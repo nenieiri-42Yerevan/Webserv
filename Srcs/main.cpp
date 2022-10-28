@@ -6,14 +6,11 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 13:17:05 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/26 11:51:50 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/28 12:52:19 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <iostream>
+#include "webserv.hpp"
 
 int	main(int argc, char **argv)
 {
@@ -42,11 +39,14 @@ int	main(int argc, char **argv)
 		socklen_t	client_size = sizeof(client_addr);
 		int	client_socket;
 		client_socket = accept(server_socket, (sockaddr *)&client_addr, &client_size);
-		if (a == -1)
+		if (client_socket == -1)
 		{
-			std::cout << "Error on accepting." << a << std::endl;
+			std::cout << "Error on accepting." << std::endl;
 			return (0);
 		}
+		char buf[3000];
+		recv(client_socket, buf, 3000, 0);
+		std::cout << buf << std::endl;
 	}
 	return (0);
 }
