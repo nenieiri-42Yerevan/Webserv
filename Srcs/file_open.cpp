@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 13:47:46 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/28 14:55:26 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/28 15:03:42 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ int	file_open(std::string config_file)
 	found = config_file.rfind(CONFIG_EXTANSION);
 	if (found == std::string::npos || config_file[found + ext.length()] != '\0')
 	{
-		std::cout << "Error: The config file must end with ";
-		std::cout << CONFIG_EXTANSION << " extension." << std::endl;
+		std::cout << "Error: The config file must end with '";
+		std::cout << CONFIG_EXTANSION << "' extension." << std::endl;
 		return (-1);
 	}
 	else
