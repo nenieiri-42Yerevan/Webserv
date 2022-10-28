@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 13:17:05 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/28 12:52:19 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/28 13:18:25 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 int	main(int argc, char **argv)
 {
 	int			server_socket;
+	(void)argc;
+	(void)argv;
 
 	server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_socket < 0)
