@@ -1,32 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   start_server.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/25 13:17:05 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/29 15:23:09 by vismaily         ###   ########.fr       */
+/*   Created: 2022/10/29 15:26:22 by vismaily          #+#    #+#             */
+/*   Updated: 2022/10/29 15:27:20 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-int	main(int argc, char **argv)
+void	start_server(std::string &config)
 {
-	int			res;
-	std::string	config;
-
-	if (argc == 1)
-		res = file_open_read(CONFIG_DEFAULT, config);
-	else if (argc == 2)
-		res = file_open_read(argv[1], config);
-	else
-	{
-		std::cerr << "Error: Argumets count must be 1 or 0." << std::endl;
-		return (0);
-	}
-	if (res != -1)
-		start_server(config);
-	return (0);
+	(void)config;
 }

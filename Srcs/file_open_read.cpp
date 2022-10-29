@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 13:47:46 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/29 14:58:29 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/29 15:22:11 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ int	file_open_read(std::string config_file, std::string &config)
 	found = config_file.rfind(CONFIG_EXTANSION);
 	if (found == std::string::npos || config_file[found + ext.length()] != '\0')
 	{
-		std::cout << "Error: The config file must end with '";
-		std::cout << CONFIG_EXTANSION << "' extension." << std::endl;
+		std::cerr << "Error: The config file must end with '";
+		std::cerr << CONFIG_EXTANSION << "' extension." << std::endl;
 		return (-1);
 	}
 	else
@@ -50,10 +50,15 @@ int	file_open_read(std::string config_file, std::string &config)
 		config_stream.open(config_file);
 		if (!config_stream.is_open())
 		{
-			std::cout << "Error: Failed to open the file." << std::endl;
+			std::cerr << "Error: Failed to open the file." << std::endl;
 			return (-1);
 		}
 		config_read_trim(config_stream, config);
+		if (config == "")
+		{
+			std::cerr << "Error: Empty config file." << std::endl;
+			return (-1);
+		}
 		config_stream.close();
 	}
 	return (0);
