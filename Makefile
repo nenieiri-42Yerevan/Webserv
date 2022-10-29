@@ -6,13 +6,13 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/10/28 13:18:00 by vismaily         ###   ########.fr        #
+#    Updated: 2022/10/29 16:56:30 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= webserv
 
-SRCS		= $(wildcard ./Srcs/*.cpp)
+SRCS		= $(wildcard ./Srcs/*.cpp) $(wildcard ./Includes/*.cpp)
 
 OBJS		= $(patsubst ./Srcs/%.cpp, ./$(TMP)/%.o, $(SRCS))
 
@@ -29,6 +29,9 @@ RM			= rm -rf
 all:		$(NAME)
 
 $(TMP)/%.o:	srcs/%.cpp
+			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+$(TMP)/%.o:	Includes/%.cpp
 			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(NAME):	$(TMP) $(OBJS)
