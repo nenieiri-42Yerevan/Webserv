@@ -47,7 +47,7 @@ void	file_open_read(std::string config_file, std::string &config)
 	{
 		if (config_file.find('/') == std::string::npos)
 			config_file.insert(0, CONFIG_PATH);
-		config_stream.open(config_file);
+		config_stream.open(config_file.c_str());
 		if (!config_stream.is_open())
 			throw std::runtime_error("Error: Failed to open the file.");
 		config_read_trim(config_stream, config);
