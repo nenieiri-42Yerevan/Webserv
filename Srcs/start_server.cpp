@@ -18,5 +18,6 @@ void	start_server(std::string &config)
 
 	server_set = parsing(config);
 	/* code */
+	createserv();
 	delete server_set;
 }

@@ -29,6 +29,9 @@
 # include <arpa/inet.h>
 
 # include "Server.hpp"
+#include <sys/types.h>
+#include <sys/socket.h>
+
 
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);
@@ -37,5 +40,8 @@ void		start_server(std::string &config);
 /* ------------- Parsing part --------------*/
 std::vector<Server>	*parsing(std::string &config);
 std::string			get_inside(std::string &config, std::string::size_type start_pos);
+
+/*-----------server--------------*/
+void createserv();
 
 #endif
