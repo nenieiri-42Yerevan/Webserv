@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 13:17:05 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/29 18:27:41 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/30 16:40:10 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,21 @@
 
 int	main(int argc, char **argv)
 {
-	int			res;
 	std::string	config;
 
-	if (argc == 1)
-		res = file_open_read(CONFIG_DEFAULT, config);
-	else if (argc == 2)
-		res = file_open_read(argv[1], config);
-	else
+	try
 	{
-		std::cerr << "Error: Argumets count must be 1 or 0." << std::endl;
-		return (0);
-	}
-	if (res != -1)
+		if (argc == 1)
+			file_open_read(CONFIG_DEFAULT, config);
+		else if (argc == 2)
+			file_open_read(argv[1], config);
+		else
+			throw std::runtime_error("Error: Argumets count must be 1 or 0.");
 		start_server(config);
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() <<  std::endl;
+	}
 	return (0);
 }

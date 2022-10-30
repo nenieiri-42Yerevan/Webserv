@@ -6,17 +6,22 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/10/29 16:56:30 by vismaily         ###   ########.fr        #
+#    Updated: 2022/10/30 17:11:56 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= webserv
 
-SRCS		= $(wildcard ./Srcs/*.cpp) $(wildcard ./Includes/*.cpp)
+TMP			= Tmp
 
-OBJS		= $(patsubst ./Srcs/%.cpp, ./$(TMP)/%.o, $(SRCS))
+SRCS_COMM	= $(wildcard ./Srcs/*.cpp)
+SRCS_PARS	= $(wildcard ./Srcs/Parsing/*.cpp)
+SRCS_CLAS	= $(wildcard ./Includes/*.cpp)
+SRCS		= $(SRCS_COMM) $(SRCS_PARS) $(SRCS_CLAS)
 
-TMP			= Tmp/
+OBJS		= $(patsubst ./Srcs/%.cpp, ./$(TMP)/%.o, $(SRCS_COMM)) \
+			  $(patsubst ./Srcs/Parsing/%.cpp, ./$(TMP)/%.o, $(SRCS_PARS)) \
+			  $(patsubst ./Includes/%.cpp, ./$(TMP)/%.o, $(SRCS_CLAS)) \
 
 CC			= c++
 
@@ -28,7 +33,10 @@ RM			= rm -rf
 
 all:		$(NAME)
 
-$(TMP)/%.o:	srcs/%.cpp
+$(TMP)/%.o:	Srcs/%.cpp
+			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+$(TMP)/%.o:	Srcs/Parsing/%.cpp
 			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(TMP)/%.o:	Includes/%.cpp
@@ -38,7 +46,7 @@ $(NAME):	$(TMP) $(OBJS)
 			@$(CC) $(CFLAGS) $(INCLUDES) -o $(NAME) $(OBJS)
 
 $(TMP):
-			@mkdir $(TMP)
+			@$(shell mkdir $(TMP))
 
 clean:
 			@$(RM) $(TMP)
