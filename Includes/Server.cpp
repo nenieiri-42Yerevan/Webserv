@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/31 16:58:08 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/31 19:06:51 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,44 +65,65 @@ const std::vector<std::string>	Server::getServerName() const
 void	Server::parsingBody(std::string &body)
 {
 	typedef std::string	str;
-	str::size_type		found_begin_name;
-	str::size_type		found_end_name;
-	str::size_type		found_begin_value;
-	str::size_type		found_end_value;
+	str::size_type		found_name_begin;
+	str::size_type		found_name_end;
+	str::size_type		found_value_begin;
+	str::size_type		found_value_end;
+	str::size_type		count = 1;
 	std::string			tmp;
 
 	while (body != "")
 	{
-		found_begin_name = body.find_first_not_of(" \t\v\r\n\f");
-		if (found_begin_name == str::npos)
+		found_name_begin = body.find_first_not_of(" \t\v\r\n\f");
+		if (found_name_begin == str::npos)
 			break ;
-		found_end_name = body.find_first_of(" \t\v\r\n\f", found_begin_name);
-		if (found_end_name == str::npos)
+		found_name_end = body.find_first_of(" \t\v\r\n\f", found_name_begin);
+		if (found_name_end == str::npos)
 			throw std::logic_error("Error: Config file: after directive name " \
 								   "must be at least one whitespce and " \
 								   "after that must be its value.");
-		found_begin_value = body.find_first_not_of(" \t\v\r\n\f", found_end_name);
-		if (found_begin_value == str::npos)
+		found_value_begin = body.find_first_not_of(" \t\v\r\n\f", found_name_end);
+		if (found_value_begin == str::npos)
 		{
 			tmp = "Error: Config file: directive '";
-			tmp += body.substr(found_begin_name, found_end_name - found_begin_name);
+			tmp += body.substr(found_name_begin, found_name_end - found_name_begin);
 			tmp += "' doesn't have a value.";
 			throw std::logic_error(tmp);
 		}
-		if (body.compare(found_begin_name, 8, "location") != 0)
+		/* write if is valid name */
+		if (body.compare(found_name_begin, 8, "location") != 0)
 		{
-			found_end_value = body.find_first_of(';', found_begin_value);
-			if (found_end_value == str::npos)
+			found_value_end = body.find_first_of(';', found_value_begin);
+			if (found_value_end == str::npos)
 			{
 				tmp = "Error: Config file: value of directive '";
-				tmp += body.substr(found_begin_name, found_end_name - found_begin_name);
+				tmp += body.substr(found_name_begin, found_name_end - found_name_begin);
 				tmp += "' must end with ';' symbol.";
 				throw std::logic_error(tmp);
 			}
 		}
 		else
 		{
+			found_value_end = body.find_first_of("{}", found_value_begin + 1);
+			if (found_value_end == str::npos || body[found_value_end] != '{')
+				throw std::runtime_error("Error: Config file: directive " \
+										 "'location' has no opening '{'.");
+			found_value_end = body.find_first_of("{}", found_value_end + 1);
+			while (found_value_end != str::npos && count != 0)
+			{
+				if (body[found_value_end] == '{')
+					++count;
+				else
+					--count;
+				if (count != 0)
+					found_value_end = body.find_first_of("{}", found_value_end + 1);
+			}
+			if (found_value_end == str::npos)
+				throw std::runtime_error("Error: Config file: directive " \
+										 "'location' has no closing '}'.");
+			++found_value_end;
 		}
-		body.erase(0, found_end_value + 1);
+		/* send to init */
+		body.erase(0, found_value_end + 1);
 	}
 }
