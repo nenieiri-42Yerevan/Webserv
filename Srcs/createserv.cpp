@@ -7,10 +7,10 @@ void createserv()
     socklen_t addrlen;
 
     std::string reply = "HTTP/1.1 200 OK\n\
-Server: Hello\n\
-Content-Length: 13\n\
-Content-Type: text/plain\n\n\
-Hello, world";
+    Server: Hello\n\
+    Content-Length: 13\n\
+    Content-Type: text/plain\n\n\
+    Hello, world";
     data.port = 8080;
     if ((data.sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -47,7 +47,8 @@ Hello, world";
             }
             FD_SET(data.acceptfd, &data.actual_set);
             send(data.acceptfd, reply.c_str(), strlen(reply.c_str()), 0);
-            break;
+            data.maxfd = data.acceptfd > data.maxfd ? data.acceptfd : data.maxfd;
         }
+        close(data.acceptfd);
     }
 }
