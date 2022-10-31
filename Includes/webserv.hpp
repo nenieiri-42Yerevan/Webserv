@@ -41,5 +41,14 @@ std::string			get_inside(std::string &config, std::string::size_type start_pos);
 
 /*-------------- Server part ---------------*/
 void createserv();
+typedef struct  s_serv
+{
+    int maxfd;
+    int sockfd;
+    int acceptfd;
+    int port;
+    fd_set actual_set, read_set, write_set;
+}               t_serv;
+
 
 #endif
