@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 15:37:59 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/30 15:49:46 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/31 12:43:36 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ std::vector<Server>	*parsing(std::string &config)
 			else if (config.compare(found_server, 6, "server") == 0)
 			{
 				body = get_inside(config, found_server + 6);
-				server_set->push_back(Server());
+				server_set->push_back(Server(body));
 			}
 			else
 				throw std::runtime_error("Error: Config file must contain only "

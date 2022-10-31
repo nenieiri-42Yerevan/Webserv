@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 14:32:00 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/30 15:16:40 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/10/31 14:09:20 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ std::string	get_inside(std::string &config, std::string::size_type start_pos)
 	count = 1;
 	found_first_brec = config.find_first_not_of(" \t\v\r\n\f", start_pos);
 	if (config[found_first_brec] != '{')
-		throw std::runtime_error("Error: directive 'server' has no opening '{'");
+		throw std::runtime_error("Error: Config file: directive 'server' " \
+								 "has no opening '{'.");
 	found_last_brec = config.find_first_of("{}", found_first_brec + 1);
 	while (found_last_brec != std::string::npos && count != 0)
 	{
@@ -34,7 +35,8 @@ std::string	get_inside(std::string &config, std::string::size_type start_pos)
 			found_last_brec = config.find_first_of("{}", found_last_brec + 1);
 	}
 	if (found_last_brec == std::string::npos)
-		throw std::runtime_error("Error: directive 'server' has no closing '}'");
+		throw std::runtime_error("Error: Config file: directive 'server' " \
+								 "has no closing '}'.");
 	body = config.substr(found_first_brec, found_last_brec - found_first_brec + 1);
 	config.erase(0, found_last_brec + 1);
 	return (body);
