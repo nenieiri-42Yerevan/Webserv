@@ -6,6 +6,11 @@ void createserv()
     struct sockaddr_in address;
     socklen_t addrlen;
 
+    std::string reply = "HTTP/1.1 200 OK\n\
+Server: Hello\n\
+Content-Length: 13\n\
+Content-Type: text/plain\n\n\
+Hello, world";
     data.port = 8080;
     if ((data.sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -41,8 +46,8 @@ void createserv()
                 throw std::runtime_error("Error: accept");
             }
             FD_SET(data.acceptfd, &data.actual_set);
-            send(data.acceptfd, "hello", 6, 0);
-
+            send(data.acceptfd, reply.c_str(), strlen(reply.c_str()), 0);
+            break;
         }
     }
 }
