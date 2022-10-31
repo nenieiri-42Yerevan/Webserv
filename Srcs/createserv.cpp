@@ -41,7 +41,7 @@ void createserv()
                 throw std::runtime_error("Error: accept");
             }
             FD_SET(data.acceptfd, &data.actual_set);
-            send(data.acceptfd, "<html><head></head><body><p>hello</p></body></html>", 60, 0);
+            send(data.acceptfd, "hello", 6, 0);
 
         }
     }
