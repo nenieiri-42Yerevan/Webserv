@@ -48,7 +48,8 @@ void createserv()
             FD_SET(data.acceptfd, &data.actual_set);
             send(data.acceptfd, reply.c_str(), strlen(reply.c_str()), 0);
             data.maxfd = data.acceptfd > data.maxfd ? data.acceptfd : data.maxfd;
+            FD_CLR(data.acceptfd, &data.actual_set);
         }
-        close(data.acceptfd);
+       close(data.acceptfd);
     }
 }

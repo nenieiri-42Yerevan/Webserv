@@ -17,6 +17,7 @@
 # include <cstring>
 
 # include <iostream>
+# include <algorithm>
 
 class	Server
 {
