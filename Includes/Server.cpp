@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/31 19:06:51 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/01 18:22:42 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,17 @@
 
 Server::Server()
 {
-	_serverName.push_back("");
 }
 
-Server::Server(std::string &body)
+Server::Server(str_t &body)
 {
-	std::string	tmp;
+	str_t	tmp;
 
 	tmp = body.substr(1, body.length() - 2);
-	if (tmp == "" || tmp.find_first_not_of(" \t\v\r\n\f") == std::string::npos)
+	if (tmp == "" || tmp.find_first_not_of(" \t\v\r\n\f") == str_t::npos)
 		throw std::logic_error("Error: Config file: directive 'server' is empty.");
+	_directive_list.push_back("server_name");
+	_directive_list.push_back("listen");
 	parsingBody(tmp);
 }
 
@@ -53,7 +54,19 @@ Server::~Server()
 /*          Setter and Getters         */
 /*=====================================*/
 
-const std::vector<std::string>	Server::getServerName() const
+void	Server::setServerName(str_t &value)
+{
+	char	*token;
+
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	while (token != NULL)
+	{
+		this->_serverName.push_back(token);
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
+const std::vector<std::string>	&Server::getServerName() const
 {
 	return (this->_serverName);
 }
@@ -62,68 +75,78 @@ const std::vector<std::string>	Server::getServerName() const
 /*       Other Member Functions        */
 /*=====================================*/
 
-void	Server::parsingBody(std::string &body)
+void	Server::setFildes(const str_t &name, str_t &value)
 {
-	typedef std::string	str;
-	str::size_type		found_name_begin;
-	str::size_type		found_name_end;
-	str::size_type		found_value_begin;
-	str::size_type		found_value_end;
-	str::size_type		count = 1;
-	std::string			tmp;
+	if (name.compare("server_name") == 0)
+		this->setServerName(value);
+//	else if (name.compare("listen") == 0)
+//		setListen(value);
+}
+
+void	Server::parsingValue(str_t &body, str_t::size_type value_begin, \
+							 str_t::size_type value_end)
+{
+	str_t::size_type	count = 1;
+
+	value_end = body.find_first_of("{}", value_begin + 1);
+	if (value_end == str_t::npos || body[value_end] != '{')
+		throw std::runtime_error("Error: Config file: directive " \
+								 "'location' has no opening '{'.");
+	value_end = body.find_first_of("{}", value_end + 1);
+	while (value_end != str_t::npos && count != 0)
+	{
+		if (body[value_end] == '{')
+			++count;
+		else
+			--count;
+		if (count != 0)
+			value_end = body.find_first_of("{}", value_end + 1);
+	}
+	if (value_end == str_t::npos)
+		throw std::runtime_error("Error: Config file: directive " \
+								 "'location' has no closing '}'.");
+	++value_end;
+}
+
+void	Server::parsingBody(str_t &body)
+{
+	str_t::size_type	name_begin;
+	str_t::size_type	name_end;
+	str_t				name;
+	str_t::size_type	value_begin;
+	str_t::size_type	value_end;
+	str_t				value;
 
 	while (body != "")
 	{
-		found_name_begin = body.find_first_not_of(" \t\v\r\n\f");
-		if (found_name_begin == str::npos)
+		name_begin = body.find_first_not_of(" \t\v\r\n\f");
+		if (name_begin == str_t::npos)
 			break ;
-		found_name_end = body.find_first_of(" \t\v\r\n\f", found_name_begin);
-		if (found_name_end == str::npos)
+		name_end = body.find_first_of(" \t\v\r\n\f", name_begin);
+		if (name_end == str_t::npos)
 			throw std::logic_error("Error: Config file: after directive name " \
 								   "must be at least one whitespce and " \
 								   "after that must be its value.");
-		found_value_begin = body.find_first_not_of(" \t\v\r\n\f", found_name_end);
-		if (found_value_begin == str::npos)
+		name = body.substr(name_begin, name_end - name_begin);
+		value_begin = body.find_first_not_of(" \t\v\r\n\f", name_end);
+		if (value_begin == str_t::npos)
+			throw std::logic_error("Error: Config file: directive '" + name + \
+									"' doesn't have a value.");
+		if (std::find(_directive_list.begin(), _directive_list.end(), name) == \
+													_directive_list.end())
+			throw std::logic_error("Error: Config file: directive name '" \
+				   					+ name + "' unknown.");
+		if (body.compare(name_begin, 8, "location") != 0)
 		{
-			tmp = "Error: Config file: directive '";
-			tmp += body.substr(found_name_begin, found_name_end - found_name_begin);
-			tmp += "' doesn't have a value.";
-			throw std::logic_error(tmp);
-		}
-		/* write if is valid name */
-		if (body.compare(found_name_begin, 8, "location") != 0)
-		{
-			found_value_end = body.find_first_of(';', found_value_begin);
-			if (found_value_end == str::npos)
-			{
-				tmp = "Error: Config file: value of directive '";
-				tmp += body.substr(found_name_begin, found_name_end - found_name_begin);
-				tmp += "' must end with ';' symbol.";
-				throw std::logic_error(tmp);
-			}
+			value_end = body.find_first_of(';', value_begin);
+			if (value_end == str_t::npos)
+				throw std::logic_error("Error: Config file: value of "
+					"directive '" + name + "' must end with ';' symbol.");
 		}
 		else
-		{
-			found_value_end = body.find_first_of("{}", found_value_begin + 1);
-			if (found_value_end == str::npos || body[found_value_end] != '{')
-				throw std::runtime_error("Error: Config file: directive " \
-										 "'location' has no opening '{'.");
-			found_value_end = body.find_first_of("{}", found_value_end + 1);
-			while (found_value_end != str::npos && count != 0)
-			{
-				if (body[found_value_end] == '{')
-					++count;
-				else
-					--count;
-				if (count != 0)
-					found_value_end = body.find_first_of("{}", found_value_end + 1);
-			}
-			if (found_value_end == str::npos)
-				throw std::runtime_error("Error: Config file: directive " \
-										 "'location' has no closing '}'.");
-			++found_value_end;
-		}
-		/* send to init */
-		body.erase(0, found_value_end + 1);
+			parsingValue(body, value_begin, value_end);
+		value = body.substr(value_begin, value_end - value_begin);
+		this->setFildes(name, value);
+		body.erase(0, value_end + 1);
 	}
 }
