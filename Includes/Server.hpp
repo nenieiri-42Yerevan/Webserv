@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/01 18:19:18 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/01 19:12:28 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 class	Server
 {
 	private:
-		typedef std::string			str_t;
+		typedef std::string			t_str;
 	public:
-		Server(str_t &body);
+		Server(t_str &body);
 		Server(const Server &other);
 		Server	&operator=(const Server &rhs);
 		~Server();
@@ -31,16 +31,16 @@ class	Server
 		Server();
 
 	public:
-		void							setServerName(str_t &value);
+		void							setServerName(t_str &value);
 		const std::vector<std::string>	&getServerName() const;
 	private:
-		void		setFildes(const str_t &name, str_t &value);
-		void		parsingValue(str_t &body, str_t::size_type value_begin, \
-								 str_t::size_type value_end);
-		void		parsingBody(str_t &body);
+		void		setFildes(const t_str &name, t_str &value);
+		void		parsingValue(t_str &body, t_str::size_type value_begin, \
+								 t_str::size_type value_end);
+		void		parsingBody(t_str &body);
 	private:
-		std::vector<str_t>			_directive_list;
-		std::vector<str_t>			_serverName;
+		std::vector<t_str>			_directive_list;
+		std::vector<t_str>			_serverName;
 };
 
 #endif
