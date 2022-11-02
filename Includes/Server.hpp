@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/02 10:45:50 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/02 13:22:39 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define SERVER_HPP
 
 # include <vector>
+# include <map>
 # include <cstring>
 # include <algorithm>
 
@@ -22,7 +23,7 @@
 class	Server
 {
 	private:
-		typedef std::string			t_str;
+		typedef std::string				t_str;
 	public:
 		Server(t_str &body);
 		Server(const Server &other);
@@ -32,16 +33,23 @@ class	Server
 		Server();
 
 	public:
-		void							setServerName(t_str &value);
 		const std::vector<std::string>	&getServerName() const;
+		const std::map<t_str, t_str>	&getListen() const;
 	private:
+		void		setServerName(t_str &value);
+		void		setListen(t_str &addr, t_str &port);
+	private:
+		void		parsingListen(t_str &value);
+		bool		isValidPort(t_str port) const;
 		void		setFildes(const t_str &name, t_str &value);
-		void		parsingValue(t_str &body, t_str::size_type value_begin, \
+		void		parsingLocation(t_str &body, t_str::size_type value_begin, \
 												t_str::size_type value_end);
+		void		setDefaults();
 		void		parsingBody(t_str &body);
 	private:
-		std::vector<t_str>			_directiveList;
-		std::vector<t_str>			_serverName;
+		std::vector<t_str>				_directiveList;
+		std::vector<t_str>				_serverName;
+		std::map<t_str, t_str>			_listen;
 };
 
 #endif

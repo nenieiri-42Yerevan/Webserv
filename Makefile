@@ -6,7 +6,7 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/10/30 17:11:56 by vismaily         ###   ########.fr        #
+#    Updated: 2022/11/02 10:52:09 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,9 @@ RM			= rm -rf
 
 all:		$(NAME)
 
+$(TMP):
+			@$(shell mkdir $(TMP))
+
 $(TMP)/%.o:	Srcs/%.cpp
 			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
@@ -44,9 +47,6 @@ $(TMP)/%.o:	Includes/%.cpp
 
 $(NAME):	$(TMP) $(OBJS)
 			@$(CC) $(CFLAGS) $(INCLUDES) -o $(NAME) $(OBJS)
-
-$(TMP):
-			@$(shell mkdir $(TMP))
 
 clean:
 			@$(RM) $(TMP)

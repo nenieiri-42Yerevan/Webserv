@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/02 10:46:16 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/02 13:23:39 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,16 @@ Server::~Server()
 /*          Setter and Getters         */
 /*=====================================*/
 
+const std::vector<std::string>	&Server::getServerName() const
+{
+	return (this->_serverName);
+}
+
+const std::map<std::string, std::string>	&Server::getListen() const
+{
+	return (this->_listen);
+}
+
 void	Server::setServerName(t_str &value)
 {
 	char	*token;
@@ -68,24 +78,99 @@ void	Server::setServerName(t_str &value)
 	}
 }
 
-const std::vector<std::string>	&Server::getServerName() const
+void	Server::setListen(t_str &addr, t_str &port)
 {
-	return (this->_serverName);
+	(void)addr;
+	(void)port;
 }
 
 /*=====================================*/
 /*       Other Member Functions        */
 /*=====================================*/
 
+void	Server::parsingListen(t_str &value)
+{
+	t_str::size_type	colon_pos;
+	t_str::size_type	addr_end;
+	t_str				addr;
+	t_str::size_type	port_begin;
+	t_str::size_type	port_end;
+	t_str				port;
+
+	colon_pos = value.find(':');
+	if (colon_pos != t_str::npos)
+	{
+		if (colon_pos == 0)
+		{
+			addr = "*";
+			port_begin = value.find_first_not_of(" \t\v\r\n\f", 1);
+			port_end = value.find_last_not_of(" \t\v\r\n\f") + 1;
+		}
+		else
+		{
+			addr_end = value.find_last_not_of(" :\t\v\r\n\f", colon_pos) + 1;
+			addr = value.substr(0, addr_end);
+			port_begin = value.find_first_not_of(" \t\v\r\n\f", colon_pos + 1);
+			port_end = value.find_last_not_of(" \t\v\r\n\f") + 1;
+		}
+		port = value.substr(port_begin, port_end - port_begin);
+		if (this->isValidPort(port) == false)
+			throw std::runtime_error("Error: Port is not valid.");
+		port_begin = port.find_first_not_of('0');
+		if (port_begin == t_str::npos)
+			throw std::runtime_error("Error: Port is not valid.");
+		port = port.substr(port_begin, port.length() - port_begin);
+	}
+	else
+	{
+		value = value.substr(0, value.find_last_not_of(" \t\v\r\n\f") + 1);
+		if (this->isValidPort(value) == true)
+		{
+			port = value;
+			port_begin = port.find_first_not_of('0');
+			if (port_begin == t_str::npos)
+				throw std::runtime_error("Error: Port is not valid.");
+			port = port.substr(port_begin, port.length() - port_begin);
+			addr = "*";
+		}
+		else
+		{
+			addr = value;
+			port = "80";
+		}
+	}
+	this->setListen(addr, port);
+}
+
+bool	Server::isValidPort(t_str port) const
+{
+	t_str::size_type	begin;
+
+	begin = port.find_first_not_of('0');
+	if (begin == t_str::npos)
+		return (0);
+	port = port.substr(begin, port.length() - begin);
+	for(t_str::iterator	it = port.begin(); it < port.end(); ++it)
+	{
+		if (std::isdigit(*it) == 0)
+			return (0);
+	}
+	if (port.size() > 5)
+		return (0);
+	if (std::stoi(port) > 65536)
+		return (0);
+	return (1);
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
 		this->setServerName(value);
-//	else if (name.compare("listen") == 0)
-//		setListen(value);
+	else if (name.compare("listen") == 0)
+		this->parsingListen(value);
 }
 
-void	Server::parsingValue(t_str &body, t_str::size_type value_begin, \
+void	Server::parsingLocation(t_str &body, t_str::size_type value_begin, \
 							 t_str::size_type value_end)
 {
 	t_str::size_type	count = 1;
@@ -108,6 +193,12 @@ void	Server::parsingValue(t_str &body, t_str::size_type value_begin, \
 		throw std::runtime_error("Error: Config file: directive " \
 								 "'location' has no closing '}'.");
 	++value_end;
+}
+
+void	Server::setDefaults()
+{
+	if (_serverName.size() == 0)
+		_serverName.push_back("");
 }
 
 void	Server::parsingBody(t_str &body)
@@ -146,9 +237,10 @@ void	Server::parsingBody(t_str &body)
 					"directive '" + name + "' must end with ';' symbol.");
 		}
 		else
-			parsingValue(body, value_begin, value_end);
+			parsingLocation(body, value_begin, value_end);
 		value = body.substr(value_begin, value_end - value_begin);
 		this->setFildes(name, value);
 		body.erase(0, value_end + 1);
 	}
+	this->setDefaults();
 }
