@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/02 13:23:39 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/02 15:46:37 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,12 @@ void	Server::setServerName(t_str &value)
 
 void	Server::setListen(t_str &addr, t_str &port)
 {
-	(void)addr;
-	(void)port;
+	if (isValidIP(addr) == 0)
+	{
+		this->_serverName.push_back(addr);
+		addr = "*";
+	}
+	this->_listen.insert(std::make_pair(addr, port));
 }
 
 /*=====================================*/
@@ -159,6 +163,45 @@ bool	Server::isValidPort(t_str port) const
 		return (0);
 	if (std::stoi(port) > 65536)
 		return (0);
+	return (1);
+}
+
+bool	Server::isValidIP(t_str addr) const
+{
+	t_str::size_type	count;
+	char				*token;
+	t_str				token_str;
+	t_str				spaces = " \t\v\r\n\f";
+
+	count = 0;
+	if (addr == "*")
+		return (1);
+	if (addr[0] == '.')
+		return (0);
+	for(t_str::iterator	it = addr.begin(); it < addr.end(); ++it)
+	{
+		if (*it == '.')
+			++count;
+		else if (spaces.find(*it) != t_str::npos)
+			throw std::runtime_error("Error: listen syntax is wrong.");
+	}
+	if (count != 3)
+		return (0);
+	token = std::strtok(&addr[0], ".");
+	while (token != NULL)
+	{
+		token_str = token;
+		if (token_str.length() > 3)
+			return (0);
+		for (t_str::iterator it = token_str.begin(); it < token_str.end(); ++it)
+		{
+			if (std::isdigit(*it) == 0)
+				return (0);
+		}
+		if (std::stoi(token_str) > 255)
+			return (0);
+		token = std::strtok(NULL, ".");
+	}
 	return (1);
 }
 

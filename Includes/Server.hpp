@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/02 13:22:39 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/02 15:47:09 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 
 # include <vector>
 # include <map>
+# include <utility>
 # include <cstring>
+# include <cctype>
 # include <algorithm>
 
 # include <iostream>
@@ -41,6 +43,7 @@ class	Server
 	private:
 		void		parsingListen(t_str &value);
 		bool		isValidPort(t_str port) const;
+		bool		isValidIP(t_str addr) const;
 		void		setFildes(const t_str &name, t_str &value);
 		void		parsingLocation(t_str &body, t_str::size_type value_begin, \
 												t_str::size_type value_end);
