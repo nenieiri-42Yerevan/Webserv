@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/01 19:12:28 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/02 10:46:16 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ Server::Server(t_str &body)
 	tmp = body.substr(1, body.length() - 2);
 	if (tmp == "" || tmp.find_first_not_of(" \t\v\r\n\f") == t_str::npos)
 		throw std::logic_error("Error: Config file: directive 'server' is empty.");
-	_directive_list.push_back("server_name");
-	_directive_list.push_back("listen");
+	_directiveList.push_back("server_name");
+	_directiveList.push_back("listen");
 	parsingBody(tmp);
 }
 
 Server::Server(const Server &other)
 {
+	this->_directiveList = other._directiveList;
 	this->_serverName = other._serverName;
 }
 
@@ -41,6 +42,7 @@ Server	&Server::operator=(const Server &rhs)
 {
 	if (this != &rhs)
 	{
+		this->_directiveList = rhs._directiveList;
 		this->_serverName = rhs._serverName;
 	}
 	return (*this);
@@ -132,8 +134,8 @@ void	Server::parsingBody(t_str &body)
 		if (value_begin == t_str::npos)
 			throw std::logic_error("Error: Config file: directive '" + name + \
 									"' doesn't have a value.");
-		if (std::find(_directive_list.begin(), _directive_list.end(), name) == \
-													_directive_list.end())
+		if (std::find(_directiveList.begin(), _directiveList.end(), name) == \
+													_directiveList.end())
 			throw std::logic_error("Error: Config file: directive name '" \
 				   					+ name + "' unknown.");
 		if (body.compare(name_begin, 8, "location") != 0)
