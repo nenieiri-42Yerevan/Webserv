@@ -33,6 +33,15 @@
 
 # include "Server.hpp"
 
+typedef struct  s_serv
+{
+    std::string host;
+    int sockfd;
+    int port;
+}               t_serv;
+#include "HttpServer.hpp"
+class HttpServer;
+
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);
 void		start_server(std::string &config);
@@ -42,15 +51,6 @@ std::vector<Server>	*parsing(std::string &config);
 std::string			get_inside(std::string &config, std::string::size_type start_pos);
 
 /*-------------- Server part ---------------*/
-void createserv();
-typedef struct  s_serv
-{
-    int maxfd;
-    int sockfd;
-    int acceptfd;
-    int port;
-    fd_set actual_set, read_set, write_set;
-}               t_serv;
 
 
 #endif

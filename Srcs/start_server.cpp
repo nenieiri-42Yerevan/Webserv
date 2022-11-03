@@ -17,6 +17,6 @@ void	start_server(std::string &config)
 	std::vector<Server>		*server_set;
 
 	server_set = parsing(config);
-	createserv();
+	HttpServer	serv(server_set);
 	delete server_set;
 }
