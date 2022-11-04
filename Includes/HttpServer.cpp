@@ -30,6 +30,33 @@ HttpServer::HttpServer(std::vector<Server> *vec)
     this->vec = *vec;
 }
 
+void HttpServer::createSockets(int i)
+{
+    this->listenSockets[i].sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if ( this->listenSockets[i].sockfd < 0)
+        throw std::runtime_error("Error: when creating a socket");
+        int on = 1;
+    if (setsockopt(this->listenSockets[i].sockfd, SOL_SOCKET,  SO_REUSEADDR | SO_REUSEPORT,
+								&on, sizeof(int)) < 0)
+    {
+            close(this->listenSockets[i].sockfd);
+            throw std::runtime_error("Error: setsockopt");
+    }
+    struct sockaddr_in address;
+    memset((char *)&address, 0, sizeof(address));
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = inet_addr(this->listenSockets[i].host.c_str());
+    address.sin_port = htons(this->listenSockets[i].port);
+    if ((bind(this->listenSockets[i].sockfd, (struct sockaddr *) &address, sizeof(address))) < 0)
+    {
+        throw std::runtime_error("Error: bind");
+    }
+    if (listen(this->listenSockets[i].sockfd, 32) < 0)
+    {
+       throw std::runtime_error("Error: Listen");
+    }
+}
+
 void HttpServer::createListen()
 {
    /* struct sockaddr_in address;
@@ -44,6 +71,7 @@ void HttpServer::createListen()
         {
             this->listenSockets[c].port = atoi(it->second.c_str());
             this->listenSockets[c].host = it->first;
+            createSockets(c);
             c++;
             it++;
         }

@@ -14,6 +14,7 @@ class HttpServer
         HttpServer(const HttpServer &other);
         HttpServer &operator=(const HttpServer &other);
         void createListen();
+        void createSockets(int i);
     private:
         std::vector<t_serv> clientSockets;
         std::vector<t_serv> listenSockets;
