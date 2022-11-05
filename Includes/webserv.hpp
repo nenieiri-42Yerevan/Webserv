@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 12:50:24 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/31 12:32:28 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/05 12:43:25 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <cstring>
 # include <stdexcept>
 # include <vector>
-
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <netinet/in.h>
@@ -32,15 +31,7 @@
 # include <fcntl.h>
 
 # include "Server.hpp"
-
-typedef struct  s_serv
-{
-    std::string host;
-    int sockfd;
-    int port;
-}               t_serv;
-#include "HttpServer.hpp"
-class HttpServer;
+# include "HttpServer.hpp"
 
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);
@@ -51,6 +42,5 @@ std::vector<Server>	*parsing(std::string &config);
 std::string			get_inside(std::string &config, std::string::size_type start_pos);
 
 /*-------------- Server part ---------------*/
-
 
 #endif
