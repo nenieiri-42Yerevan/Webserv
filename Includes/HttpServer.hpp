@@ -3,6 +3,7 @@
 
 # include <vector>
 # include <map>
+# include <cstring>
 # include "webserv.hpp"
 
 typedef struct s_serv
