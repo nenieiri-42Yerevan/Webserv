@@ -19,7 +19,7 @@ HttpServer &HttpServer::operator=(const HttpServer &other)
 {
     if (this != &other)
     {
-        this->clientSockets = other.clientSockets;
+        this->acceptfds = other.acceptfds;
         this->listenSockets = other.listenSockets;
     }
     return (*this);
@@ -74,4 +74,55 @@ void HttpServer::createListen()
             ++it;
         }
     }
+}
+
+void HttpServer::createacceptfd(int i, fd_set initset, int *maxfd)
+{
+     struct sockaddr_in	address;
+     int fd;
+     socklen_t addrlen;
+     
+     if ((fd = accept(this->listenSockets[i].sockfd,(struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0)
+    {
+        throw std::runtime_error("Error: accept");
+    }
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+    FD_SET(fd, &initset);
+    (*maxfd)++;
+    this->acceptfds.push_back(fd);
+}
+
+void HttpServer::run()
+{
+    fd_set readset, writeset, initset;
+    int maxfd;
+
+    createListen();
+    maxfd = 0; 
+    FD_ZERO(&initset);
+    for (int i = 0; i < this->listenSockets.size(); i++)
+    {
+        if (this->listenSockets[i].sockfd > maxfd)
+            maxfd = listenSockets[i].sockfd;
+        FD_SET(this->listenSockets[i].sockfd, &initset);
+    }
+    while (1)
+    {
+        readset = initset;
+        writeset = initset;
+        select(maxfd, &readset, &writeset, 0, 0);
+        for (int i = 0; i < this->listenSockets.size(); i++)
+        {
+            if (FD_ISSET(this->listenSockets[i].sockfd, &readset) == 1)
+            {
+                createacceptfd(i, initset,  &maxfd);
+            }
+        }
+        for (int i = 0; i < this->acceptfds.size(); i++)
+        {
+            
+        }
+    }
+
+
 }

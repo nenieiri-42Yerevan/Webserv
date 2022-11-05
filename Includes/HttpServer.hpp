@@ -23,10 +23,12 @@ class	HttpServer
 		virtual				~HttpServer();
 
 	public:
-		void				createListen();
-		void				createSockets(int i);
+		void	createListen();
+		void	createSockets(int i);
+		void 	run();
+		void createacceptfd(int i, fd_set initset, int *maxfd);
 	private:
-		std::vector<t_serv>	clientSockets;
+		std::vector<int>	acceptfds;
 		std::vector<t_serv>	listenSockets;
 		std::vector<Server>	vec;
 };
