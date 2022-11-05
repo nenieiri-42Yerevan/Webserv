@@ -92,6 +92,20 @@ void HttpServer::createacceptfd(int i, fd_set initrset, int *maxfd)
     this->acceptfds.push_back(fd);
 }
 
+void HttpServer::getrequest(int i)
+{
+    char buffer[1024];
+    int n = 0;
+
+    if((n = recv(this->acceptfds[i], buffer, sizeof(buffer) - 1, 0)) < 0)
+    {
+        throw std::runtime_error("Error: recieve");
+    }
+    buffer[n] = '\0';
+    std::cout << buffer << std::endl;
+}
+
+
 void HttpServer::run()
 {
     fd_set readset, writeset, initwset, initrset;
@@ -101,7 +115,7 @@ void HttpServer::run()
     maxfd = 0; 
     FD_ZERO(&initrset);
     FD_ZERO(&initwset);
-    for (int i = 0; i < this->listenSockets.size(); i++)
+    for (size_t i = 0; i < this->listenSockets.size(); i++)
     {
         if (this->listenSockets[i].sockfd > maxfd)
             maxfd = listenSockets[i].sockfd;
@@ -112,23 +126,23 @@ void HttpServer::run()
         readset = initrset;
         writeset = initwset;
         select(maxfd, &readset, &writeset, 0, 0);
-        for (int i = 0; i < this->listenSockets.size(); i++)
+        for (size_t i = 0; i < this->listenSockets.size(); i++)
         {
             if (FD_ISSET(this->listenSockets[i].sockfd, &readset) == 1)
             {
                 createacceptfd(i, initrset,  &maxfd);
             }
         }
-        for (int i = 0; i < this->acceptfds.size(); i++)
+        for (size_t i = 0; i < this->acceptfds.size(); i++)
         {
             if (FD_ISSET(this->acceptfds[i], &readset) == 1)
             {
-                getrequest();
+                getrequest(i);
                 FD_SET(this->acceptfds[i], &initwset);
             }
             if (FD_ISSET(this->acceptfds[i], &readset) == 1)
             {
-                getresponse();
+               // sendresponse(i);
             }
         }
     }

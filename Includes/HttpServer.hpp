@@ -27,6 +27,8 @@ class	HttpServer
 		void	createSockets(int i);
 		void 	run();
 		void createacceptfd(int i, fd_set initset, int *maxfd);
+		void getrequest(int i);
+		void sendresponse(int i);
 	private:
 		std::vector<int>	acceptfds;
 		std::vector<t_serv>	listenSockets;

@@ -18,5 +18,6 @@ void	start_server(std::string &config)
 
 	server_set = parsing(config);
 	HttpServer	serv(server_set);
+	serv.run();
 	delete server_set;
 }
