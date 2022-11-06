@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/02 15:46:37 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/06 11:21:08 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ Server::Server(const Server &other)
 {
 	this->_directiveList = other._directiveList;
 	this->_serverName = other._serverName;
+	this->_listen = other._listen;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -44,6 +45,7 @@ Server	&Server::operator=(const Server &rhs)
 	{
 		this->_directiveList = rhs._directiveList;
 		this->_serverName = rhs._serverName;
+		this->_listen = rhs._listen;
 	}
 	return (*this);
 }
