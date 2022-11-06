@@ -32,6 +32,7 @@
 
 # include "Server.hpp"
 # include "HttpServer.hpp"
+# include "Client.hpp"
 
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);

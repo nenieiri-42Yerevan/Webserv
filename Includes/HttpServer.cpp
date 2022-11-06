@@ -50,9 +50,15 @@ void HttpServer::createSockets(int i)
 	address.sin_port = htons(this->listenSockets[i].port);
 	if (bind(this->listenSockets[i].sockfd, (struct sockaddr *) &address, \
 					sizeof(address)) < 0)
+    {
+        close(this->listenSockets[i].sockfd);
 		throw std::runtime_error("Error: binding socket.");
+    }
 	if (listen(this->listenSockets[i].sockfd, 32) < 0)
+    {
 		throw std::runtime_error("Error: listening socket.");
+        close(this->listenSockets[i].sockfd);
+    }
 }
 
 void HttpServer::createListen()
@@ -86,22 +92,22 @@ void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 
 	if ((fd = accept(this->listenSockets[i].sockfd, (struct sockaddr *)&address, \
 					(socklen_t*)&addrlen)) < 0)
-		throw std::runtime_error("Error: accept");
+		return ;
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	FD_SET(fd, initrset);
 	(*maxfd)++;
-	this->acceptfds.push_back(fd);
+	this->acceptfds.insert(std::make_pair(fd, Client()));
 }
 
-void HttpServer::getrequest(int i)
+void HttpServer::getrequest(int fd)
 {
-    char	buffer[4096];
+    char	buffer[1024];
     int		n = 0;
 
-	if ((n = recv(this->acceptfds[i], buffer, sizeof(buffer) - 1, 0)) < 0)
-		throw std::runtime_error("Error: recieve");
+	if ((n = recv(fd, buffer, sizeof(buffer) - 1, 0)) < 0)
+		return ;
 	buffer[n] = '\0';
-	std::cout << buffer << std::endl;
+	this->acceptfds[fd].setStr(buffer);
 }
 
 
@@ -130,17 +136,19 @@ void HttpServer::run()
             if (FD_ISSET(this->listenSockets[i].sockfd, &readset))
                 createacceptfd(i, &initrset,  &maxfd);
         }
-        for (size_t i = 0; i < this->acceptfds.size(); i++)
+        std::map<int, Client>::iterator it = this->acceptfds.begin();
+        while (it != this->acceptfds.end())
         {
-            if (FD_ISSET(this->acceptfds[i], &readset))
+            if (FD_ISSET(it->first, &readset))
             {
-                getrequest(i);
-                FD_SET(this->acceptfds[i], &initwset);
+                getrequest(it->first);
+                FD_SET(it->first, &initwset);
             }
-            if (FD_ISSET(this->acceptfds[i], &readset))
+            if (FD_ISSET(it->first, &readset))
             {
                // sendresponse(i);
             }
+            it++;
         }
     }
 }

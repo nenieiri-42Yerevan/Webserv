@@ -30,7 +30,7 @@ class	HttpServer
 		void getrequest(int i);
 		void sendresponse(int i);
 	private:
-		std::vector<int>	acceptfds;
+		std::map<int, Client>	acceptfds;
 		std::vector<t_serv>	listenSockets;
 		std::vector<Server>	vec;
 };
