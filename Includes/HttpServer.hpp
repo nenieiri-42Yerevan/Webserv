@@ -26,7 +26,7 @@ class	HttpServer
 		void	createListen();
 		void	createSockets(int i);
 		void 	run();
-		void createacceptfd(int i, fd_set initset, int *maxfd);
+		void createacceptfd(int i, fd_set *initset, int *maxfd);
 		void getrequest(int i);
 		void sendresponse(int i);
 	private:

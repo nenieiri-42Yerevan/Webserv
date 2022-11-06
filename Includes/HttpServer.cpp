@@ -33,13 +33,13 @@ HttpServer::HttpServer(std::vector<Server> *vec)
 void HttpServer::createSockets(int i)
 {
     struct sockaddr_in	address;
-	int					on = 1;
+	socklen_t			on = 1;
 
 	this->listenSockets[i].sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->listenSockets[i].sockfd < 0)
 		throw std::runtime_error("Error: when creating a socket.");
 	if (setsockopt(this->listenSockets[i].sockfd, SOL_SOCKET, \
-				SO_REUSEADDR | SO_REUSEPORT, &on, sizeof(on)) < 0)
+				SO_REUSEADDR, &on, sizeof(on)) < 0)
 	{
 		close(this->listenSockets[i].sockfd);
 		throw std::runtime_error("Error: setsockopt");
@@ -78,7 +78,7 @@ void HttpServer::createListen()
     }
 }
 
-void HttpServer::createacceptfd(int i, fd_set initrset, int *maxfd)
+void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 {
 	struct sockaddr_in	address;
 	int					fd;
@@ -88,14 +88,14 @@ void HttpServer::createacceptfd(int i, fd_set initrset, int *maxfd)
 					(socklen_t*)&addrlen)) < 0)
 		throw std::runtime_error("Error: accept");
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-	FD_SET(fd, &initrset);
+	FD_SET(fd, initrset);
 	(*maxfd)++;
 	this->acceptfds.push_back(fd);
 }
 
 void HttpServer::getrequest(int i)
 {
-    char	buffer[1024];
+    char	buffer[4096];
     int		n = 0;
 
 	if ((n = recv(this->acceptfds[i], buffer, sizeof(buffer) - 1, 0)) < 0)
@@ -124,22 +124,20 @@ void HttpServer::run()
     {
         readset = initrset;
         writeset = initwset;
-        select(maxfd, &readset, &writeset, 0, 0);
+        select(maxfd + 1, &readset, &writeset, 0, 0);
         for (size_t i = 0; i < this->listenSockets.size(); i++)
         {
-            if (FD_ISSET(this->listenSockets[i].sockfd, &readset) == 1)
-            {
-                createacceptfd(i, initrset,  &maxfd);
-            }
+            if (FD_ISSET(this->listenSockets[i].sockfd, &readset))
+                createacceptfd(i, &initrset,  &maxfd);
         }
         for (size_t i = 0; i < this->acceptfds.size(); i++)
         {
-            if (FD_ISSET(this->acceptfds[i], &readset) == 1)
+            if (FD_ISSET(this->acceptfds[i], &readset))
             {
                 getrequest(i);
                 FD_SET(this->acceptfds[i], &initwset);
             }
-            if (FD_ISSET(this->acceptfds[i], &readset) == 1)
+            if (FD_ISSET(this->acceptfds[i], &readset))
             {
                // sendresponse(i);
             }
