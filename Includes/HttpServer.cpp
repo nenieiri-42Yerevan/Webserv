@@ -60,6 +60,7 @@ void HttpServer::createListen()
    /* struct sockaddr_in address;
     socklen_t addrlen;*/
 	int	c;
+    t_serv serv;
 
     c = 0;
     for (size_t i = 0; i < this->vec.size(); ++i)
@@ -67,10 +68,11 @@ void HttpServer::createListen()
 		std::map<std::string, std::string>::const_iterator it = vec[i].getListen().begin();
 		while (it != vec[i].getListen().end())
         {
-            this->listenSockets[c].host = it->first;
-            this->listenSockets[c].port = atoi(it->second.c_str());
+            serv.host = it->first;
+            serv.port = atoi(it->second.c_str());
+            this->listenSockets.push_back(serv);
             createSockets(c);
-			++c;
+            c++;
             ++it;
         }
     }

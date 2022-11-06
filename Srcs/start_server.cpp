@@ -18,9 +18,9 @@ void	start_server(std::string &config)
 
 	server_set = parsing(config);
 	HttpServer	serv(server_set);
-//	serv.run();
+	serv.run();
 	
-	std::string	req = "POST /cgi-bin/process.cgi HTTP/1.1\n"
+	/*std::string	req = "POST /cgi-bin/process.cgi HTTP/1.1\n"
 					"User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n"
 					"Host: www.tutorialspoint.com\n"
 					"Content-Type: application/x-www-form-urlencoded\n"
@@ -30,7 +30,7 @@ void	start_server(std::string &config)
 					"Connection: Keep-Alive\n"
 					"\n"
 					"licenseID=string&content=string&/paramsXML=string\n";
-	std::cout << req << std::endl;
+	std::cout << req << std::endl;*/
 
 
 
