@@ -6,7 +6,7 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/11/02 10:52:09 by vismaily         ###   ########.fr        #
+#    Updated: 2022/11/06 17:18:52 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ OBJS		= $(patsubst ./Srcs/%.cpp, ./$(TMP)/%.o, $(SRCS_COMM)) \
 
 CC			= c++
 
-CFLAGS		= -Wall -Wextra -Werror -g
+CFLAGS		= -Wall -Wextra -Werror -std=c++98
 
 INCLUDES	= -I ./Includes
 

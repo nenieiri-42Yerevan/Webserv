@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 12:50:24 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/06 16:55:19 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/06 17:23:38 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <fstream>
 # include <sstream>
 # include <string>
+# include <cstring>
 # include <stdexcept>
 # include <vector>
 # include <sys/socket.h>

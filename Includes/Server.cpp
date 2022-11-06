@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/06 11:21:08 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/06 17:25:48 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ bool	Server::isValidPort(t_str port) const
 	}
 	if (port.size() > 5)
 		return (0);
-	if (std::stoi(port) > 65536)
+	if (std::atoi(port.c_str()) > 65536)
 		return (0);
 	return (1);
 }
@@ -200,7 +200,7 @@ bool	Server::isValidIP(t_str addr) const
 			if (std::isdigit(*it) == 0)
 				return (0);
 		}
-		if (std::stoi(token_str) > 255)
+		if (std::atoi(token_str.c_str()) > 255)
 			return (0);
 		token = std::strtok(NULL, ".");
 	}
