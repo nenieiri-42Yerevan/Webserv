@@ -107,7 +107,7 @@ void HttpServer::getrequest(int fd)
 	if ((n = recv(fd, buffer, sizeof(buffer) - 1, 0)) < 0)
 		return ;
 	buffer[n] = '\0';
-	this->acceptfds[fd].setStr(buffer);
+	this->acceptfds[fd].setStr(std::string(buffer));
 }
 
 

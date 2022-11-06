@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 12:50:24 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/05 12:43:25 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/06 16:55:19 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <iostream>
 # include <fstream>
 # include <sstream>
-# include <cstring>
+# include <string>
 # include <stdexcept>
 # include <vector>
 # include <sys/socket.h>
@@ -31,8 +31,8 @@
 # include <fcntl.h>
 
 # include "Server.hpp"
-# include "HttpServer.hpp"
 # include "Client.hpp"
+# include "HttpServer.hpp"
 
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);
