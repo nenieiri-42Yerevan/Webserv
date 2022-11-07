@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/07 15:39:02 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/07 17:04:27 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class	Client
 		std::string							_request;
 		std::map<std::string, std::string>	_header;
 		std::string							_body;
+		bool								_error;
 
 	private:
 		int									_isStart;
