@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/07 15:27:43 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/07 15:46:04 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ void	Client::parsingHeader(std::string line)
 	std::string				header_name;
 	std::string				header_value;
 
-	/* if start with space */
 	begin = line.find_first_not_of(" \t\v\r\n\f");
 	if (begin != 0)
 	{
@@ -114,10 +113,12 @@ void	Client::parsingHeader(std::string line)
 				return ;
 			end += 1;
 			header_value = line.substr(begin, end - begin);
-			/*
-			 * name to lowercase
-			 */
-			this->_header.insert(std::make_pair(header_name, header_value));
+			for (size_t	i = 0; i < header_name.length(); ++i)
+				header_name[i] = tolower(header_name[i]);
+			if (this->_header.find(header_name) == this->_header.end())
+				this->_header.insert(std::make_pair(header_name, header_value));
+			else if (this->_header[header_name].find(",") != std::string::npos)
+				this->_header[header_name] += header_value;
 			this->_lastHeader = header_name;
 		}
 	}
