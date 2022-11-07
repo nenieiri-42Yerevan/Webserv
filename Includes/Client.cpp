@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/07 14:56:58 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/07 15:27:43 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ Client	&Client::operator=(const Client &rhs)
 		this->_request = rhs._request;
 		this->_header = rhs._header;
 		this->_body = rhs._body;
-		this->_isStart = other._isStart;
-		this->_isHeader = other._isHeader;
-		this->_lastHeader = other._lastHeader;
+		this->_isStart = rhs._isStart;
+		this->_isHeader = rhs._isHeader;
+		this->_lastHeader = rhs._lastHeader;
 	}
 	return (*this);
 }
