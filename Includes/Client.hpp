@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/08 11:27:47 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/08 13:09:35 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class	Client
 
 	public:
 		void			setStr(const std::string &request);
+		bool			getStatus() const;
 	private:
 		void			parsing();
 		void			parsingRequestLine(std::string line);
@@ -37,6 +38,7 @@ class	Client
 		std::string							_request;
 		std::map<std::string, std::string>	_header;
 		std::string							_body;
+		bool								_isFinish;
 
 	private:
 		int									_isStart;

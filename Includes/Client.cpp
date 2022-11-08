@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/08 11:27:47 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/08 13:10:26 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Client::Client()
 {
 	this->_request = "";
 	this->_body = "";
+	this->_isFinish = false;
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
@@ -30,6 +31,7 @@ Client::Client(const Client &other)
 	this->_request = other._request;
 	this->_header = other._header;
 	this->_body = other._body;
+	this->_isFinish = other._isFinish;
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
@@ -42,6 +44,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_request = rhs._request;
 		this->_header = rhs._header;
 		this->_body = rhs._body;
+		this->_isFinish = rhs._isFinish;
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
@@ -63,6 +66,11 @@ void	Client::setStr(const std::string &request)
 	parsing();
 }
 
+bool	Client::getStatus() const
+{
+	return (this->_isFinish);
+}
+
 /*=====================================*/
 /*       Other Member Functions        */
 /*=====================================*/
@@ -77,7 +85,9 @@ void	Client::parsingRequestLine(std::string line)
 	if (this->_header["method"] == "" || \
 		this->_header["method"].find(" \t\v\f") != std::string::npos)
 		return ;
-	pos += 1;
+	pos = line.find_first_not_of(" ", pos);
+	if (pos == std::string::npos)
+		return ;
 	line = line.substr(pos, line.length() - pos);
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
@@ -86,7 +96,9 @@ void	Client::parsingRequestLine(std::string line)
 	if (this->_header["uri"] == "" || \
 		this->_header["uri"].find(" \t\v\f") != std::string::npos)
 		return ;
-	pos += 1;
+	pos = line.find_first_not_of(" ", pos);
+	if (pos == std::string::npos)
+		return ;
 	line = line.substr(pos, line.length() - pos);
 	this->_header.insert(std::make_pair("protocol-version", line));
 	if (this->_header["protocol-version"] == "" || \
@@ -150,6 +162,7 @@ void	Client::parsingBody()
 {
 	this->_body += this->_request;
 	this->_request = "";
+	this->_isFinish = true;
 }
 
 void	Client::parsing()
