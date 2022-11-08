@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/06 17:25:48 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/08 15:55:49 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Server::Server(t_str &body)
 		throw std::logic_error("Error: Config file: directive 'server' is empty.");
 	_directiveList.push_back("server_name");
 	_directiveList.push_back("listen");
+	_directiveList.push_back("root");
 	parsingBody(tmp);
 }
 
@@ -37,6 +38,7 @@ Server::Server(const Server &other)
 	this->_directiveList = other._directiveList;
 	this->_serverName = other._serverName;
 	this->_listen = other._listen;
+	this->_root = other._root;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -46,6 +48,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_directiveList = rhs._directiveList;
 		this->_serverName = rhs._serverName;
 		this->_listen = rhs._listen;
+		this->_root = rhs._root;
 	}
 	return (*this);
 }
@@ -66,6 +69,11 @@ const std::vector<std::string>	&Server::getServerName() const
 const std::map<std::string, std::string>	&Server::getListen() const
 {
 	return (this->_listen);
+}
+
+const std::string	&Server::getRoot() const
+{
+	return (this->_root);
 }
 
 void	Server::setServerName(t_str &value)
@@ -90,9 +98,26 @@ void	Server::setListen(t_str &addr, t_str &port)
 	this->_listen.insert(std::make_pair(addr, port));
 }
 
+void	Server::setRoot(const t_str &root)
+{
+	this->_root = root;
+}
+
 /*=====================================*/
 /*       Other Member Functions        */
 /*=====================================*/
+
+void	Server::parsingRoot(t_str &value)
+{
+	std::string::size_type	pos;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Root is not valid.");
+	++pos;
+	value = value.substr(0, pos);
+	setRoot(value);
+}
 
 void	Server::parsingListen(t_str &value)
 {
@@ -213,6 +238,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->setServerName(value);
 	else if (name.compare("listen") == 0)
 		this->parsingListen(value);
+	else if (name.compare("root") == 0)
+		this->parsingRoot(value);
 }
 
 void	Server::parsingLocation(t_str &body, t_str::size_type value_begin, \

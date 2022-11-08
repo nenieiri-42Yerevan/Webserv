@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/06 17:24:29 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/08 15:54:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,13 @@ class	Server
 	public:
 		const std::vector<t_str>		&getServerName() const;
 		const std::map<t_str, t_str>	&getListen() const;
+		const std::string				&getRoot() const;
 	private:
 		void					setServerName(t_str &value);
 		void					setListen(t_str &addr, t_str &port);
+		void					setRoot(const t_str &root);
 	private:
+		void					parsingRoot(t_str &value);
 		void					parsingListen(t_str &value);
 		bool					isValidPort(t_str port) const;
 		bool					isValidIP(t_str addr) const;
@@ -55,6 +58,7 @@ class	Server
 		std::vector<t_str>		_directiveList;
 		std::vector<t_str>		_serverName;
 		std::map<t_str, t_str>	_listen;
+		std::string				_root;
 };
 
 #endif
