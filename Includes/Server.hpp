@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/08 15:54:24 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/08 17:30:44 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class	Server
 		const std::string				&getRoot() const;
 	private:
 		void					setServerName(t_str &value);
+		void					setLocation(t_str &value);
 		void					setListen(t_str &addr, t_str &port);
 		void					setRoot(const t_str &root);
 	private:
@@ -51,7 +52,7 @@ class	Server
 		bool					isValidIP(t_str addr) const;
 		void					setFildes(const t_str &name, t_str &value);
 		void					parsingLocation(t_str &body, t_str::size_type \
-									value_begin, t_str::size_type value_end);
+									&value_begin, t_str::size_type &value_end);
 		void					setDefaults();
 		void					parsingBody(t_str &body);
 	private:
