@@ -144,7 +144,7 @@ void HttpServer::run()
                 getrequest(it->first);
                 FD_SET(it->first, &initwset);
             }
-            if (FD_ISSET(it->first, &readset))
+            if (FD_ISSET(it->first, &writeset))
             {
                // sendresponse(i);
             }

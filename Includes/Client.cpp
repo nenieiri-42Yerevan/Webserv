@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/07 17:34:05 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/08 11:27:47 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ Client::Client()
 {
 	this->_request = "";
 	this->_body = "";
-	this->_error = false;
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
@@ -31,7 +30,6 @@ Client::Client(const Client &other)
 	this->_request = other._request;
 	this->_header = other._header;
 	this->_body = other._body;
-	this->_error = other._error;
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
@@ -44,7 +42,6 @@ Client	&Client::operator=(const Client &rhs)
 		this->_request = rhs._request;
 		this->_header = rhs._header;
 		this->_body = rhs._body;
-		this->_error = rhs._error;
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
@@ -75,41 +72,26 @@ void	Client::parsingRequestLine(std::string line)
 	std::string::size_type	pos;
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
-	{
-		this->_error = 1;
 		return ;
-	}
 	this->_header.insert(std::make_pair("method", line.substr(0, pos)));
 	if (this->_header["method"] == "" || \
 		this->_header["method"].find(" \t\v\f") != std::string::npos)
-	{
-		this->_error = 1;
 		return ;
-	}
 	pos += 1;
 	line = line.substr(pos, line.length() - pos);
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
-	{
-		this->_error = 1;
 		return ;
-	}
 	this->_header.insert(std::make_pair("uri", line.substr(0, pos)));
 	if (this->_header["uri"] == "" || \
 		this->_header["uri"].find(" \t\v\f") != std::string::npos)
-	{
-		this->_error = 1;
 		return ;
-	}
 	pos += 1;
 	line = line.substr(pos, line.length() - pos);
 	this->_header.insert(std::make_pair("protocol-version", line));
 	if (this->_header["protocol-version"] == "" || \
 		this->_header["protocol-version"].find(" \t\v\f") != std::string::npos)
-	{
-		this->_error = 1;
 		return ;
-	}
 	++_isStart;
 }
 
