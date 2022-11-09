@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:15:17 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 12:28:26 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class	Server
 		const std::vector<t_str>		&getServerName() const;
 		const std::map<t_str, t_str>	&getListen() const;
 		const std::string				&getRoot() const;
+		const std::map<t_str, Location>	&getLocation() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:22:57 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 12:29:02 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,11 @@ const std::map<std::string, std::string>	&Server::getListen() const
 const std::string	&Server::getRoot() const
 {
 	return (this->_root);
+}
+
+const std::map<std::string, Location>	&Server::getLocation() const
+{
+	return (this->_location);
 }
 
 void	Server::setLocation(t_str &value)
