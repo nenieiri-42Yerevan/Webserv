@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/08 13:10:26 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 16:32:13 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ Client::Client()
 {
 	this->_request = "";
 	this->_body = "";
-	this->_isFinish = false;
+	this->_isRecvFinish = false;
+	this->_isSendFinish = false;
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
@@ -31,7 +32,8 @@ Client::Client(const Client &other)
 	this->_request = other._request;
 	this->_header = other._header;
 	this->_body = other._body;
-	this->_isFinish = other._isFinish;
+	this->_isRecvFinish = other._isRecvFinish;
+	this->_isSendFinish = other._isSendFinish;
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
@@ -44,7 +46,8 @@ Client	&Client::operator=(const Client &rhs)
 		this->_request = rhs._request;
 		this->_header = rhs._header;
 		this->_body = rhs._body;
-		this->_isFinish = rhs._isFinish;
+		this->_isRecvFinish = rhs._isRecvFinish;
+		this->_isSendFinish = rhs._isSendFinish;
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
@@ -66,14 +69,57 @@ void	Client::setStr(const std::string &request)
 	parsing();
 }
 
-bool	Client::getStatus() const
+bool	Client::getRecvStatus() const
 {
-	return (this->_isFinish);
+	return (this->_isRecvFinish);
+}
+
+bool	Client::getSendStatus() const
+{
+	return (this->_isSendFinish);
 }
 
 /*=====================================*/
 /*       Other Member Functions        */
 /*=====================================*/
+
+void	Client::parsing()
+{
+	if (_isStart == 0)
+	{
+		std::string::size_type	pos = _request.find_first_not_of("\r\n");
+		if (pos == std::string::npos)
+			return ;
+		else if (pos != 0)
+			this->_request = _request.substr(pos, _request.length() - pos);
+		_isStart = 1;
+	}
+	if (_isHeader == 0)
+	{
+		std::string::size_type	pos = _request.find("\r\n");
+		while (pos != std::string::npos)
+		{
+			pos += 2;
+			if (pos == 2)
+			{
+				_isHeader = 1;
+				_request = _request.substr(pos, _request.length() - pos);
+				break ;
+			}
+			else
+			{
+				if (_isStart == 1)
+					parsingRequestLine(_request.substr(0, pos));
+				else
+					parsingHeader(_request.substr(0, pos));
+				_request = _request.substr(pos, _request.length() - pos);
+			}
+			pos = _request.find("\r\n");
+		}
+	}
+	else
+		parsingBody();
+}
 
 void	Client::parsingRequestLine(std::string line)
 {
@@ -162,43 +208,11 @@ void	Client::parsingBody()
 {
 	this->_body += this->_request;
 	this->_request = "";
-	this->_isFinish = true;
+	this->_isRecvFinish = true;
+	this->prepareAnswer();
 }
 
-void	Client::parsing()
+void	Client::prepareAnswer()
 {
-	if (_isStart == 0)
-	{
-		std::string::size_type	pos = _request.find_first_not_of("\r\n");
-		if (pos == std::string::npos)
-			return ;
-		else if (pos != 0)
-			this->_request = _request.substr(pos, _request.length() - pos);
-		_isStart = 1;
-	}
-	if (_isHeader == 0)
-	{
-		std::string::size_type	pos = _request.find("\r\n");
-		while (pos != std::string::npos)
-		{
-			pos += 2;
-			if (pos == 2)
-			{
-				_isHeader = 1;
-				_request = _request.substr(pos, _request.length() - pos);
-				break ;
-			}
-			else
-			{
-				if (_isStart == 1)
-					parsingRequestLine(_request.substr(0, pos));
-				else
-					parsingHeader(_request.substr(0, pos));
-				_request = _request.substr(pos, _request.length() - pos);
-			}
-			pos = _request.find("\r\n");
-		}
-	}
-	else
-		parsingBody();
+	this->_isSendFinish = true;
 }
