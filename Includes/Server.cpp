@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/08 19:11:25 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 12:22:57 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,17 +81,19 @@ void	Server::setLocation(t_str &value)
 {
 	std::string::size_type	pos;
 	std::string::size_type	pos2;
+	std::string				name;
+	std::string				inner;
 
 	pos = value.find_first_of("{");
-	std::string	name = value.substr(0, pos);
+	name = value.substr(0, pos);
 	pos2 = name.find_last_not_of(" \t\v\r\n\f");
 	if (pos2 == std::string::npos)
 		throw std::runtime_error("Error: Location is not valid.");
 	++pos2;
 	name = name.substr(0, pos2);
 	++pos;
-	std::string	inner = value.substr(pos, value.length() - 1 - pos);
-	/* here */
+	inner = value.substr(pos, value.length() - 1 - pos);
+	this->_location.insert(std::make_pair(name, Location(inner)));
 }
 
 void	Server::setServerName(t_str &value)
