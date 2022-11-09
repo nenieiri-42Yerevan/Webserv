@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:28:26 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 12:44:02 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,16 @@ class	Server
 		void							setLocation(t_str &value);
 		void							setListen(t_str &addr, t_str &port);
 		void							setRoot(const t_str &root);
+		void							setFildes(const t_str &name, t_str &value);
+		void							setDefaults();
 	private:
 		void							parsingRoot(t_str &value);
 		void							parsingListen(t_str &value);
 		bool							isValidPort(t_str port) const;
 		bool							isValidIP(t_str addr) const;
-		void							setFildes(const t_str &name, t_str &value);
 		void							parsingLocation(t_str &body, \
-										t_str::size_type &value_begin, \
-										t_str::size_type &value_end);
-		void							setDefaults();
+											t_str::size_type &value_begin, \
+											t_str::size_type &value_end);
 		void							parsingBody(t_str &body);
 	private:
 		std::vector<t_str>				_directiveList;

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:29:02 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 12:44:02 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,24 @@ void	Server::setListen(t_str &addr, t_str &port)
 void	Server::setRoot(const t_str &root)
 {
 	this->_root = root;
+}
+
+void	Server::setFildes(const t_str &name, t_str &value)
+{
+	if (name.compare("server_name") == 0)
+		this->setServerName(value);
+	else if (name.compare("listen") == 0)
+		this->parsingListen(value);
+	else if (name.compare("root") == 0)
+		this->parsingRoot(value);
+	else if (name.compare("location") == 0)
+		this->setLocation(value);
+}
+
+void	Server::setDefaults()
+{
+	if (_serverName.size() == 0)
+		_serverName.push_back("");
 }
 
 /*=====================================*/
@@ -257,18 +275,6 @@ bool	Server::isValidIP(t_str addr) const
 	return (1);
 }
 
-void	Server::setFildes(const t_str &name, t_str &value)
-{
-	if (name.compare("server_name") == 0)
-		this->setServerName(value);
-	else if (name.compare("listen") == 0)
-		this->parsingListen(value);
-	else if (name.compare("root") == 0)
-		this->parsingRoot(value);
-	else if (name.compare("location") == 0)
-		this->setLocation(value);
-}
-
 void	Server::parsingLocation(t_str &body, t_str::size_type &value_begin, \
 							 t_str::size_type &value_end)
 {
@@ -292,12 +298,6 @@ void	Server::parsingLocation(t_str &body, t_str::size_type &value_begin, \
 		throw std::runtime_error("Error: Config file: directive " \
 								 "'location' has no closing '}'.");
 	++value_end;
-}
-
-void	Server::setDefaults()
-{
-	if (_serverName.size() == 0)
-		_serverName.push_back("");
 }
 
 void	Server::parsingBody(t_str &body)
