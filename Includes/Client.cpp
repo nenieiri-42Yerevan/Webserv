@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 16:32:13 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 17:17:25 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ Client::Client()
 	this->_body = "";
 	this->_isRecvFinish = false;
 	this->_isSendFinish = false;
+	this->_version = "webserv/1.0.0";
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
@@ -30,10 +31,12 @@ Client::Client()
 Client::Client(const Client &other)
 {
 	this->_request = other._request;
+	this->_response = other._response;
 	this->_header = other._header;
 	this->_body = other._body;
 	this->_isRecvFinish = other._isRecvFinish;
 	this->_isSendFinish = other._isSendFinish;
+	this->_version = other._version;
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
@@ -44,10 +47,12 @@ Client	&Client::operator=(const Client &rhs)
 	if (this != &rhs)
 	{
 		this->_request = rhs._request;
+		this->_response = rhs._response;
 		this->_header = rhs._header;
 		this->_body = rhs._body;
 		this->_isRecvFinish = rhs._isRecvFinish;
 		this->_isSendFinish = rhs._isSendFinish;
+		this->_version = rhs._version;
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
@@ -77,6 +82,11 @@ bool	Client::getRecvStatus() const
 bool	Client::getSendStatus() const
 {
 	return (this->_isSendFinish);
+}
+
+const std::string	&Client::getResponse() const
+{
+	return (this->_response);
 }
 
 /*=====================================*/
@@ -214,5 +224,35 @@ void	Client::parsingBody()
 
 void	Client::prepareAnswer()
 {
+	std::map<std::string, std::string>::iterator	host;
+
+	host = this->_header.find("host");
+	if (host == this->_header.end())
+		this->_response += getError(400);
 	this->_isSendFinish = true;
+}
+
+std::string	Client::getError(int num)
+{
+	switch (num)
+	{
+		case 400:
+			return (getErrorMsg("400", "Bad Request"));
+		default:
+			return ("");
+	}
+}
+
+std::string	Client::getErrorMsg(const std::string &num, const std::string &msg)
+{
+	std::string	response;
+
+	response += "<html>";
+	response += "<head><title>" + num + " " + msg + "</title></head>";
+	response += "<body>";
+	response += "<center><h1>" + num + " " + msg + "</h1></center><hr>";
+	response += "<center>" + this->_version + "</center>";
+	response += "</body>";
+	response += "</html>";
+	return (response);
 }
