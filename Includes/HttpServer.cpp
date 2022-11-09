@@ -108,8 +108,20 @@ void HttpServer::getrequest(int fd)
 		return ;
 	buffer[n] = '\0';
 	this->acceptfds[fd].setStr(std::string(buffer));
+    std::cout << buffer << std::endl;
 }
 
+void HttpServer::sendresponse(int fd)
+{
+    std::string str;
+
+    str = "HTTP/1.1 200 OK\n\
+            Server: Hello\n\
+            Content-Length: 13\n\
+            Content-Type: text/plain\n\n\
+            Hello, world";
+    send(fd, str.c_str(), str.length(), 0);
+}
 
 void HttpServer::run()
 {
@@ -146,7 +158,9 @@ void HttpServer::run()
             }
             if (FD_ISSET(it->first, &writeset))
             {
-               // sendresponse(i);
+               sendresponse(it->first);
+               FD_CLR(it->first, &initwset);
+               close(it->first);
             }
             it++;
         }
