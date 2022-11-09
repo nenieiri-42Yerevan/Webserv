@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:51:52 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/09 14:13:45 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,9 @@ void	Location::parsingRoot(t_str &value)
 		throw std::runtime_error("Error: Root is not valid.");
 	++pos;
 	value = value.substr(0, pos);
+	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: Root isn't valid "
+								 "(there are whitespaces).");
 	setRoot(value);
 }
 
