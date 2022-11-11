@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 16:51:47 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 17:09:57 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ const std::string	Client::getResponse()
 
 	tmp = _response;
 	_response = "";
+	this->_isSendFinish = true;
 	return (tmp);
 }
 
@@ -102,6 +103,8 @@ const std::string	Client::getResponse(size_t buff_size)
 		_response = "";
 	else
 		_response = _response.substr(buff_size, _response.length() - buff_size);
+	if (_response == "")
+		this->_isSendFinish = true;
 	return (tmp);
 }
 
@@ -276,7 +279,6 @@ void	Client::prepareAnswer()
 //	if (host == this->_header.end())
 		this->_response = getError(400);
 //	else
-	this->_isSendFinish = true;
 }
 
 std::string	Client::getError(int num)
