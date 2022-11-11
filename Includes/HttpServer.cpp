@@ -99,28 +99,24 @@ void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 	this->acceptfds.insert(std::make_pair(fd, Client()));
 }
 
-void HttpServer::getrequest(int fd)
+int HttpServer::getrequest(int fd)
 {
-    char	buffer[1024];
+    char	buffer[BUFREAD];
     int		n = 0;
 
-	if ((n = recv(fd, buffer, sizeof(buffer) - 1, 0)) < 0)
-		return ;
+	n = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	buffer[n] = '\0';
 	this->acceptfds[fd].setRequest(std::string(buffer));
 //    std::cout << buffer << std::endl;
+    return (n);
 }
 
-void HttpServer::sendresponse(int fd)
+int HttpServer::sendresponse(int fd)
 {
     std::string str;
 
-    str = "HTTP/1.1 200 OK\n\
-            Server: Hello\n\
-            Content-Length: 13\n\
-            Content-Type: text/plain\n\n\
-            Hello, world";
-    send(fd, str.c_str(), str.length(), 0);
+    str = this->acceptfds[fd].getResponse(BUFWRITE);
+    return (send(fd, str.c_str(), str.length(), 0));
 }
 
 void HttpServer::run()
@@ -160,7 +156,7 @@ void HttpServer::run()
             {
                sendresponse(it->first);
                FD_CLR(it->first, &initwset);
-               close(it->first);
+               //close(it->first);
             }
             it++;
         }

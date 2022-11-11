@@ -34,6 +34,8 @@
 # include "Server.hpp"
 # include "Client.hpp"
 # include "HttpServer.hpp"
+#define BUFREAD 1024
+#define BUFWRITE 1024
 
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);
