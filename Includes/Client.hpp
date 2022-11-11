@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 17:14:03 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 13:29:00 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class	Client
 		const std::string	&getResponse() const;
 	private:
 		void				parsing();
-		void				parsingRequestLine(std::string line);
+		int					parsingRequestLine(std::string line);
 		void				parsingHeader(std::string line);
 		void				parsingBody();
 		void				prepareAnswer();

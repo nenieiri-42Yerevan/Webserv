@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 17:17:25 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 13:35:00 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,13 @@ void	Client::parsing()
 			else
 			{
 				if (_isStart == 1)
-					parsingRequestLine(_request.substr(0, pos));
+				{
+					if (parsingRequestLine(_request.substr(0, pos)) == 0)
+					{
+						this->_isRecvFinish = true;
+						return ;
+					}
+				}
 				else
 					parsingHeader(_request.substr(0, pos));
 				_request = _request.substr(pos, _request.length() - pos);
@@ -131,36 +137,60 @@ void	Client::parsing()
 		parsingBody();
 }
 
-void	Client::parsingRequestLine(std::string line)
+int	Client::parsingRequestLine(std::string line)
 {
 	std::string::size_type	pos;
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
-		return ;
+	{
+		_response = getError(400);
+		return (0);
+	}
 	this->_header.insert(std::make_pair("method", line.substr(0, pos)));
 	if (this->_header["method"] == "" || \
 		this->_header["method"].find(" \t\v\f") != std::string::npos)
-		return ;
+	{
+		_response = getError(400);
+		return (0);
+	}
 	pos = line.find_first_not_of(" ", pos);
 	if (pos == std::string::npos)
-		return ;
+	{
+		_response = getError(400);
+		return (0);
+	}
 	line = line.substr(pos, line.length() - pos);
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
-		return ;
+	{
+		_response = getError(400);
+		return (0);
+	}
 	this->_header.insert(std::make_pair("uri", line.substr(0, pos)));
 	if (this->_header["uri"] == "" || \
 		this->_header["uri"].find(" \t\v\f") != std::string::npos)
-		return ;
+	if (pos == std::string::npos)
+	{
+		_response = getError(400);
+		return (0);
+	}
 	pos = line.find_first_not_of(" ", pos);
 	if (pos == std::string::npos)
-		return ;
+	if (pos == std::string::npos)
+	{
+		_response = getError(400);
+		return (0);
+	}
 	line = line.substr(pos, line.length() - pos);
 	this->_header.insert(std::make_pair("protocol-version", line));
 	if (this->_header["protocol-version"] == "" || \
 		this->_header["protocol-version"].find(" \t\v\f") != std::string::npos)
-		return ;
+	{
+		_response = getError(400);
+		return (0);
+	}
 	++_isStart;
+	return (1);
 }
 
 void	Client::parsingHeader(std::string line)
