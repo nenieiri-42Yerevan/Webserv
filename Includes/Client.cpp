@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 16:06:31 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:28:17 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ void	Client::parsing()
 			pos = _request.find("\r\n");
 		}
 		++_isHeader;
+		parsingBody();
 	}
 	else
 		parsingBody();
@@ -286,9 +287,12 @@ std::string	Client::getErrorMsg(const std::string &num, const std::string &msg)
 	response_body += "</body>";
 	response_body += "</html>";
 
+	std::stringstream	ss;
+	ss << response_body.length();
+
 	response += "HTTP/1.1 " + num + " " + msg + "\r\n";
 	response += "Content-Type : text/html;\r\n";
-	response += "Content-Length : " + std::to_string(response_body.length()) + "\r\n";
+	response += "Content-Length : " + ss.str() + "\r\n";
 	response += "Server : webserv;\r\n";
 	response += "\r\n";
 	response += response_body;
