@@ -22,7 +22,7 @@
 class	Client
 {
 	private:
-		std::string			t_str;
+		typedef std::string		t_str;
 	public:
 		Client();
 		Client(const Client &other);
