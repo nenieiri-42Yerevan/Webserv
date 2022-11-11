@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 13:35:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 13:40:22 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,13 +169,11 @@ int	Client::parsingRequestLine(std::string line)
 	this->_header.insert(std::make_pair("uri", line.substr(0, pos)));
 	if (this->_header["uri"] == "" || \
 		this->_header["uri"].find(" \t\v\f") != std::string::npos)
-	if (pos == std::string::npos)
 	{
 		_response = getError(400);
 		return (0);
 	}
 	pos = line.find_first_not_of(" ", pos);
-	if (pos == std::string::npos)
 	if (pos == std::string::npos)
 	{
 		_response = getError(400);
