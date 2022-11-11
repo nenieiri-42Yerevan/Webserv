@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 16:28:17 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:51:47 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,25 @@ bool	Client::getSendStatus() const
 	return (this->_isSendFinish);
 }
 
-const std::string	&Client::getResponse() const
+const std::string	Client::getResponse()
 {
-	return (this->_response);
+	std::string	tmp;
+
+	tmp = _response;
+	_response = "";
+	return (tmp);
+}
+
+const std::string	Client::getResponse(size_t buff_size)
+{
+	std::string	tmp;
+
+	tmp = _response.substr(0, buff_size);
+	if (buff_size > _response.length())
+		_response = "";
+	else
+		_response = _response.substr(buff_size, _response.length() - buff_size);
+	return (tmp);
 }
 
 /*=====================================*/
