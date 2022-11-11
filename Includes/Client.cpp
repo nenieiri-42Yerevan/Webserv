@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 13:40:22 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:06:31 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ Client::~Client()
 /*          Setter and Getters         */
 /*=====================================*/
 
-void	Client::setStr(const std::string &request)
+void	Client::setRequest(const std::string &request)
 {
 	this->_request += request;
 	parsing();
@@ -132,6 +132,7 @@ void	Client::parsing()
 			}
 			pos = _request.find("\r\n");
 		}
+		++_isHeader;
 	}
 	else
 		parsingBody();
@@ -255,8 +256,9 @@ void	Client::prepareAnswer()
 	std::map<std::string, std::string>::iterator	host;
 
 	host = this->_header.find("host");
-	if (host == this->_header.end())
-		this->_response += getError(400);
+//	if (host == this->_header.end())
+		this->_response = getError(400);
+//	else
 	this->_isSendFinish = true;
 }
 
@@ -274,13 +276,21 @@ std::string	Client::getError(int num)
 std::string	Client::getErrorMsg(const std::string &num, const std::string &msg)
 {
 	std::string	response;
+	std::string	response_body;
 
-	response += "<html>";
-	response += "<head><title>" + num + " " + msg + "</title></head>";
-	response += "<body>";
-	response += "<center><h1>" + num + " " + msg + "</h1></center><hr>";
-	response += "<center>" + this->_version + "</center>";
-	response += "</body>";
-	response += "</html>";
+	response_body += "<html>";
+	response_body += "<head><title>" + num + " " + msg + "</title></head>";
+	response_body += "<body>";
+	response_body += "<center><h1>" + num + " " + msg + "</h1></center><hr>";
+	response_body += "<center>" + this->_version + "</center>";
+	response_body += "</body>";
+	response_body += "</html>";
+
+	response += "HTTP/1.1 " + num + " " + msg + "\r\n";
+	response += "Content-Type : text/html;\r\n";
+	response += "Content-Length : " + std::to_string(response_body.length()) + "\r\n";
+	response += "Server : webserv;\r\n";
+	response += "\r\n";
+	response += response_body;
 	return (response);
 }
