@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 12:50:24 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:56:32 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/11 17:55:48 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # define CONFIG_DEFAULT		"default.conf"
 # define CONFIG_PATH		"./Configs/"
 # define CONFIG_EXTANSION	".conf"
+# define BUFREAD			1024
+# define BUFWRITE			1024
 
 # include <iostream>
 # include <fstream>
@@ -34,8 +36,6 @@
 # include "Server.hpp"
 # include "Client.hpp"
 # include "HttpServer.hpp"
-#define BUFREAD 1024
-#define BUFWRITE 1024
 
 /* ------------- Common Part ---------------*/
 void		file_open_read(std::string config_file, std::string &config);
