@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 17:09:57 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/12 13:46:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,19 @@ Client::Client()
 	this->_lastHeader = "";
 }
 
+Client::Client(std::vector<Server> &serverSet)
+{
+	this->_request = "";
+	this->_body = "";
+	this->_isRecvFinish = false;
+	this->_isSendFinish = false;
+	this->_version = "webserv/1.0.0";
+	this->_isStart = 0;
+	this->_isHeader = 0;
+	this->_lastHeader = "";
+	this->_serverSet = serverSet;
+}
+
 Client::Client(const Client &other)
 {
 	this->_request = other._request;
@@ -40,6 +53,7 @@ Client::Client(const Client &other)
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
+	this->_serverSet = other._serverSet;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -56,6 +70,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
+		this->_serverSet = rhs._serverSet;
 	}
 	return (*this);
 }
@@ -276,7 +291,7 @@ void	Client::prepareAnswer()
 	std::map<std::string, std::string>::iterator	host;
 
 	host = this->_header.find("host");
-//	if (host == this->_header.end())
+	if (host == this->_header.end())
 		this->_response = getError(400);
 //	else
 }
@@ -292,7 +307,7 @@ std::string	Client::getError(int num)
 	}
 }
 
-std::string	Client::getErrorMsg(const std::string &num, const std::string &msg)
+std::string	Client::getErrorMsg(const t_str &num, const t_str &msg)
 {
 	std::string	response;
 	std::string	response_body;

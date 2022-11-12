@@ -2,12 +2,10 @@
 
 HttpServer::HttpServer()
 {
-
 }
 
 HttpServer::~HttpServer()
 {
-
 }
 
 HttpServer::HttpServer(const HttpServer &other)
@@ -96,7 +94,7 @@ void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	FD_SET(fd, initrset);
 	(*maxfd)++;
-	this->acceptfds.insert(std::make_pair(fd, Client()));
+	this->acceptfds.insert(std::make_pair(fd, Client(this->vec)));
 }
 
 int HttpServer::getrequest(int fd)
@@ -106,7 +104,7 @@ int HttpServer::getrequest(int fd)
 
 	n = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	buffer[n] = '\0';
-	this->acceptfds[fd].setRequest(std::string(buffer));
+	this->acceptfds.at(fd).setRequest(std::string(buffer));
 //    std::cout << buffer << std::endl;
     return (n);
 }
@@ -115,7 +113,7 @@ int HttpServer::sendresponse(int fd)
 {
     std::string str;
 
-    str = this->acceptfds[fd].getResponse(BUFWRITE);
+    str = this->acceptfds.at(fd).getResponse(BUFWRITE);
     return (send(fd, str.c_str(), str.length(), 0));
 }
 

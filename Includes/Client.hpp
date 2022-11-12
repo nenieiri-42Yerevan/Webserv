@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/11 17:55:01 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/12 13:41:34 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,21 @@
 # include <cstring>
 # include <sstream>
 # include <map>
+# include <vector>
+
+# include "Server.hpp"
 
 class	Client
 {
 	private:
 		typedef std::string		t_str;
 	public:
-		Client();
+		Client(std::vector<Server> &serverSet);
 		Client(const Client &other);
 		Client	&operator=(const Client &rhs);
 		~Client();
+	private:
+		Client();
 
 	public:
 		void					setRequest(const std::string &request);
@@ -42,8 +47,7 @@ class	Client
 		void					parsingBody();
 		void					prepareAnswer();
 		std::string				getError(int num);
-		std::string				getErrorMsg(const std::string &num, \
-											const std::string &msg);
+		std::string				getErrorMsg(const t_str &num, const t_str &msg);
 	private:
 		std::string				_request;
 		std::string				_response;
@@ -55,6 +59,7 @@ class	Client
 		int						_isStart;
 		int						_isHeader;
 		std::string				_lastHeader;
+		std::vector<Server>		_serverSet;
 };
 
 #endif
