@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/12 13:46:23 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/12 16:32:00 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,11 +289,59 @@ void	Client::parsingBody()
 void	Client::prepareAnswer()
 {
 	std::map<std::string, std::string>::iterator	host;
+	std::string::size_type							pos;
 
 	host = this->_header.find("host");
 	if (host == this->_header.end())
 		this->_response = getError(400);
-//	else
+	else
+	{
+		pos = host->second.find(":");
+		if (pos == std::string::npos)
+			this->_port = "80";
+		else
+		{
+			++pos;
+			this->_port = host->second.substr(pos, host->second.length() - pos);
+			host->second = host->second.substr(0, pos - 1);
+		}
+		this->_host = host->second;
+		this->findServer();
+	}
+}
+
+void	Client::findServer()
+{
+	std::map<std::string, std::string>				listen;
+	std::map<std::string, std::string>::iterator	listen_it;
+	std::vector<std::string>						servName;
+	std::vector<std::string>::iterator				serv_it;
+
+	for (std::vector<Server>::size_type i = 0; i < this->_serverSet.size(); ++i)
+	{
+		listen = this->_serverSet[i].getListen();
+		for (listen_it = listen.begin(); listen_it != listen.end(); ++listen_it)
+		{
+			if (listen_it->first == this->_host && listen_it->second == this->_port)
+			{
+				this->_serverNumber = i;
+				return ;
+			}
+		}
+	}
+	for (std::vector<Server>::size_type i = 0; i < this->_serverSet.size(); ++i)
+	{
+		servName = this->_serverSet[i].getServerName();
+		for (serv_it = servName.begin(); serv_it != servName.end(); ++serv_it)
+		{
+			if (*serv_it == this->_host)
+			{
+				this->_serverNumber = i;
+				return ;
+			}
+		}
+	}
+	this->_serverNumber = -1;
 }
 
 std::string	Client::getError(int num)
@@ -326,7 +374,7 @@ std::string	Client::getErrorMsg(const t_str &num, const t_str &msg)
 	response += "HTTP/1.1 " + num + " " + msg + "\r\n";
 	response += "Content-Type : text/html;\r\n";
 	response += "Content-Length : " + ss.str() + "\r\n";
-	response += "Server : webserv;\r\n";
+	response += "Server : webserv\r\n";
 	response += "\r\n";
 	response += response_body;
 	return (response);
