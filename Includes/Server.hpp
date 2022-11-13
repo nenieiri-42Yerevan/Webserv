@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 11:01:17 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 13:38:58 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,17 @@ class	Server
 		const std::map<t_str, Location>	&getLocation() const;
 		const std::vector<t_str>		&getIndex() const;
 		bool							getAutoindex() const;
+		const std::map<t_str, t_str>	&getErrorPage() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);
 		void							setListen(t_str &addr, t_str &port);
 		void							setRoot(t_str &value);
-		void							setFildes(const t_str &name, t_str &value);
-		void							setDefaults();
 		void							setIndex(t_str &value);
 		void							setAutoindex(t_str &value);
+		void							setErrorPage(t_str &value);
+		void							setFildes(const t_str &name, t_str &value);
+		void							setDefaults();
 	private:
 		void							parsingListen(t_str &value);
 		bool							isValidPort(t_str port) const;
@@ -68,6 +70,7 @@ class	Server
 		std::string						_root;
 		std::vector<t_str>				_index;
 		bool							_autoindex;
+		std::map<t_str, t_str>			_errorPage;
 };
 
 #endif

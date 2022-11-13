@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 11:03:27 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 14:17:02 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ Server::Server(t_str &body)
 	_directiveList.push_back("root");
 	_directiveList.push_back("index");
 	_directiveList.push_back("autoindex");
+	_directiveList.push_back("error_page");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
 	parsingBody(tmp);
@@ -42,9 +43,11 @@ Server::Server(const Server &other)
 	this->_directiveList = other._directiveList;
 	this->_serverName = other._serverName;
 	this->_listen = other._listen;
+	this->_location = other._location;
 	this->_root = other._root;
 	this->_index = other._index;
 	this->_autoindex = other._autoindex;
+	this->_errorPage = other._errorPage;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -54,9 +57,11 @@ Server	&Server::operator=(const Server &rhs)
 		this->_directiveList = rhs._directiveList;
 		this->_serverName = rhs._serverName;
 		this->_listen = rhs._listen;
+		this->_location = rhs._location;
 		this->_root = rhs._root;
 		this->_index = rhs._index;
 		this->_autoindex = rhs._autoindex;
+		this->_errorPage = rhs._errorPage;
 	}
 	return (*this);
 }
@@ -66,7 +71,7 @@ Server::~Server()
 }
 
 /*=====================================*/
-/*          Setter and Getters         */
+/*               Getters               */
 /*=====================================*/
 
 const std::vector<std::string>	&Server::getServerName() const
@@ -99,6 +104,30 @@ bool	Server::getAutoindex() const
 	return (this->_autoindex);
 }
 
+const std::map<std::string, std::string>	&Server::getErrorPage() const
+{
+	return (this->_errorPage);
+}
+
+/*=====================================*/
+/*               Setters               */
+/*=====================================*/
+
+void	Server::setServerName(t_str &value)
+{
+	char	*token;
+
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	if (token == NULL)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of server_name is empty.");
+	while (token != NULL)
+	{
+		this->_serverName.push_back(token);
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Server::setLocation(t_str &value)
 {
 	std::string::size_type	pos;
@@ -116,21 +145,6 @@ void	Server::setLocation(t_str &value)
 	++pos;
 	inner = value.substr(pos, value.length() - 1 - pos);
 	this->_location.insert(std::make_pair(name, Location(inner)));
-}
-
-void	Server::setServerName(t_str &value)
-{
-	char	*token;
-
-	token = std::strtok(&value[0], " \t\v\r\n\f");
-	if (token == NULL)
-		throw std::runtime_error("Error: Config file: Directive "
-								 "value of server_name is empty.");
-	while (token != NULL)
-	{
-		this->_serverName.push_back(token);
-		token = std::strtok(NULL, " \t\v\r\n\f");
-	}
 }
 
 void	Server::setListen(t_str &addr, t_str &port)
@@ -166,7 +180,7 @@ void	Server::setIndex(t_str &value)
 	token = std::strtok(&value[0], " \t\v\r\n\f");
 	if (token == NULL)
 		throw std::runtime_error("Error: Config file: Directive "
-								 "value of index is empty");
+								 "value of index is empty.");
 	while (token != NULL)
 	{
 		this->_index.push_back(token);
@@ -192,6 +206,33 @@ void	Server::setAutoindex(t_str &value)
 								 "'on' or 'off'.");
 }
 
+void	Server::setErrorPage(t_str &value)
+{
+	t_str::size_type	pos;
+	char				*token;
+	t_str				page;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of error_page is empty.");
+	value = value.substr(0, ++pos);
+	pos = value.find_last_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive value of "
+								 "error_page must contain an error number"
+								 "and after that an error page uri.");
+	++pos;
+	page = value.substr(pos, value.length() - pos);
+	value = value.substr(0, pos - 1);
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	while (token != NULL)
+	{
+		this->_errorPage.insert(std::make_pair(token, page));
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -206,6 +247,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->setIndex(value);
 	else if (name.compare("autoindex") == 0)
 		this->setAutoindex(value);
+	else if (name.compare("error_page") == 0)
+		this->setErrorPage(value);
 }
 
 void	Server::setDefaults()

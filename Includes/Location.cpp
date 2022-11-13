@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 11:00:53 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 14:17:12 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Location::Location(t_str &body)
 	_directiveList.push_back("root");
 	_directiveList.push_back("index");
 	_directiveList.push_back("autoindex");
+	_directiveList.push_back("error_page");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
 	parsingBody(body);
@@ -35,6 +36,8 @@ Location::Location(const Location &other)
 	this->_root = other._root;
 	this->_index = other._index;
 	this->_autoindex = other._autoindex;
+	this->_location = other._location;
+	this->_errorPage = other._errorPage;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -44,6 +47,8 @@ Location	&Location::operator=(const Location &rhs)
 		this->_root = rhs._root;
 		this->_index = rhs._index;
 		this->_autoindex = rhs._autoindex;
+		this->_location = rhs._location;
+		this->_errorPage = rhs._errorPage;
 	}
 	return (*this);
 }
@@ -53,7 +58,7 @@ Location::~Location()
 }
 
 /*=====================================*/
-/*          Setter and Getters         */
+/*               Getters               */
 /*=====================================*/
 
 const std::string	&Location::getRoot() const
@@ -75,6 +80,15 @@ bool	Location::getAutoindex() const
 {
 	return (this->_autoindex);
 }
+
+const std::map<std::string, std::string>	&Location::getErrorPage() const
+{
+	return (this->_errorPage);
+}
+
+/*=====================================*/
+/*               Setters               */
+/*=====================================*/
 
 void	Location::setRoot(t_str &value)
 {
@@ -143,6 +157,33 @@ void	Location::setAutoindex(t_str &value)
 								 "'on' or 'off'.");
 }
 
+void	Location::setErrorPage(t_str &value)
+{
+	t_str::size_type	pos;
+	char				*token;
+	t_str				page;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of error_page is empty.");
+	value = value.substr(0, ++pos);
+	pos = value.find_last_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive value of "
+								 "error_page must contain an error number"
+								 "and after that an error page uri.");
+	++pos;
+	page = value.substr(pos, value.length() - pos);
+	value = value.substr(0, pos - 1);
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	while (token != NULL)
+	{
+		this->_errorPage.insert(std::make_pair(token, page));
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Location::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("root") == 0)
@@ -153,6 +194,8 @@ void	Location::setFildes(const t_str &name, t_str &value)
 		this->setIndex(value);
 	else if (name.compare("autoindex") == 0)
 		this->setAutoindex(value);
+	else if (name.compare("error_page") == 0)
+		this->setErrorPage(value);
 }
 
 /*=====================================*/
