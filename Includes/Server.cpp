@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 10:30:21 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 11:03:27 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ Server::Server(t_str &body)
 	_directiveList.push_back("listen");
 	_directiveList.push_back("root");
 	_directiveList.push_back("index");
+	_directiveList.push_back("autoindex");
 	_directiveList.push_back("location");
+	this->_autoindex = false;
 	parsingBody(tmp);
 }
 
@@ -42,6 +44,7 @@ Server::Server(const Server &other)
 	this->_listen = other._listen;
 	this->_root = other._root;
 	this->_index = other._index;
+	this->_autoindex = other._autoindex;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -53,6 +56,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_listen = rhs._listen;
 		this->_root = rhs._root;
 		this->_index = rhs._index;
+		this->_autoindex = rhs._autoindex;
 	}
 	return (*this);
 }
@@ -88,6 +92,11 @@ const std::map<std::string, Location>	&Server::getLocation() const
 const std::vector<std::string>	&Server::getIndex() const
 {
 	return (this->_index);
+}
+
+bool	Server::getAutoindex() const
+{
+	return (this->_autoindex);
 }
 
 void	Server::setLocation(t_str &value)
@@ -135,9 +144,19 @@ void	Server::setListen(t_str &addr, t_str &port)
 	this->_listen.insert(std::make_pair(addr, port));
 }
 
-void	Server::setRoot(const t_str &root)
+void	Server::setRoot(t_str &value)
 {
-	this->_root = root;
+	std::string::size_type	pos;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Root value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: Root isn't valid "
+								 "(there are whitespaces).");
+	this->_root = value;
 }
 
 void	Server::setIndex(t_str &value)
@@ -155,6 +174,24 @@ void	Server::setIndex(t_str &value)
 	}
 }
 
+void	Server::setAutoindex(t_str &value)
+{
+	std::string::size_type	pos;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Autoindex value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value == "on")
+		this->_autoindex = true;
+	else if (value == "off")
+		this->_autoindex = false;
+	else
+		throw std::runtime_error("Error: Autoindex value can only be "
+								 "'on' or 'off'.");
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -162,11 +199,13 @@ void	Server::setFildes(const t_str &name, t_str &value)
 	else if (name.compare("listen") == 0)
 		this->parsingListen(value);
 	else if (name.compare("root") == 0)
-		this->parsingRoot(value);
+		this->setRoot(value);
 	else if (name.compare("location") == 0)
 		this->setLocation(value);
 	else if (name.compare("index") == 0)
 		this->setIndex(value);
+	else if (name.compare("autoindex") == 0)
+		this->setAutoindex(value);
 }
 
 void	Server::setDefaults()
@@ -178,21 +217,6 @@ void	Server::setDefaults()
 /*=====================================*/
 /*       Other Member Functions        */
 /*=====================================*/
-
-void	Server::parsingRoot(t_str &value)
-{
-	std::string::size_type	pos;
-
-	pos = value.find_last_not_of(" \t\v\r\n\f");
-	if (pos == std::string::npos)
-		throw std::runtime_error("Error: Root is not valid.");
-	++pos;
-	value = value.substr(0, pos);
-	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
-		throw std::runtime_error("Error: Root isn't valid "
-								 "(there are whitespaces).");
-	setRoot(value);
-}
 
 void	Server::parsingListen(t_str &value)
 {

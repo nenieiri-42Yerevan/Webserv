@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 10:08:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 11:01:17 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,17 @@ class	Server
 		const std::string				&getRoot() const;
 		const std::map<t_str, Location>	&getLocation() const;
 		const std::vector<t_str>		&getIndex() const;
+		bool							getAutoindex() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);
 		void							setListen(t_str &addr, t_str &port);
-		void							setRoot(const t_str &root);
+		void							setRoot(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 		void							setDefaults();
 		void							setIndex(t_str &value);
+		void							setAutoindex(t_str &value);
 	private:
-		void							parsingRoot(t_str &value);
 		void							parsingListen(t_str &value);
 		bool							isValidPort(t_str port) const;
 		bool							isValidIP(t_str addr) const;
@@ -66,6 +67,7 @@ class	Server
 		std::map<t_str, Location>		_location;
 		std::string						_root;
 		std::vector<t_str>				_index;
+		bool							_autoindex;
 };
 
 #endif

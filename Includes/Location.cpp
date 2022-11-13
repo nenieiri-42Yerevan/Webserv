@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 10:30:24 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 11:00:53 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ Location::Location()
 Location::Location(t_str &body)
 {
 	_directiveList.push_back("root");
-	_directiveList.push_back("location");
 	_directiveList.push_back("index");
+	_directiveList.push_back("autoindex");
+	_directiveList.push_back("location");
+	this->_autoindex = false;
 	parsingBody(body);
 }
 
@@ -32,6 +34,7 @@ Location::Location(const Location &other)
 {
 	this->_root = other._root;
 	this->_index = other._index;
+	this->_autoindex = other._autoindex;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -40,6 +43,7 @@ Location	&Location::operator=(const Location &rhs)
 	{
 		this->_root = rhs._root;
 		this->_index = rhs._index;
+		this->_autoindex = rhs._autoindex;
 	}
 	return (*this);
 }
@@ -67,9 +71,24 @@ const std::vector<std::string>	&Location::getIndex() const
 	return (this->_index);
 }
 
-void	Location::setRoot(const t_str &root)
+bool	Location::getAutoindex() const
 {
-	this->_root = root;
+	return (this->_autoindex);
+}
+
+void	Location::setRoot(t_str &value)
+{
+	std::string::size_type	pos;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Root value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: Root isn't valid "
+								 "(there are whitespaces).");
+	this->_root = value;
 }
 
 void	Location::setLocation(t_str &value)
@@ -106,34 +125,39 @@ void	Location::setIndex(t_str &value)
 	}
 }
 
-void	Location::setFildes(const t_str &name, t_str &value)
-{
-	if (name.compare("root") == 0)
-		this->parsingRoot(value);
-	else if (name.compare("location") == 0)
-		this->setLocation(value);
-	else if (name.compare("index") == 0)
-		this->setIndex(value);
-}
-
-/*=====================================*/
-/*       Other Member Functions        */
-/*=====================================*/
-
-void	Location::parsingRoot(t_str &value)
+void	Location::setAutoindex(t_str &value)
 {
 	std::string::size_type	pos;
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
-		throw std::runtime_error("Error: Root is not valid.");
+		throw std::runtime_error("Error: Autoindex value is empty.");
 	++pos;
 	value = value.substr(0, pos);
-	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
-		throw std::runtime_error("Error: Root isn't valid "
-								 "(there are whitespaces).");
-	setRoot(value);
+	if (value == "on")
+		this->_autoindex = true;
+	else if (value == "off")
+		this->_autoindex = false;
+	else
+		throw std::runtime_error("Error: Autoindex value can only be "
+								 "'on' or 'off'.");
 }
+
+void	Location::setFildes(const t_str &name, t_str &value)
+{
+	if (name.compare("root") == 0)
+		this->setRoot(value);
+	else if (name.compare("location") == 0)
+		this->setLocation(value);
+	else if (name.compare("index") == 0)
+		this->setIndex(value);
+	else if (name.compare("autoindex") == 0)
+		this->setAutoindex(value);
+}
+
+/*=====================================*/
+/*       Other Member Functions        */
+/*=====================================*/
 
 void	Location::parsingLocation(t_str &body, t_str::size_type &value_begin, \
 							 t_str::size_type &value_end)
