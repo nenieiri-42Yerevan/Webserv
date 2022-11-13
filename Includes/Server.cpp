@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 14:17:02 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 14:39:59 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ bool	Server::getAutoindex() const
 	return (this->_autoindex);
 }
 
-const std::map<std::string, std::string>	&Server::getErrorPage() const
+const std::map<int, std::string>	&Server::getErrorPage() const
 {
 	return (this->_errorPage);
 }
@@ -153,7 +153,6 @@ void	Server::setListen(t_str &addr, t_str &port)
 	{
 		this->_serverName.push_back(addr);
 		addr = "*";
-		return ;
 	}
 	this->_listen.insert(std::make_pair(addr, port));
 }
@@ -228,7 +227,7 @@ void	Server::setErrorPage(t_str &value)
 	token = std::strtok(&value[0], " \t\v\r\n\f");
 	while (token != NULL)
 	{
-		this->_errorPage.insert(std::make_pair(token, page));
+		this->_errorPage.insert(std::make_pair(std::atoi(token), page));
 		token = std::strtok(NULL, " \t\v\r\n\f");
 	}
 }
