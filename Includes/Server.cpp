@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 14:39:59 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 16:19:40 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,7 @@ void	Server::setErrorPage(t_str &value)
 	t_str::size_type	pos;
 	char				*token;
 	t_str				page;
+	int					error_number;
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
@@ -227,7 +228,12 @@ void	Server::setErrorPage(t_str &value)
 	token = std::strtok(&value[0], " \t\v\r\n\f");
 	while (token != NULL)
 	{
-		this->_errorPage.insert(std::make_pair(std::atoi(token), page));
+		error_number = std::atoi(token);
+		if (!(error_number >= 300 && error_number <= 599))
+			throw std::runtime_error("Error: Config file: Directive "
+									 "value of error_page must be between "
+									 "'300' and '599' range.");
+		this->_errorPage.insert(std::make_pair(error_number, page));
 		token = std::strtok(NULL, " \t\v\r\n\f");
 	}
 }
