@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 12:44:02 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 10:08:00 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class	Server
 		const std::map<t_str, t_str>	&getListen() const;
 		const std::string				&getRoot() const;
 		const std::map<t_str, Location>	&getLocation() const;
+		const std::vector<t_str>		&getIndex() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);
@@ -48,6 +49,7 @@ class	Server
 		void							setRoot(const t_str &root);
 		void							setFildes(const t_str &name, t_str &value);
 		void							setDefaults();
+		void							setIndex(t_str &value);
 	private:
 		void							parsingRoot(t_str &value);
 		void							parsingListen(t_str &value);
@@ -63,6 +65,7 @@ class	Server
 		std::map<t_str, t_str>			_listen;
 		std::map<t_str, Location>		_location;
 		std::string						_root;
+		std::vector<t_str>				_index;
 };
 
 #endif

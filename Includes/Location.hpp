@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 16:22:25 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 10:10:34 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,14 @@ class	Location
 	private:
 		Location();
 
+	public:
+		const std::string				&getRoot() const;
+		const std::map<t_str, Location>	&getLocation() const;
+		const std::vector<t_str>		&getIndex() const;
 	private:
 		void							setRoot(const t_str &root);
 		void							setLocation(t_str &value);
+		void							setIndex(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 	private:
 		void							parsingRoot(t_str &value);
@@ -47,6 +52,7 @@ class	Location
 		std::vector<t_str>				_directiveList;
 		std::string						_root;
 		std::map<t_str, Location>		_location;
+		std::vector<t_str>				_index;
 };
 
 #endif

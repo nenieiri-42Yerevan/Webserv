@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/12 16:28:02 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 10:30:21 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Server::Server(t_str &body)
 	_directiveList.push_back("server_name");
 	_directiveList.push_back("listen");
 	_directiveList.push_back("root");
+	_directiveList.push_back("index");
 	_directiveList.push_back("location");
 	parsingBody(tmp);
 }
@@ -40,6 +41,7 @@ Server::Server(const Server &other)
 	this->_serverName = other._serverName;
 	this->_listen = other._listen;
 	this->_root = other._root;
+	this->_index = other._index;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -50,6 +52,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_serverName = rhs._serverName;
 		this->_listen = rhs._listen;
 		this->_root = rhs._root;
+		this->_index = rhs._index;
 	}
 	return (*this);
 }
@@ -82,6 +85,11 @@ const std::map<std::string, Location>	&Server::getLocation() const
 	return (this->_location);
 }
 
+const std::vector<std::string>	&Server::getIndex() const
+{
+	return (this->_index);
+}
+
 void	Server::setLocation(t_str &value)
 {
 	std::string::size_type	pos;
@@ -106,6 +114,9 @@ void	Server::setServerName(t_str &value)
 	char	*token;
 
 	token = std::strtok(&value[0], " \t\v\r\n\f");
+	if (token == NULL)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of server_name is empty.");
 	while (token != NULL)
 	{
 		this->_serverName.push_back(token);
@@ -129,6 +140,21 @@ void	Server::setRoot(const t_str &root)
 	this->_root = root;
 }
 
+void	Server::setIndex(t_str &value)
+{
+	char	*token;
+
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	if (token == NULL)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of index is empty");
+	while (token != NULL)
+	{
+		this->_index.push_back(token);
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -139,6 +165,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->parsingRoot(value);
 	else if (name.compare("location") == 0)
 		this->setLocation(value);
+	else if (name.compare("index") == 0)
+		this->setIndex(value);
 }
 
 void	Server::setDefaults()

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/09 14:13:45 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/13 10:30:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@ Location::Location(t_str &body)
 {
 	_directiveList.push_back("root");
 	_directiveList.push_back("location");
+	_directiveList.push_back("index");
 	parsingBody(body);
 }
 
 Location::Location(const Location &other)
 {
 	this->_root = other._root;
+	this->_index = other._index;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -37,6 +39,7 @@ Location	&Location::operator=(const Location &rhs)
 	if (this != &rhs)
 	{
 		this->_root = rhs._root;
+		this->_index = rhs._index;
 	}
 	return (*this);
 }
@@ -48,6 +51,21 @@ Location::~Location()
 /*=====================================*/
 /*          Setter and Getters         */
 /*=====================================*/
+
+const std::string	&Location::getRoot() const
+{
+	return (this->_root);
+}
+
+const std::map<std::string, Location>	&Location::getLocation() const
+{
+	return (this->_location);
+}
+
+const std::vector<std::string>	&Location::getIndex() const
+{
+	return (this->_index);
+}
 
 void	Location::setRoot(const t_str &root)
 {
@@ -73,12 +91,29 @@ void	Location::setLocation(t_str &value)
 	this->_location.insert(std::make_pair(name, Location(inner)));
 }
 
+void	Location::setIndex(t_str &value)
+{
+	char	*token;
+
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	if (token == NULL)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of index is empty.");
+	while (token != NULL)
+	{
+		this->_index.push_back(token);
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Location::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("root") == 0)
 		this->parsingRoot(value);
 	else if (name.compare("location") == 0)
 		this->setLocation(value);
+	else if (name.compare("index") == 0)
+		this->setIndex(value);
 }
 
 /*=====================================*/
