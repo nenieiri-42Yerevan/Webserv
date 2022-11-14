@@ -44,6 +44,10 @@ void HttpServer::createSockets(int i)
 	}
 	memset((char *)&address, 0, sizeof(address));
 	address.sin_family = AF_INET;
+    if (this->listenSockets[i].host == "*")
+    {
+        this->listenSockets[i].host = "0.0.0.0";
+    }
 	address.sin_addr.s_addr = inet_addr(this->listenSockets[i].host.c_str());
 	address.sin_port = htons(this->listenSockets[i].port);
 	if (bind(this->listenSockets[i].sockfd, (struct sockaddr *) &address, \
