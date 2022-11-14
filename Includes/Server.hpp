@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 14:40:10 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 13:25:59 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class	Server
 		const std::vector<t_str>		&getIndex() const;
 		bool							getAutoindex() const;
 		const std::map<int, t_str>		&getErrorPage() const;
+		long int						getClientMaxBodySize() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);
@@ -52,6 +53,7 @@ class	Server
 		void							setIndex(t_str &value);
 		void							setAutoindex(t_str &value);
 		void							setErrorPage(t_str &value);
+		void							setClientMaxBodySize(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 		void							setDefaults();
 	private:
@@ -71,6 +73,7 @@ class	Server
 		std::vector<t_str>				_index;
 		bool							_autoindex;
 		std::map<int, t_str>			_errorPage;
+		unsigned long int				_clientMaxBodySize;
 };
 
 #endif

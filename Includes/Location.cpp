@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 16:19:40 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 13:23:07 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,10 @@ Location::Location(t_str &body)
 	_directiveList.push_back("index");
 	_directiveList.push_back("autoindex");
 	_directiveList.push_back("error_page");
+	_directiveList.push_back("client_max_body_size");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
+	this->_clientMaxBodySize = 0;
 	parsingBody(body);
 }
 
@@ -36,8 +38,9 @@ Location::Location(const Location &other)
 	this->_root = other._root;
 	this->_index = other._index;
 	this->_autoindex = other._autoindex;
-	this->_location = other._location;
 	this->_errorPage = other._errorPage;
+	this->_clientMaxBodySize = other._clientMaxBodySize;
+	this->_location = other._location;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -47,8 +50,9 @@ Location	&Location::operator=(const Location &rhs)
 		this->_root = rhs._root;
 		this->_index = rhs._index;
 		this->_autoindex = rhs._autoindex;
-		this->_location = rhs._location;
 		this->_errorPage = rhs._errorPage;
+		this->_clientMaxBodySize = rhs._clientMaxBodySize;
+		this->_location = rhs._location;
 	}
 	return (*this);
 }
@@ -86,6 +90,11 @@ const std::map<int, std::string>	&Location::getErrorPage() const
 	return (this->_errorPage);
 }
 
+long int	Location::getClientMaxBodySize() const
+{
+	return (this->_clientMaxBodySize);
+}
+
 /*=====================================*/
 /*               Setters               */
 /*=====================================*/
@@ -96,11 +105,11 @@ void	Location::setRoot(t_str &value)
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
-		throw std::runtime_error("Error: Root value is empty.");
+		throw std::runtime_error("Error: root value is empty.");
 	++pos;
 	value = value.substr(0, pos);
 	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
-		throw std::runtime_error("Error: Root isn't valid "
+		throw std::runtime_error("Error: root isn't valid "
 								 "(there are whitespaces).");
 	this->_root = value;
 }
@@ -116,7 +125,7 @@ void	Location::setLocation(t_str &value)
 	name = value.substr(0, pos);
 	pos2 = name.find_last_not_of(" \t\v\r\n\f");
 	if (pos2 == std::string::npos)
-		throw std::runtime_error("Error: Location is not valid.");
+		throw std::runtime_error("Error: location is not valid.");
 	++pos2;
 	name = name.substr(0, pos2);
 	++pos;
@@ -145,7 +154,7 @@ void	Location::setAutoindex(t_str &value)
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
-		throw std::runtime_error("Error: Autoindex value is empty.");
+		throw std::runtime_error("Error: autoindex value is empty.");
 	++pos;
 	value = value.substr(0, pos);
 	if (value == "on")
@@ -153,7 +162,7 @@ void	Location::setAutoindex(t_str &value)
 	else if (value == "off")
 		this->_autoindex = false;
 	else
-		throw std::runtime_error("Error: Autoindex value can only be "
+		throw std::runtime_error("Error: autoindex value can only be "
 								 "'on' or 'off'.");
 }
 
@@ -190,6 +199,45 @@ void	Location::setErrorPage(t_str &value)
 	}
 }
 
+void	Location::setClientMaxBodySize(t_str &value)
+{
+	std::string::size_type	pos;
+	int						coefficient;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: client_max_body_size value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value.back() == 'k' || value.back() == 'K')
+	{
+		coefficient = 1024;
+		value.pop_back();
+	}
+	else if (value.back() == 'm' || value.back() == 'M')
+	{
+		coefficient = 1024 * 1024;
+		value.pop_back();
+	}
+	else if (value.back() >= '0' && value.back() <= '9')
+		coefficient = 1;
+	else
+		throw std::runtime_error("Error: client_max_body_size is not valid.");
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: client_max_body_size value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value == "")
+		throw std::runtime_error("Error: client_max_body_size is not valid.");
+	for (std::string::iterator it = value.begin(); it != value.end(); ++it)
+	{
+		if (!(*it >= '0' && *it <= '9'))
+			throw std::runtime_error("Error: client_max_body_size is not valid.");
+	}
+	this->_clientMaxBodySize = coefficient * std::atol(value.c_str());
+}
+
 void	Location::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("root") == 0)
@@ -202,6 +250,8 @@ void	Location::setFildes(const t_str &name, t_str &value)
 		this->setAutoindex(value);
 	else if (name.compare("error_page") == 0)
 		this->setErrorPage(value);
+	else if (name.compare("client_max_body_size") == 0)
+		this->setClientMaxBodySize(value);
 }
 
 /*=====================================*/

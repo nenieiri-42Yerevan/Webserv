@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 14:39:38 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 13:26:09 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ class	Location
 		const std::vector<t_str>		&getIndex() const;
 		bool							getAutoindex() const;
 		const std::map<int, t_str>		&getErrorPage() const;
+		long int						getClientMaxBodySize() const;
 	private:
 		void							setRoot(t_str &value);
 		void							setLocation(t_str &value);
 		void							setIndex(t_str &value);
 		void							setAutoindex(t_str &value);
 		void							setErrorPage(t_str &value);
+		void							setClientMaxBodySize(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 	private:
 		void							parsingLocation(t_str &body, \
@@ -59,6 +61,7 @@ class	Location
 		std::vector<t_str>				_index;
 		bool							_autoindex;
 		std::map<int, t_str>			_errorPage;
+		unsigned long int				_clientMaxBodySize;
 };
 
 #endif

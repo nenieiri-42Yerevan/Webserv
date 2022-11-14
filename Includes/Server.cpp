@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 16:19:40 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 13:29:18 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,10 @@ Server::Server(t_str &body)
 	_directiveList.push_back("index");
 	_directiveList.push_back("autoindex");
 	_directiveList.push_back("error_page");
+	_directiveList.push_back("client_max_body_size");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
+	this->_clientMaxBodySize = 0;
 	parsingBody(tmp);
 }
 
@@ -48,6 +50,7 @@ Server::Server(const Server &other)
 	this->_index = other._index;
 	this->_autoindex = other._autoindex;
 	this->_errorPage = other._errorPage;
+	this->_location = other._location;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -62,6 +65,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_index = rhs._index;
 		this->_autoindex = rhs._autoindex;
 		this->_errorPage = rhs._errorPage;
+		this->_clientMaxBodySize = rhs._clientMaxBodySize;
 	}
 	return (*this);
 }
@@ -107,6 +111,11 @@ bool	Server::getAutoindex() const
 const std::map<int, std::string>	&Server::getErrorPage() const
 {
 	return (this->_errorPage);
+}
+
+long int	Server::getClientMaxBodySize() const
+{
+	return (this->_clientMaxBodySize);
 }
 
 /*=====================================*/
@@ -163,11 +172,11 @@ void	Server::setRoot(t_str &value)
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
-		throw std::runtime_error("Error: Root value is empty.");
+		throw std::runtime_error("Error: root value is empty.");
 	++pos;
 	value = value.substr(0, pos);
 	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
-		throw std::runtime_error("Error: Root isn't valid "
+		throw std::runtime_error("Error: root isn't valid "
 								 "(there are whitespaces).");
 	this->_root = value;
 }
@@ -193,7 +202,7 @@ void	Server::setAutoindex(t_str &value)
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
-		throw std::runtime_error("Error: Autoindex value is empty.");
+		throw std::runtime_error("Error: autoindex value is empty.");
 	++pos;
 	value = value.substr(0, pos);
 	if (value == "on")
@@ -201,7 +210,7 @@ void	Server::setAutoindex(t_str &value)
 	else if (value == "off")
 		this->_autoindex = false;
 	else
-		throw std::runtime_error("Error: Autoindex value can only be "
+		throw std::runtime_error("Error: autoindex value can only be "
 								 "'on' or 'off'.");
 }
 
@@ -238,6 +247,45 @@ void	Server::setErrorPage(t_str &value)
 	}
 }
 
+void	Server::setClientMaxBodySize(t_str &value)
+{
+	std::string::size_type	pos;
+	int						coefficient;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: client_max_body_size value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value.back() == 'k' || value.back() == 'K')
+	{
+		coefficient = 1024;
+		value.pop_back();
+	}
+	else if (value.back() == 'm' || value.back() == 'M')
+	{
+		coefficient = 1024 * 1024;
+		value.pop_back();
+	}
+	else if (value.back() >= '0' && value.back() <= '9')
+		coefficient = 1;
+	else
+		throw std::runtime_error("Error: client_max_body_size is not valid.");
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: client_max_body_size value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value == "")
+		throw std::runtime_error("Error: client_max_body_size is not valid.");
+	for (std::string::iterator it = value.begin(); it != value.end(); ++it)
+	{
+		if (!(*it >= '0' && *it <= '9'))
+			throw std::runtime_error("Error: client_max_body_size is not valid.");
+	}
+	this->_clientMaxBodySize = coefficient * std::atol(value.c_str());
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -254,6 +302,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->setAutoindex(value);
 	else if (name.compare("error_page") == 0)
 		this->setErrorPage(value);
+	else if (name.compare("client_max_body_size") == 0)
+		this->setClientMaxBodySize(value);
 }
 
 void	Server::setDefaults()
