@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 13:26:09 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 14:51:33 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ class	Location
 		bool							getAutoindex() const;
 		const std::map<int, t_str>		&getErrorPage() const;
 		long int						getClientMaxBodySize() const;
+		void							inherit(std::map<int, t_str> errorPage, \
+										unsigned long int clientMaxBodySize);
 	private:
 		void							setRoot(t_str &value);
 		void							setLocation(t_str &value);

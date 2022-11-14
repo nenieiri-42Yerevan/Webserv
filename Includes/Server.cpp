@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 13:29:18 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 14:48:57 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -499,4 +499,7 @@ void	Server::parsingBody(t_str &body)
 			body.erase(0, value_end);
 	}
 	this->setDefaults();
+	std::map<t_str, Location>::iterator	it;
+	for (it = this->_location.begin(); it != this->_location.end(); ++it)
+		it->second.inherit(this->_errorPage, this->_clientMaxBodySize);
 }
