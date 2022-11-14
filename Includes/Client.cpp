@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/12 16:32:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 16:18:45 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,7 +324,7 @@ void	Client::findServer()
 		{
 			if (listen_it->first == this->_host && listen_it->second == this->_port)
 			{
-				this->_serverNumber = i;
+				this->_server = this->_serverSet[i];
 				return ;
 			}
 		}
@@ -336,12 +336,12 @@ void	Client::findServer()
 		{
 			if (*serv_it == this->_host)
 			{
-				this->_serverNumber = i;
+				this->_server = this->_serverSet[i];
 				return ;
 			}
 		}
 	}
-	this->_serverNumber = -1;
+//	this->_serverNumber = -1;
 }
 
 std::string	Client::getError(int num)
@@ -355,18 +355,28 @@ std::string	Client::getError(int num)
 	}
 }
 
+bool	Client::responseErrorPage(std::string &response_body)
+{
+	(void)response_body;
+	return (false);
+//	return (true);
+}
+
 std::string	Client::getErrorMsg(const t_str &num, const t_str &msg)
 {
 	std::string	response;
 	std::string	response_body;
 
-	response_body += "<html>";
-	response_body += "<head><title>" + num + " " + msg + "</title></head>";
-	response_body += "<body>";
-	response_body += "<center><h1>" + num + " " + msg + "</h1></center><hr>";
-	response_body += "<center>" + this->_version + "</center>";
-	response_body += "</body>";
-	response_body += "</html>";
+	if (responseErrorPage(response_body) == false)
+	{
+		response_body += "<html>";
+		response_body += "<head><title>" + num + " " + msg + "</title></head>";
+		response_body += "<body>";
+		response_body += "<center><h1>" + num + " " + msg + "</h1></center><hr>";
+		response_body += "<center>" + this->_version + "</center>";
+		response_body += "</body>";
+		response_body += "</html>";
+	}
 
 	std::stringstream	ss;
 	ss << response_body.length();

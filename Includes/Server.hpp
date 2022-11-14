@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 13:25:59 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 16:14:40 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,11 @@ class	Server
 		typedef std::string				t_str;
 
 	public:
+		Server();
 		Server(t_str &body);
 		Server(const Server &other);
 		Server	&operator=(const Server &rhs);
 		~Server();
-	private:
-		Server();
 
 	public:
 		const std::vector<t_str>		&getServerName() const;

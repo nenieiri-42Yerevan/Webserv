@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/12 16:06:18 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/14 16:13:18 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class	Client
 		void					findServer();
 		std::string				getError(int num);
 		std::string				getErrorMsg(const t_str &num, const t_str &msg);
+		bool					responseErrorPage(std::string &response_body);
 	private:
 		std::string				_request;
 		std::string				_response;
@@ -61,9 +62,9 @@ class	Client
 		int						_isHeader;
 		std::string				_lastHeader;
 		std::vector<Server>		_serverSet;
+		Server					_server;
 		std::string				_port;
 		std::string				_host;
-		int						_serverNumber;
 };
 
 #endif
