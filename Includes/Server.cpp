@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 10:09:09 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 14:33:33 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ const std::vector<std::string>	&Server::getServerName() const
 	return (this->_serverName);
 }
 
-const std::map<std::string, std::string>	&Server::getListen() const
+const std::multimap<std::string, std::string>	&Server::getListen() const
 {
 	return (this->_listen);
 }
@@ -162,6 +162,14 @@ void	Server::setListen(t_str &addr, t_str &port)
 	{
 		this->_serverName.push_back(addr);
 		addr = "*";
+	}
+	std::multimap<t_str, t_str>::iterator	it1 = _listen.lower_bound(addr);
+	std::multimap<t_str, t_str>::iterator	it2 = _listen.upper_bound(addr);
+	while (it1 != it2)
+	{
+		if (it1->first == addr && it1->second == port)
+			throw std::runtime_error("Error: duplicate listen values.");
+		++it1;
 	}
 	this->_listen.insert(std::make_pair(addr, port));
 }

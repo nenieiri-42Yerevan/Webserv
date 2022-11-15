@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 16:18:45 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 14:25:15 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,10 +312,10 @@ void	Client::prepareAnswer()
 
 void	Client::findServer()
 {
-	std::map<std::string, std::string>				listen;
-	std::map<std::string, std::string>::iterator	listen_it;
-	std::vector<std::string>						servName;
-	std::vector<std::string>::iterator				serv_it;
+	std::multimap<std::string, std::string>				listen;
+	std::multimap<std::string, std::string>::iterator	listen_it;
+	std::vector<std::string>							servName;
+	std::vector<std::string>::iterator					serv_it;
 
 	for (std::vector<Server>::size_type i = 0; i < this->_serverSet.size(); ++i)
 	{

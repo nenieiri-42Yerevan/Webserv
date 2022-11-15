@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 16:14:40 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 14:17:46 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class	Server
 
 	public:
 		const std::vector<t_str>		&getServerName() const;
-		const std::map<t_str, t_str>	&getListen() const;
+		const std::multimap<t_str, t_str>	&getListen() const;
 		const std::string				&getRoot() const;
 		const std::map<t_str, Location>	&getLocation() const;
 		const std::vector<t_str>		&getIndex() const;
@@ -66,7 +66,7 @@ class	Server
 	private:
 		std::vector<t_str>				_directiveList;
 		std::vector<t_str>				_serverName;
-		std::map<t_str, t_str>			_listen;
+		std::multimap<t_str, t_str>		_listen;
 		std::map<t_str, Location>		_location;
 		std::string						_root;
 		std::vector<t_str>				_index;
