@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 16:13:18 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 15:16:17 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class	Client
 	private:
 		typedef std::string		t_str;
 	public:
-		Client(std::vector<Server> &serverSet);
+		Client(std::vector<Server> &serverSet, int serverNumber);
 		Client(const Client &other);
 		Client	&operator=(const Client &rhs);
 		~Client();
@@ -46,7 +46,7 @@ class	Client
 		void					parsingHeader(std::string line);
 		void					parsingBody();
 		void					prepareAnswer();
-		void					findServer();
+		int						findServer();
 		std::string				getError(int num);
 		std::string				getErrorMsg(const t_str &num, const t_str &msg);
 		bool					responseErrorPage(std::string &response_body);

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/14 14:51:33 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 17:21:14 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@
 # include <vector>
 # include <string>
 # include <cstring>
+# include <cstdlib>
 # include <algorithm>
+# include <unistd.h>
 
 # include <iostream>
 

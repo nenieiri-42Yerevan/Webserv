@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 14:25:15 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 16:20:43 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Client::Client()
 	this->_lastHeader = "";
 }
 
-Client::Client(std::vector<Server> &serverSet)
+Client::Client(std::vector<Server> &serverSet, int serverNumber)
 {
 	this->_request = "";
 	this->_body = "";
@@ -39,6 +39,7 @@ Client::Client(std::vector<Server> &serverSet)
 	this->_isHeader = 0;
 	this->_lastHeader = "";
 	this->_serverSet = serverSet;
+	this->_server = serverSet[serverNumber];
 }
 
 Client::Client(const Client &other)
@@ -54,6 +55,7 @@ Client::Client(const Client &other)
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
 	this->_serverSet = other._serverSet;
+	this->_server= other._server;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -71,6 +73,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
 		this->_serverSet = rhs._serverSet;
+		this->_server= rhs._server;
 	}
 	return (*this);
 }
@@ -292,10 +295,9 @@ void	Client::prepareAnswer()
 	std::string::size_type							pos;
 
 	host = this->_header.find("host");
-	(void) pos;
-	//if (host == this->_header.end())
+	if (host == this->_header.end())
 		this->_response = getError(400);
-	/*else
+	else
 	{
 		pos = host->second.find(":");
 		if (pos == std::string::npos)
@@ -307,11 +309,13 @@ void	Client::prepareAnswer()
 			host->second = host->second.substr(0, pos - 1);
 		}
 		this->_host = host->second;
-		this->findServer();
-	}*/
+		if (this->findServer() != 0)
+		{
+		}
+	}
 }
 
-void	Client::findServer()
+int	Client::findServer()
 {
 	std::multimap<std::string, std::string>				listen;
 	std::multimap<std::string, std::string>::iterator	listen_it;
@@ -326,7 +330,7 @@ void	Client::findServer()
 			if (listen_it->first == this->_host && listen_it->second == this->_port)
 			{
 				this->_server = this->_serverSet[i];
-				return ;
+				return (1);
 			}
 		}
 	}
@@ -338,11 +342,12 @@ void	Client::findServer()
 			if (*serv_it == this->_host)
 			{
 				this->_server = this->_serverSet[i];
-				return ;
+				return (1);
 			}
 		}
 	}
-//	this->_serverNumber = -1;
+	this->_response = getError(400);
+	return (0);
 }
 
 std::string	Client::getError(int num)
@@ -358,9 +363,9 @@ std::string	Client::getError(int num)
 
 bool	Client::responseErrorPage(std::string &response_body)
 {
-	(void)response_body;
+	(void) response_body;
 	return (false);
-//	return (true);
+	//return (true);
 }
 
 std::string	Client::getErrorMsg(const t_str &num, const t_str &msg)

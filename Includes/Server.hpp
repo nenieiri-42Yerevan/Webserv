@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 14:17:46 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/15 17:08:35 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@
 # include <string>
 # include <cstring>
 # include <cctype>
+# include <cstdlib>
 # include <algorithm>
+# include <unistd.h>
 
 # include "Location.hpp"
 
