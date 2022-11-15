@@ -78,6 +78,7 @@ void HttpServer::createListen()
         {
             serv.host = it->first;
             serv.port = atoi(it->second.c_str());
+            serv.current = i;
             this->listenSockets.push_back(serv);
             createSockets(c);
             c++;
@@ -97,8 +98,9 @@ void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 		return ;
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	FD_SET(fd, initrset);
-	(*maxfd)++;
-	this->acceptfds.insert(std::make_pair(fd, Client(this->vec)));
+	if (fd > *maxfd)
+        *maxfd = fd;
+	this->acceptfds.insert(std::make_pair(fd, Client(this->vec,  this->listenSockets[i].current)));
 }
 
 int HttpServer::getrequest(int fd)

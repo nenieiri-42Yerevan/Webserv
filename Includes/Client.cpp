@@ -292,9 +292,10 @@ void	Client::prepareAnswer()
 	std::string::size_type							pos;
 
 	host = this->_header.find("host");
-	if (host == this->_header.end())
+	(void) pos;
+	//if (host == this->_header.end())
 		this->_response = getError(400);
-	else
+	/*else
 	{
 		pos = host->second.find(":");
 		if (pos == std::string::npos)
@@ -307,7 +308,7 @@ void	Client::prepareAnswer()
 		}
 		this->_host = host->second;
 		this->findServer();
-	}
+	}*/
 }
 
 void	Client::findServer()

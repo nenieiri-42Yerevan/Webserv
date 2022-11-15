@@ -11,6 +11,7 @@ typedef struct s_serv
 	std::string	host;
 	int			sockfd;
 	int			port;
+	int 		current;
 }				t_serv;
 
 class	HttpServer
