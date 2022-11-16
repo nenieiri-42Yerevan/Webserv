@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 16:20:43 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 13:23:18 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,51 +181,30 @@ int	Client::parsingRequestLine(std::string line)
 	std::string::size_type	pos;
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	this->_header.insert(std::make_pair("method", line.substr(0, pos)));
 	if (this->_header["method"] == "" || \
 		this->_header["method"].find(" \t\v\f") != std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	pos = line.find_first_not_of(" ", pos);
 	if (pos == std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	line = line.substr(pos, line.length() - pos);
 	pos = line.find_first_of(" ");
 	if (pos == std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	this->_header.insert(std::make_pair("uri", line.substr(0, pos)));
 	if (this->_header["uri"] == "" || \
 		this->_header["uri"].find(" \t\v\f") != std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	pos = line.find_first_not_of(" ", pos);
 	if (pos == std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	line = line.substr(pos, line.length() - pos);
 	this->_header.insert(std::make_pair("protocol-version", line));
 	if (this->_header["protocol-version"] == "" || \
 		this->_header["protocol-version"].find(" \t\v\f") != std::string::npos)
-	{
-		_response = getError(400);
-		return (0);
-	}
+		return (getError(400));
 	++_isStart;
 	return (1);
 }
@@ -295,8 +274,8 @@ void	Client::prepareAnswer()
 	std::string::size_type							pos;
 
 	host = this->_header.find("host");
-	if (host == this->_header.end())
-		this->_response = getError(400);
+	if (host != this->_header.end())
+		getError(400);
 	else
 	{
 		pos = host->second.find(":");
@@ -346,34 +325,57 @@ int	Client::findServer()
 			}
 		}
 	}
-	this->_response = getError(400);
-	return (0);
+	return (getError(400));
 }
 
-std::string	Client::getError(int num)
+int	Client::getError(int num)
 {
 	switch (num)
 	{
 		case 400:
-			return (getErrorMsg("400", "Bad Request"));
+			getErrorMsg(400, "400", "Bad Request");
+			break ;
 		default:
-			return ("");
+			return (0);
 	}
+	return (0);
 }
 
-bool	Client::responseErrorPage(std::string &response_body)
+bool	Client::readWhole(const std::string &full_path, \
+							std::string &readFile) const
 {
-	(void) response_body;
-	return (false);
-	//return (true);
+	std::ifstream			openFile;
+	std::ostringstream		ss;
+
+	openFile.open(full_path.c_str());
+	if (!openFile.is_open())
+		return (false);
+	ss << openFile.rdbuf();
+	readFile = ss.str();
+	openFile.close();
+	return (true);
 }
 
-std::string	Client::getErrorMsg(const t_str &num, const t_str &msg)
+bool	Client::responseErrorPage(int errNum, std::string &response_body) const
+{
+	std::map<int, std::string>::const_iterator	it;
+	std::string									full_path;
+
+	it = this->_server.getErrorPage().find(errNum);
+	if (it == this->_server.getErrorPage().end())
+		return (false);
+	full_path = this->_server.getRoot() + it->second;
+	if (access(full_path.c_str(), F_OK | R_OK) != 0)
+		return (false);
+	return (readWhole(full_path, response_body));
+}
+
+void	Client::getErrorMsg(int errNum, const t_str &num, const t_str &msg)
 {
 	std::string	response;
 	std::string	response_body;
 
-	if (responseErrorPage(response_body) == false)
+	if (responseErrorPage(errNum, response_body) == false)
 	{
 		response_body += "<html>";
 		response_body += "<head><title>" + num + " " + msg + "</title></head>";
@@ -393,5 +395,5 @@ std::string	Client::getErrorMsg(const t_str &num, const t_str &msg)
 	response += "Server : webserv\r\n";
 	response += "\r\n";
 	response += response_body;
-	return (response);
+	this->_response = response;
 }

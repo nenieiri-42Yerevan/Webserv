@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 15:16:17 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 13:21:58 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,12 @@
 # include <iostream>
 # include <string>
 # include <cstring>
+# include <fstream>
 # include <sstream>
 # include <map>
 # include <vector>
+# include <algorithm>
+# include <unistd.h>
 
 # include "Server.hpp"
 
@@ -47,9 +50,13 @@ class	Client
 		void					parsingBody();
 		void					prepareAnswer();
 		int						findServer();
-		std::string				getError(int num);
-		std::string				getErrorMsg(const t_str &num, const t_str &msg);
-		bool					responseErrorPage(std::string &response_body);
+		int						getError(int num);
+		void					getErrorMsg(int errNum, const t_str &num, \
+											const t_str &msg);
+		bool					responseErrorPage(int errNum, \
+											std::string &response_body) const;
+		bool					readWhole(const std::string &full_path, \
+											std::string &readFile) const;
 	private:
 		std::string				_request;
 		std::string				_response;

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 13:47:46 by vismaily          #+#    #+#             */
-/*   Updated: 2022/10/30 15:36:15 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 13:18:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	file_open_read(std::string config_file, std::string &config)
 		if (!config_stream.is_open())
 			throw std::runtime_error("Error: Failed to open the file.");
 		config_read_trim(config_stream, config);
+		config_stream.close();
 		if (config == "")
 			throw std::runtime_error("Error: Empty config file.");
-		config_stream.close();
 	}
 }
