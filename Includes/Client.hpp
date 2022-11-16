@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/16 13:21:58 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 15:05:01 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <unistd.h>
 
 # include "Server.hpp"
+# include "Location.hpp"
 
 class	Client
 {
@@ -50,6 +51,7 @@ class	Client
 		void					parsingBody();
 		void					prepareAnswer();
 		int						findServer();
+		void					findLocation();
 		int						getError(int num);
 		void					getErrorMsg(int errNum, const t_str &num, \
 											const t_str &msg);
@@ -70,6 +72,8 @@ class	Client
 		std::string				_lastHeader;
 		std::vector<Server>		_serverSet;
 		Server					_server;
+		Location				_location;
+		bool					_isLocation;
 		std::string				_port;
 		std::string				_host;
 };

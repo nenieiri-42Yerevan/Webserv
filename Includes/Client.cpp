@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/16 13:23:18 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 15:29:28 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ Client::Client()
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
+	this->_isLocation = false;
 }
 
 Client::Client(std::vector<Server> &serverSet, int serverNumber)
@@ -40,6 +41,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_lastHeader = "";
 	this->_serverSet = serverSet;
 	this->_server = serverSet[serverNumber];
+	this->_isLocation = false;
 }
 
 Client::Client(const Client &other)
@@ -56,6 +58,7 @@ Client::Client(const Client &other)
 	this->_lastHeader = other._lastHeader;
 	this->_serverSet = other._serverSet;
 	this->_server= other._server;
+	this->_isLocation = other._isLocation;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -74,6 +77,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_lastHeader = rhs._lastHeader;
 		this->_serverSet = rhs._serverSet;
 		this->_server= rhs._server;
+		this->_isLocation = rhs._isLocation;
 	}
 	return (*this);
 }
@@ -290,6 +294,8 @@ void	Client::prepareAnswer()
 		this->_host = host->second;
 		if (this->findServer() != 0)
 		{
+			this->findLocation();
+			/* code */
 		}
 	}
 }
@@ -328,6 +334,11 @@ int	Client::findServer()
 	return (getError(400));
 }
 
+void	Client::findLocation()
+{
+//	this->_isLocation = true;
+}
+
 int	Client::getError(int num)
 {
 	switch (num)
@@ -361,10 +372,20 @@ bool	Client::responseErrorPage(int errNum, std::string &response_body) const
 	std::map<int, std::string>::const_iterator	it;
 	std::string									full_path;
 
-	it = this->_server.getErrorPage().find(errNum);
-	if (it == this->_server.getErrorPage().end())
-		return (false);
-	full_path = this->_server.getRoot() + it->second;
+	if (this->_isLocation == true)
+	{
+		it = this->_location.getErrorPage().find(errNum);
+		if (it == this->_location.getErrorPage().end())
+			return (false);
+		full_path = this->_location.getRoot() + it->second;
+	}
+	else
+	{
+		it = this->_server.getErrorPage().find(errNum);
+		if (it == this->_server.getErrorPage().end())
+			return (false);
+		full_path = this->_server.getRoot() + it->second;
+	}
 	if (access(full_path.c_str(), F_OK | R_OK) != 0)
 		return (false);
 	return (readWhole(full_path, response_body));

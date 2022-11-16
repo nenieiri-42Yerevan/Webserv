@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 17:21:14 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 15:28:51 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,11 @@ class	Location
 		typedef std::string				t_str;
 
 	public:
+		Location();
 		Location(t_str &body);
 		Location(const Location &other);
 		Location	&operator=(const Location &rhs);
 		~Location();
-	private:
-		Location();
 
 	public:
 		const std::string				&getRoot() const;
@@ -43,8 +42,11 @@ class	Location
 		bool							getAutoindex() const;
 		const std::map<int, t_str>		&getErrorPage() const;
 		long int						getClientMaxBodySize() const;
-		void							inherit(std::map<int, t_str> errorPage, \
-										unsigned long int clientMaxBodySize);
+		void							inherit(t_str root, \
+											std::vector<t_str> index, \
+											bool autoindex, \
+											std::map<int, t_str> errorPage, \
+											unsigned long int clientMaxBodySize);
 	private:
 		void							setRoot(t_str &value);
 		void							setLocation(t_str &value);
@@ -64,6 +66,7 @@ class	Location
 		std::map<t_str, Location>		_location;
 		std::vector<t_str>				_index;
 		bool							_autoindex;
+		bool							_isAutoindexed;
 		std::map<int, t_str>			_errorPage;
 		unsigned long int				_clientMaxBodySize;
 };

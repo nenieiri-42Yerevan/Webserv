@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/15 17:33:56 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/16 15:33:00 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Location::Location(t_str &body)
 	_directiveList.push_back("client_max_body_size");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
+	this->_isAutoindexed = false;
 	this->_clientMaxBodySize = 0;
 	parsingBody(body);
 }
@@ -38,6 +39,7 @@ Location::Location(const Location &other)
 	this->_root = other._root;
 	this->_index = other._index;
 	this->_autoindex = other._autoindex;
+	this->_isAutoindexed = other._isAutoindexed;
 	this->_errorPage = other._errorPage;
 	this->_clientMaxBodySize = other._clientMaxBodySize;
 	this->_location = other._location;
@@ -50,6 +52,7 @@ Location	&Location::operator=(const Location &rhs)
 		this->_root = rhs._root;
 		this->_index = rhs._index;
 		this->_autoindex = rhs._autoindex;
+		this->_isAutoindexed = rhs._isAutoindexed;
 		this->_errorPage = rhs._errorPage;
 		this->_clientMaxBodySize = rhs._clientMaxBodySize;
 		this->_location = rhs._location;
@@ -95,12 +98,29 @@ long int	Location::getClientMaxBodySize() const
 	return (this->_clientMaxBodySize);
 }
 
-void	Location::inherit(std::map<int, t_str> errorPage, \
+void	Location::inherit(t_str root, \
+							std::vector<t_str> index, \
+							bool autoindex, \
+							std::map<int, t_str> errorPage, \
 							unsigned long int clientMaxBodySize)
 {
+	if (this->_root == "")
+		this->_root = root;
+	if (this->_index.size() == 0)
+		this->_index = index;
+	if (this->_isAutoindexed == false)
+		this->_autoindex = autoindex;
 	this->_errorPage.insert(errorPage.begin(), errorPage.end());
 	if (this->_clientMaxBodySize == 0)
 		this->_clientMaxBodySize = clientMaxBodySize;
+
+	std::map<t_str, Location>::iterator	it;
+	for (it = this->_location.begin(); it != this->_location.end(); ++it)
+		it->second.inherit(this->_root, \
+							this->_index, \
+							this->_autoindex, \
+							this->_errorPage, \
+							this->_clientMaxBodySize);
 }
 
 /*=====================================*/
@@ -187,6 +207,7 @@ void	Location::setAutoindex(t_str &value)
 	else
 		throw std::runtime_error("Error: autoindex value can only be "
 								 "'on' or 'off'.");
+	this->_isAutoindexed = true;
 }
 
 void	Location::setErrorPage(t_str &value)
