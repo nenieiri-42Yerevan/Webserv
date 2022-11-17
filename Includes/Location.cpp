@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 14:47:20 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 15:09:48 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,8 @@ void	Location::setLocation(t_str &value)
 	inner = value.substr(pos, value.length() - 1 - pos);
 	if (name[0] != '/')
 		throw std::runtime_error("Error: Location must start with '/' symbol.");
+	if (name[name.length() - 1] != '/')
+		name += "/";
 	this->_location.insert(std::make_pair(name, Location(inner)));
 }
 

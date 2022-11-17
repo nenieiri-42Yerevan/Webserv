@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/16 15:05:01 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 15:57:28 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <vector>
 # include <algorithm>
 # include <unistd.h>
+# include <utility>
 
 # include "Server.hpp"
 # include "Location.hpp"
@@ -51,7 +52,7 @@ class	Client
 		void					parsingBody();
 		void					prepareAnswer();
 		int						findServer();
-		void					findLocation();
+		void					findLocation(std::string &full_path);
 		int						getError(int num);
 		void					getErrorMsg(int errNum, const t_str &num, \
 											const t_str &msg);
@@ -60,22 +61,22 @@ class	Client
 		bool					readWhole(const std::string &full_path, \
 											std::string &readFile) const;
 	private:
-		std::string				_request;
-		std::string				_response;
-		std::map<t_str, t_str>	_header;
-		std::string				_body;
-		bool					_isRecvFinish;
-		bool					_isSendFinish;
-		std::string				_version;
-		int						_isStart;
-		int						_isHeader;
-		std::string				_lastHeader;
-		std::vector<Server>		_serverSet;
-		Server					_server;
-		Location				_location;
-		bool					_isLocation;
-		std::string				_port;
-		std::string				_host;
+		std::string					_request;
+		std::string					_response;
+		std::map<t_str, t_str>		_header;
+		std::string					_body;
+		bool						_isRecvFinish;
+		bool						_isSendFinish;
+		std::string					_version;
+		int							_isStart;
+		int							_isHeader;
+		std::string					_lastHeader;
+		std::vector<Server>			_serverSet;
+		Server						_server;
+		std::pair<t_str, Location>	_location;
+		bool						_isLocation;
+		std::string					_port;
+		std::string					_host;
 };
 
 #endif

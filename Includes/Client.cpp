@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 14:43:26 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 16:21:04 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,6 +276,7 @@ void	Client::prepareAnswer()
 {
 	std::map<std::string, std::string>::iterator	host;
 	std::string::size_type							pos;
+	std::string										full_path;
 
 	host = this->_header.find("host");
 	if (host == this->_header.end())
@@ -294,7 +295,10 @@ void	Client::prepareAnswer()
 		this->_host = host->second;
 		if (this->findServer() != 0)
 		{
-			this->findLocation();
+			full_path = this->_header.find("uri")->second;
+			if (full_path[full_path.length() - 1] != '/')
+				full_path += "/";
+			this->findLocation(full_path);
 			/* code */
 		}
 	}
@@ -334,13 +338,42 @@ int	Client::findServer()
 	return (getError(400));
 }
 
-void	Client::findLocation()
+void	Client::findLocation(std::string &full_path)
 {
-	std::map<t_str, t_str>::iterator	uri;
-
-	uri = this->_header.find("uri");
-
-	this->_isLocation = true;
+	std::map<t_str, Location>::const_iterator	it_begin;
+	std::map<t_str, Location>::const_iterator	it_end;
+	std::pair<t_str, Location>					tmp;
+   
+	if (this->_isLocation == true)
+	{
+		if (_location.second.getLocation().size() == 0)
+			return ;
+		it_begin = _location.second.getLocation().begin();
+		it_end = _location.second.getLocation().end();
+	}
+	else
+	{
+		if (_server.getLocation().size() == 0)
+			return ;
+		it_begin = _server.getLocation().begin();
+		it_end = _server.getLocation().end();
+	}
+	while (it_begin != it_end)
+	{
+		if (std::equal(it_begin->first.begin(), it_begin->first.end(), \
+													full_path.begin()) == 1)
+		{
+			if (tmp.first.length() < it_begin->first.length())
+				tmp = *it_begin;
+		}
+		++it_begin;
+	}
+	if (tmp.first.length() != 0)
+	{
+		this->_location = tmp;
+		this->_isLocation = true;
+		findLocation(full_path);
+	}
 }
 
 int	Client::getError(int num)
@@ -378,10 +411,10 @@ bool	Client::responseErrorPage(int errNum, std::string &response_body) const
 
 	if (this->_isLocation == true)
 	{
-		it = this->_location.getErrorPage().find(errNum);
-		if (it == this->_location.getErrorPage().end())
+		it = this->_location.second.getErrorPage().find(errNum);
+		if (it == this->_location.second.getErrorPage().end())
 			return (false);
-		full_path = this->_location.getRoot() + it->second;
+		full_path = this->_location.second.getRoot() + it->second;
 	}
 	else
 	{
