@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/16 15:29:28 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 14:43:26 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ void	Client::prepareAnswer()
 	std::string::size_type							pos;
 
 	host = this->_header.find("host");
-	if (host != this->_header.end())
+	if (host == this->_header.end())
 		getError(400);
 	else
 	{
@@ -336,7 +336,11 @@ int	Client::findServer()
 
 void	Client::findLocation()
 {
-//	this->_isLocation = true;
+	std::map<t_str, t_str>::iterator	uri;
+
+	uri = this->_header.find("uri");
+
+	this->_isLocation = true;
 }
 
 int	Client::getError(int num)
