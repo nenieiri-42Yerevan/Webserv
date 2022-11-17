@@ -43,7 +43,7 @@ void Cgi::cgi_run()
     int pid;
     char *args[3];
     char *envc[13];
-    int i;
+    int i, status;
 
     i = 0;
     initenv();
@@ -69,7 +69,7 @@ void Cgi::cgi_run()
     {
         perror("Error: ");
     }
-    //waitpid[]
+     waitpid(-1, &status, 0);
 
 
 }
