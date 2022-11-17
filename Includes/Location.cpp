@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/16 15:33:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 13:29:54 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,13 @@ void	Location::inherit(t_str root, \
 							std::vector<t_str> index, \
 							bool autoindex, \
 							std::map<int, t_str> errorPage, \
-							unsigned long int clientMaxBodySize)
+							unsigned long int clientMaxBodySize, \
+							t_str path)
 {
+	std::map<t_str, Location>::iterator	it;
+	std::string							full_path;
+	std::string							error_msg;
+
 	if (this->_root == "")
 		this->_root = root;
 	if (this->_index.size() == 0)
@@ -114,13 +119,28 @@ void	Location::inherit(t_str root, \
 	if (this->_clientMaxBodySize == 0)
 		this->_clientMaxBodySize = clientMaxBodySize;
 
-	std::map<t_str, Location>::iterator	it;
+	if (path[path.length() - 1] != '/')
+		full_path = path + "/";
+	else
+		full_path = path;
 	for (it = this->_location.begin(); it != this->_location.end(); ++it)
+	{
+		if (it->first.compare(0, full_path.length(), full_path) != 0)
+		{
+			error_msg = "Error: '" + it->first + "' is not in '" \
+						 + full_path + "' location (i.e. it must start with '" \
+						 + full_path + "' path).";
+			throw std::runtime_error(error_msg);
+		}
+		if (it->first.length() <= full_path.length())
+			throw std::runtime_error("Error: location paths are indentical.");
 		it->second.inherit(this->_root, \
 							this->_index, \
 							this->_autoindex, \
 							this->_errorPage, \
-							this->_clientMaxBodySize);
+							this->_clientMaxBodySize, \
+							it->first);
+	}
 }
 
 /*=====================================*/

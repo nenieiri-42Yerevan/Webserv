@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/16 15:28:51 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 13:09:05 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ class	Location
 											std::vector<t_str> index, \
 											bool autoindex, \
 											std::map<int, t_str> errorPage, \
-											unsigned long int clientMaxBodySize);
+											unsigned long int clientMaxBodySize, \
+											t_str path);
 	private:
 		void							setRoot(t_str &value);
 		void							setLocation(t_str &value);
