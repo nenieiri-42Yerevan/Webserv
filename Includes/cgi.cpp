@@ -58,9 +58,9 @@ void Cgi::cgi_run()
     pid = fork();
     if (pid == 0)
     {
-        args[0] = "/usr/bin/php";
+        //args[0] = "/usr/bin/php";
         args[1] = (char *)env["SCRIPT_NAME"].c_str();
-        args[3] = NULL;
+        //args[3] = NULL;
         dup2(fd, 0);
         close(fd);
         execve("/usr/bin/php", args, envc);

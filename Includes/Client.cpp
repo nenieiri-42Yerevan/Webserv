@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 19:31:03 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 11:35:17 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,13 +296,22 @@ void	Client::prepareAnswer()
 		if (this->findServer() != 0)
 		{
 			full_path = this->_header.find("uri")->second;
-			pos = full_path.find_last_of("/.");
-			if (full_path[pos] == '/' && full_path[full_path.length() - 1] != '/')
-				full_path += "/";
-			this->findLocation(full_path);
-			/* stugel */
-			this->findFile(full_path, pos);
-			/* code */
+			if (full_path[0] != '/')
+				getError(400);
+			else
+			{
+				pos = full_path.find_last_of("/.");
+				if (full_path[pos] == '/' && full_path[full_path.length() - 1] != '/')
+					full_path += "/";
+				this->findLocation(full_path);
+				/* stugel */
+				if (this->findFile(full_path, pos) == false)
+					getError(404);
+				else
+				{
+					/* code */
+				}
+			}
 		}
 	}
 }
@@ -410,9 +419,12 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 		}
 		for (; it_begin != it_end; ++it_begin)
 		{
-			/* stugel*/
 			tmp = full_path + *it_begin;
-			std::cout << tmp << std::endl;
+			if (access(tmp.c_str(), F_OK | R_OK) == 0)
+			{
+				full_path = tmp;
+				return (true);
+			}
 		}
 	}
 	else
@@ -432,11 +444,14 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 				root = this->_server.getRoot();
 			full_path = root + full_path;
 		}
-			/* stugel*/
-			tmp = full_path;
-			std::cout << tmp << std::endl;
+		tmp = full_path;
+		if (access(tmp.c_str(), F_OK | R_OK) == 0)
+		{
+			full_path = tmp;
+			return (true);
+		}
 	}
-	return (true);
+	return (false);
 }
 
 int	Client::getError(int num)
@@ -445,6 +460,9 @@ int	Client::getError(int num)
 	{
 		case 400:
 			getErrorMsg(400, "400", "Bad Request");
+			break ;
+		case 404:
+			getErrorMsg(404, "404", "Not Found");
 			break ;
 		default:
 			return (0);
