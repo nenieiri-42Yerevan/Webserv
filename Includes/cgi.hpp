@@ -8,6 +8,7 @@ class Cgi
     private:
         std::map<std::string, std::string> env;
         void initenv();
+        void cgi_run();
     public:
         Cgi();
         Cgi(const Cgi &other);
