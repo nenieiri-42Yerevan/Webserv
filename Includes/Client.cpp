@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 16:21:04 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/17 19:31:03 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,9 +296,12 @@ void	Client::prepareAnswer()
 		if (this->findServer() != 0)
 		{
 			full_path = this->_header.find("uri")->second;
-			if (full_path[full_path.length() - 1] != '/')
+			pos = full_path.find_last_of("/.");
+			if (full_path[pos] == '/' && full_path[full_path.length() - 1] != '/')
 				full_path += "/";
 			this->findLocation(full_path);
+			/* stugel */
+			this->findFile(full_path, pos);
 			/* code */
 		}
 	}
@@ -374,6 +377,66 @@ void	Client::findLocation(std::string &full_path)
 		this->_isLocation = true;
 		findLocation(full_path);
 	}
+}
+
+bool	Client::findFile(std::string &full_path, std::string::size_type pos)
+{
+	std::vector<t_str>::const_iterator	it_begin;
+	std::vector<t_str>::const_iterator	it_end;
+	std::string							tmp;
+	std::string							root;
+	std::string::size_type				len;
+
+	if (full_path[pos] == '/')
+	{
+		if (this->_isLocation == true)
+		{
+			len = this->_location.first.length();
+			full_path = full_path.substr(len, full_path.length() - len);
+			full_path = this->_location.second.getRoot() + full_path;
+			it_begin = this->_location.second.getIndex().begin();
+			it_end = this->_location.second.getIndex().end();
+		}
+		else
+		{
+			if (this->_server.getRoot()[this->_server.getRoot().length() - 1] == '/')
+				root = this->_server.getRoot().substr(0, \
+						this->_server.getRoot().length() - 1);
+			else
+				root = this->_server.getRoot();
+			full_path = root + full_path;
+			it_begin = this->_server.getIndex().begin();
+			it_end = this->_server.getIndex().end();
+		}
+		for (; it_begin != it_end; ++it_begin)
+		{
+			/* stugel*/
+			tmp = full_path + *it_begin;
+			std::cout << tmp << std::endl;
+		}
+	}
+	else
+	{
+		if (this->_isLocation == true)
+		{
+			len = this->_location.first.length();
+			full_path = full_path.substr(len, full_path.length() - len);
+			full_path = this->_location.second.getRoot() + full_path;
+		}
+		else
+		{
+			if (this->_server.getRoot()[this->_server.getRoot().length() - 1] == '/')
+				root = this->_server.getRoot().substr(0, \
+						this->_server.getRoot().length() - 1);
+			else
+				root = this->_server.getRoot();
+			full_path = root + full_path;
+		}
+			/* stugel*/
+			tmp = full_path;
+			std::cout << tmp << std::endl;
+	}
+	return (true);
 }
 
 int	Client::getError(int num)
