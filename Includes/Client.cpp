@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/18 12:20:07 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:35:35 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,7 +304,6 @@ void	Client::prepareAnswer()
 				if (full_path[pos] == '/' && full_path[full_path.length() - 1] != '/')
 					full_path += "/";
 				this->findLocation(full_path);
-				/* stugel */
 				if (this->findFile(full_path, pos) == false)
 					getError(404);
 				else
@@ -494,19 +493,20 @@ bool	Client::responseErrorPage(int errNum, std::string &response_body) const
 	if (this->_isLocation == true)
 	{
 		it = this->_location.second.getErrorPage().find(errNum);
-		if (it == this->_location.second.getErrorPage().end())
-			return (false);
-		root = this->_location.second.getRoot();
-		std::cout << it->second << std::endl;
-		if (root[root.length() - 1] == '/'  && it->second[0] == '/')
-			full_path = root + it->second.substr(1, it->second.length() - 1);
-		else if (root[root.length() - 1] != '/'  && it->second[0] != '/')
-			full_path = root + "/" + it->second;
-		else
-			full_path = root + it->second;
-		std::cout << full_path << std::endl;
-		if (access(full_path.c_str(), F_OK | R_OK) == 0)
-			return (readWhole(full_path, response_body));
+		if (it != this->_location.second.getErrorPage().end())
+		{
+			root = this->_location.second.getRoot();
+			std::cout << it->second << std::endl;
+			if (root[root.length() - 1] == '/'  && it->second[0] == '/')
+				full_path = root + it->second.substr(1, it->second.length() - 1);
+			else if (root[root.length() - 1] != '/'  && it->second[0] != '/')
+				full_path = root + "/" + it->second;
+			else
+				full_path = root + it->second;
+			std::cout << full_path << std::endl;
+			if (access(full_path.c_str(), F_OK | R_OK) == 0)
+				return (readWhole(full_path, response_body));
+		}
 	}
 	it = this->_server.getErrorPage().find(errNum);
 	if (it == this->_server.getErrorPage().end())

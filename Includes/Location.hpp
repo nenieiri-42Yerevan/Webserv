@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 13:09:05 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:37:59 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ class	Location
 		void							inherit(t_str root, \
 											std::vector<t_str> index, \
 											bool autoindex, \
-											std::map<int, t_str> errorPage, \
 											unsigned long int clientMaxBodySize, \
 											t_str path);
 	private:

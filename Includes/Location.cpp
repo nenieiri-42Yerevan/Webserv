@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 15:09:48 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:37:59 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ long int	Location::getClientMaxBodySize() const
 void	Location::inherit(t_str root, \
 							std::vector<t_str> index, \
 							bool autoindex, \
-							std::map<int, t_str> errorPage, \
 							unsigned long int clientMaxBodySize, \
 							t_str path)
 {
@@ -115,7 +114,6 @@ void	Location::inherit(t_str root, \
 		this->_index = index;
 	if (this->_isAutoindexed == false)
 		this->_autoindex = autoindex;
-	this->_errorPage.insert(errorPage.begin(), errorPage.end());
 	if (this->_clientMaxBodySize == 0)
 		this->_clientMaxBodySize = clientMaxBodySize;
 
@@ -137,7 +135,6 @@ void	Location::inherit(t_str root, \
 		it->second.inherit(this->_root, \
 							this->_index, \
 							this->_autoindex, \
-							this->_errorPage, \
 							this->_clientMaxBodySize, \
 							it->first);
 	}

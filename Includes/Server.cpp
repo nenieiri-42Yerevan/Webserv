@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 15:07:41 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:38:04 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -549,7 +549,6 @@ void	Server::parsingBody(t_str &body)
 		it->second.inherit(this->_root, \
 							this->_index, \
 							this->_autoindex, \
-							this->_errorPage, \
 							this->_clientMaxBodySize, \
 							it->first);
 }
