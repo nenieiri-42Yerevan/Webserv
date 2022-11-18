@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/18 11:35:17 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:08:51 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -489,21 +489,29 @@ bool	Client::responseErrorPage(int errNum, std::string &response_body) const
 {
 	std::map<int, std::string>::const_iterator	it;
 	std::string									full_path;
+	std::string									root;
 
 	if (this->_isLocation == true)
 	{
 		it = this->_location.second.getErrorPage().find(errNum);
 		if (it == this->_location.second.getErrorPage().end())
 			return (false);
-		full_path = this->_location.second.getRoot() + it->second;
+		root = this->_location.second.getRoot();
 	}
 	else
 	{
 		it = this->_server.getErrorPage().find(errNum);
 		if (it == this->_server.getErrorPage().end())
 			return (false);
-		full_path = this->_server.getRoot() + it->second;
+		root = this->_server.getRoot();
 	}
+	if (root[root.length() - 1] == '/'  && it->second[0] == '/')
+		full_path = root + it->second.substr(1, it->second.length() - 1);
+	else if (root[root.length() - 1] != '/'  && it->second[0] != '/')
+		full_path = root + "/" + it->second;
+	else
+		full_path = root + it->second;
+	std::cout << full_path << std::endl;
 	if (access(full_path.c_str(), F_OK | R_OK) != 0)
 		return (false);
 	return (readWhole(full_path, response_body));
