@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/18 12:08:51 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:20:07 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -497,21 +497,27 @@ bool	Client::responseErrorPage(int errNum, std::string &response_body) const
 		if (it == this->_location.second.getErrorPage().end())
 			return (false);
 		root = this->_location.second.getRoot();
+		std::cout << it->second << std::endl;
+		if (root[root.length() - 1] == '/'  && it->second[0] == '/')
+			full_path = root + it->second.substr(1, it->second.length() - 1);
+		else if (root[root.length() - 1] != '/'  && it->second[0] != '/')
+			full_path = root + "/" + it->second;
+		else
+			full_path = root + it->second;
+		std::cout << full_path << std::endl;
+		if (access(full_path.c_str(), F_OK | R_OK) == 0)
+			return (readWhole(full_path, response_body));
 	}
-	else
-	{
-		it = this->_server.getErrorPage().find(errNum);
-		if (it == this->_server.getErrorPage().end())
-			return (false);
-		root = this->_server.getRoot();
-	}
+	it = this->_server.getErrorPage().find(errNum);
+	if (it == this->_server.getErrorPage().end())
+		return (false);
+	root = this->_server.getRoot();
 	if (root[root.length() - 1] == '/'  && it->second[0] == '/')
 		full_path = root + it->second.substr(1, it->second.length() - 1);
 	else if (root[root.length() - 1] != '/'  && it->second[0] != '/')
 		full_path = root + "/" + it->second;
 	else
 		full_path = root + it->second;
-	std::cout << full_path << std::endl;
 	if (access(full_path.c_str(), F_OK | R_OK) != 0)
 		return (false);
 	return (readWhole(full_path, response_body));
