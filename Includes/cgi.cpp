@@ -44,7 +44,7 @@ void Cgi::cgi_run()
     char *args[3];
     char *envc[20];
     int i, status;
-    char buf;
+    //char buf;
     int tmpfd;
 
     i = 0;
