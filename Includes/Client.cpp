@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/18 12:40:54 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/19 11:57:25 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,8 @@ void	Client::parsing()
 			}
 			pos = _request.find("\r\n");
 		}
+		if (pos == std::string::npos)
+			return ;
 		++_isHeader;
 		parsingBody();
 	}
@@ -240,26 +242,29 @@ void	Client::parsingHeader(std::string line)
 		colon = line.find(":");
 		if (colon != std::string::npos)
 		{
-			begin = 0;
 			end = line.find_last_not_of(" \t\v\r\n\f", colon - 1);
-			if (begin == std::string::npos || end == std::string::npos)
+			if (end == std::string::npos)
 				return ;
 			end += 1;
-			header_name = line.substr(begin, end - begin);
+			header_name = line.substr(0, end);
+			for (size_t	i = 0; i < header_name.length(); ++i)
+				header_name[i] = tolower(header_name[i]);
+			this->_lastHeader = header_name;
 			line = line.substr(colon + 1, line.length() - (colon + 1));
 			begin = line.find_first_not_of(" \t\v\r\n\f");
 			end = line.find_last_not_of(" \t\v\r\n\f", line.length() - 1);
 			if (begin == std::string::npos || end == std::string::npos)
+			{
+				if (this->_header.find(header_name) == this->_header.end())
+					this->_header.insert(std::make_pair(header_name, ""));
 				return ;
+			}
 			end += 1;
 			header_value = line.substr(begin, end - begin);
-			for (size_t	i = 0; i < header_name.length(); ++i)
-				header_name[i] = tolower(header_name[i]);
 			if (this->_header.find(header_name) == this->_header.end())
 				this->_header.insert(std::make_pair(header_name, header_value));
 			else if (this->_header[header_name].find(",") != std::string::npos)
 				this->_header[header_name] += header_value;
-			this->_lastHeader = header_name;
 		}
 	}
 }
