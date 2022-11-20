@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/18 12:37:59 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 12:47:20 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ Location::Location(t_str &body)
 	_directiveList.push_back("autoindex");
 	_directiveList.push_back("error_page");
 	_directiveList.push_back("client_max_body_size");
+	_directiveList.push_back("allow_methods");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
 	this->_isAutoindexed = false;
@@ -43,6 +44,7 @@ Location::Location(const Location &other)
 	this->_errorPage = other._errorPage;
 	this->_clientMaxBodySize = other._clientMaxBodySize;
 	this->_location = other._location;
+	this->_allowedMethods = other._allowedMethods;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -56,6 +58,7 @@ Location	&Location::operator=(const Location &rhs)
 		this->_errorPage = rhs._errorPage;
 		this->_clientMaxBodySize = rhs._clientMaxBodySize;
 		this->_location = rhs._location;
+		this->_allowedMethods = rhs._allowedMethods;
 	}
 	return (*this);
 }
@@ -98,10 +101,16 @@ long int	Location::getClientMaxBodySize() const
 	return (this->_clientMaxBodySize);
 }
 
+const std::vector<std::string>	&Location::getAllowedMethods() const
+{
+	return (this->_allowedMethods);
+}
+
 void	Location::inherit(t_str root, \
 							std::vector<t_str> index, \
 							bool autoindex, \
 							unsigned long int clientMaxBodySize, \
+							std::vector<t_str> allowMethods, \
 							t_str path)
 {
 	std::map<t_str, Location>::iterator	it;
@@ -116,6 +125,8 @@ void	Location::inherit(t_str root, \
 		this->_autoindex = autoindex;
 	if (this->_clientMaxBodySize == 0)
 		this->_clientMaxBodySize = clientMaxBodySize;
+	if (this->_allowedMethods.size() == 0)
+		this->_allowedMethods = allowMethods;
 
 	if (path[path.length() - 1] != '/')
 		full_path = path + "/";
@@ -136,6 +147,7 @@ void	Location::inherit(t_str root, \
 							this->_index, \
 							this->_autoindex, \
 							this->_clientMaxBodySize, \
+							this->_allowedMethods, \
 							it->first);
 	}
 }
@@ -303,6 +315,26 @@ void	Location::setClientMaxBodySize(t_str &value)
 	this->_clientMaxBodySize = coefficient * std::atol(value.c_str());
 }
 
+void	Location::setAllowedMethods(t_str &value)
+{
+	char	*token;
+
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	if (token == NULL)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of allow_methods is empty.");
+	while (token != NULL)
+	{
+		if (std::strncmp(token, "GET", std::strlen(token)) != 0 && \
+			std::strncmp(token, "POST", std::strlen(token)) != 0 && \
+			std::strncmp(token, "DELETE", std::strlen(token)) != 0)
+			throw std::runtime_error("Error: The values of allow_methods must" \
+									 " be one of these 'GET' 'POST' 'DELETE'.");
+		this->_index.push_back(token);
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Location::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("root") == 0)
@@ -317,6 +349,8 @@ void	Location::setFildes(const t_str &name, t_str &value)
 		this->setErrorPage(value);
 	else if (name.compare("client_max_body_size") == 0)
 		this->setClientMaxBodySize(value);
+	else if (name.compare("allow_methods") == 0)
+		this->setAllowedMethods(value);
 }
 
 /*=====================================*/

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 11:13:47 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 12:18:19 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ Client::Client()
 	this->_isHeader = 0;
 	this->_lastHeader = "";
 	this->_isLocation = false;
+	this->_supportedMethods.push_back("GET");
+	this->_supportedMethods.push_back("POST");
+	this->_supportedMethods.push_back("DELETE");
 }
 
 Client::Client(std::vector<Server> &serverSet, int serverNumber)
@@ -42,6 +45,9 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_serverSet = serverSet;
 	this->_server = serverSet[serverNumber];
 	this->_isLocation = false;
+	this->_supportedMethods.push_back("GET");
+	this->_supportedMethods.push_back("POST");
+	this->_supportedMethods.push_back("DELETE");
 }
 
 Client::Client(const Client &other)
@@ -59,6 +65,7 @@ Client::Client(const Client &other)
 	this->_serverSet = other._serverSet;
 	this->_server= other._server;
 	this->_isLocation = other._isLocation;
+	this->_supportedMethods = other._supportedMethods;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -78,6 +85,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_serverSet = rhs._serverSet;
 		this->_server= rhs._server;
 		this->_isLocation = rhs._isLocation;
+		this->_supportedMethods = rhs._supportedMethods;
 	}
 	return (*this);
 }
@@ -276,6 +284,9 @@ int	Client::receiveInfo()
 	std::map<std::string, std::string>::iterator	host;
 	std::string::size_type							pos;
 
+	if (std::find(_supportedMethods.begin(), _supportedMethods.end(), \
+			_header.find("method")->second) == _supportedMethods.end())
+		return (getError(501));
 	host = this->_header.find("host");
 	if (host == this->_header.end())
 		return (getError(400));
@@ -304,6 +315,8 @@ int	Client::receiveInfo()
 				if (_file[pos] == '/' && _file[_file.length() - 1] != '/')
 					_file += "/";
 				this->findLocation();
+				if (this->isAllowedMethods() == false)
+					return (getError(405));
 				if (this->findFile(_file, pos) == false)
 					return (getError(404));
 			}
@@ -450,6 +463,40 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 	return (false);
 }
 
+bool	Client::isAllowedMethods()
+{
+	std::vector<t_str>::const_iterator	it_begin;
+	std::vector<t_str>::const_iterator	it_end;
+	std::vector<t_str>::const_iterator	it_begin_tmp;
+
+	if (this->_isLocation == true)
+	{
+		it_begin = this->_location.second.getAllowedMethods().begin();
+		it_end = this->_location.second.getAllowedMethods().end();
+	}
+	else
+	{
+		it_begin = this->_server.getAllowedMethods().begin();
+		it_end = this->_server.getAllowedMethods().end();
+	}
+	it_begin_tmp = it_begin;
+	while (it_begin != it_end)
+	{
+		if (*it_begin == this->_header["method"])
+			return (true);
+		++it_begin;
+	}
+	it_begin = it_begin_tmp;
+	this->_errorAllowed = "Allow: ";
+	while (it_begin != it_end)
+	{
+		this->_errorAllowed += (*it_begin + ", ");
+		++it_begin;
+	}
+	this->_errorAllowed = _errorAllowed.substr(0, _errorAllowed.length() - 2);
+	return (false);
+}
+
 void	Client::parsingBody()
 {
 	if (this->_isRecvFinish == false)
@@ -495,8 +542,14 @@ int	Client::getError(int num)
 		case 404:
 			getErrorMsg(404, "404", "Not Found");
 			break ;
+		case 405:
+			getErrorMsg(405, "405", "Method Not Allowed");
+			break ;
 		case 411:
 			getErrorMsg(411, "411", "Length Required");
+			break ;
+		case 501:
+			getErrorMsg(501, "501", "Not Implemented");
 			break ;
 		default:
 			return (0);
@@ -563,6 +616,8 @@ void	Client::getErrorMsg(int errNum, const t_str &num, const t_str &msg)
 	response += "HTTP/1.1 " + num + " " + msg + "\r\n";
 	response += "Content-Type : text/html;\r\n";
 	response += "Content-Length : " + ss.str() + "\r\n";
+	if (errNum == 405)
+		response += this->_errorAllowed + "\r\n";
 	response += "Server : webserv\r\n";
 	response += "\r\n";
 	response += response_body;

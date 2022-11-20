@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/18 12:38:04 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 12:47:07 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ Server::Server(t_str &body)
 	_directiveList.push_back("autoindex");
 	_directiveList.push_back("error_page");
 	_directiveList.push_back("client_max_body_size");
+	_directiveList.push_back("allow_methods");
 	_directiveList.push_back("location");
 	this->_autoindex = false;
 	this->_clientMaxBodySize = 0;
@@ -51,6 +52,7 @@ Server::Server(const Server &other)
 	this->_autoindex = other._autoindex;
 	this->_errorPage = other._errorPage;
 	this->_location = other._location;
+	this->_allowedMethods = other._allowedMethods;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -66,6 +68,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_autoindex = rhs._autoindex;
 		this->_errorPage = rhs._errorPage;
 		this->_clientMaxBodySize = rhs._clientMaxBodySize;
+		this->_allowedMethods = rhs._allowedMethods;
 	}
 	return (*this);
 }
@@ -116,6 +119,11 @@ const std::map<int, std::string>	&Server::getErrorPage() const
 long int	Server::getClientMaxBodySize() const
 {
 	return (this->_clientMaxBodySize);
+}
+
+const std::vector<std::string>	&Server::getAllowedMethods() const
+{
+	return (this->_allowedMethods);
 }
 
 /*=====================================*/
@@ -313,6 +321,26 @@ void	Server::setClientMaxBodySize(t_str &value)
 	this->_clientMaxBodySize = coefficient * std::atol(value.c_str());
 }
 
+void	Server::setAllowedMethods(t_str &value)
+{
+	char	*token;
+
+	token = std::strtok(&value[0], " \t\v\r\n\f");
+	if (token == NULL)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of allow_methods is empty.");
+	while (token != NULL)
+	{
+		if (std::strncmp(token, "GET", std::strlen(token)) != 0 && \
+			std::strncmp(token, "POST", std::strlen(token)) != 0 && \
+			std::strncmp(token, "DELETE", std::strlen(token)) != 0)
+			throw std::runtime_error("Error: The values of allow_methods must" \
+									 " be one of these 'GET' 'POST' 'DELETE'.");
+		this->_index.push_back(token);
+		token = std::strtok(NULL, " \t\v\r\n\f");
+	}
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -331,6 +359,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->setErrorPage(value);
 	else if (name.compare("client_max_body_size") == 0)
 		this->setClientMaxBodySize(value);
+	else if (name.compare("allow_methods") == 0)
+		this->setAllowedMethods(value);
 }
 
 void	Server::setDefaults()
@@ -354,6 +384,12 @@ void	Server::setDefaults()
 		if (access(value.c_str(), F_OK) != 0)
 			throw std::runtime_error("Error: root dir does not found.");
 		this->_root = value;
+	}
+	if (this->_allowedMethods.size() == 0)
+	{
+		this->_allowedMethods.push_back("GET");
+		this->_allowedMethods.push_back("POST");
+		this->_allowedMethods.push_back("DELETE");
 	}
 }
 
@@ -550,5 +586,6 @@ void	Server::parsingBody(t_str &body)
 							this->_index, \
 							this->_autoindex, \
 							this->_clientMaxBodySize, \
+							this->_allowedMethods, \
 							it->first);
 }

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 11:12:09 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 12:07:44 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,12 @@ class	Client
 		int						parsingRequestLine(std::string line);
 		void					parsingHeader(std::string line);
 		int						receiveInfo();
-		void					readBody();
 		int						findServer();
 		void					findLocation();
 		bool					findFile(t_str &full_path, t_str::size_type pos);
+		bool					isAllowedMethods();
 		void					parsingBody();
+		void					readBody();
 		void					prepareAnswer();
 		bool					readWhole(const std::string &full_path, \
 											std::string &readFile) const;
@@ -81,6 +82,8 @@ class	Client
 		std::string					_port;
 		std::string					_host;
 		std::string					_file;
+		std::vector<t_str>			_supportedMethods;
+		std::string					_errorAllowed;
 };
 
 #endif
