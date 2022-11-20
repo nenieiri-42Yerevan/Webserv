@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 12:47:20 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 13:59:09 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,7 @@ void	Location::setAllowedMethods(t_str &value)
 			std::strncmp(token, "DELETE", std::strlen(token)) != 0)
 			throw std::runtime_error("Error: The values of allow_methods must" \
 									 " be one of these 'GET' 'POST' 'DELETE'.");
-		this->_index.push_back(token);
+		this->_allowedMethods.push_back(token);
 		token = std::strtok(NULL, " \t\v\r\n\f");
 	}
 }
