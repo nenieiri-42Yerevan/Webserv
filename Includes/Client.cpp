@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/19 11:57:25 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 11:13:47 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,8 @@ void	Client::parsing()
 		if (pos == std::string::npos)
 			return ;
 		++_isHeader;
+		if (this->receiveInfo() == 0)
+			this->_isRecvFinish = true;
 		parsingBody();
 	}
 	else
@@ -223,7 +225,7 @@ void	Client::parsingHeader(std::string line)
 	std::string				header_name;
 	std::string				header_value;
 
-	begin = line.find_first_not_of(" \t\v\r\n\f");
+	begin = line.find_first_not_of(" \t");
 	if (begin != 0)
 	{
 		end = line.find_last_not_of(" \t\v\r\n\f", line.length() - 1);
@@ -269,23 +271,14 @@ void	Client::parsingHeader(std::string line)
 	}
 }
 
-void	Client::parsingBody()
-{
-	this->_body += this->_request;
-	this->_request = "";
-	this->_isRecvFinish = true;
-	this->prepareAnswer();
-}
-
-void	Client::prepareAnswer()
+int	Client::receiveInfo()
 {
 	std::map<std::string, std::string>::iterator	host;
 	std::string::size_type							pos;
-	std::string										full_path;
 
 	host = this->_header.find("host");
 	if (host == this->_header.end())
-		getError(400);
+		return (getError(400));
 	else
 	{
 		pos = host->second.find(":");
@@ -298,26 +291,25 @@ void	Client::prepareAnswer()
 			host->second = host->second.substr(0, pos - 1);
 		}
 		this->_host = host->second;
-		if (this->findServer() != 0)
+		if (this->findServer() == 0)
+			return (0);
+		else
 		{
-			full_path = this->_header.find("uri")->second;
-			if (full_path[0] != '/')
-				getError(400);
+			_file = this->_header.find("uri")->second;
+			if (_file[0] != '/')
+				return (getError(400));
 			else
 			{
-				pos = full_path.find_last_of("/.");
-				if (full_path[pos] == '/' && full_path[full_path.length() - 1] != '/')
-					full_path += "/";
-				this->findLocation(full_path);
-				if (this->findFile(full_path, pos) == false)
-					getError(404);
-				else
-				{
-					/* code */
-				}
+				pos = _file.find_last_of("/.");
+				if (_file[pos] == '/' && _file[_file.length() - 1] != '/')
+					_file += "/";
+				this->findLocation();
+				if (this->findFile(_file, pos) == false)
+					return (getError(404));
 			}
 		}
 	}
+	return (1);
 }
 
 int	Client::findServer()
@@ -354,7 +346,7 @@ int	Client::findServer()
 	return (getError(400));
 }
 
-void	Client::findLocation(std::string &full_path)
+void	Client::findLocation()
 {
 	std::map<t_str, Location>::const_iterator	it_begin;
 	std::map<t_str, Location>::const_iterator	it_end;
@@ -377,7 +369,7 @@ void	Client::findLocation(std::string &full_path)
 	while (it_begin != it_end)
 	{
 		if (std::equal(it_begin->first.begin(), it_begin->first.end(), \
-													full_path.begin()) == 1)
+													_file.begin()) == 1)
 		{
 			if (tmp.first.length() < it_begin->first.length())
 				tmp = *it_begin;
@@ -388,7 +380,7 @@ void	Client::findLocation(std::string &full_path)
 	{
 		this->_location = tmp;
 		this->_isLocation = true;
-		findLocation(full_path);
+		findLocation();
 	}
 }
 
@@ -458,20 +450,24 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 	return (false);
 }
 
-int	Client::getError(int num)
+void	Client::parsingBody()
 {
-	switch (num)
+	if (this->_isRecvFinish == false)
 	{
-		case 400:
-			getErrorMsg(400, "400", "Bad Request");
-			break ;
-		case 404:
-			getErrorMsg(404, "404", "Not Found");
-			break ;
-		default:
-			return (0);
+		this->_body += this->_request;
+		this->_request = "";
+		this->readBody();
 	}
-	return (0);
+	if (this->_isRecvFinish == true)
+		this->prepareAnswer();
+}
+
+void	Client::readBody()
+{
+}
+
+void	Client::prepareAnswer()
+{
 }
 
 bool	Client::readWhole(const std::string &full_path, \
@@ -487,6 +483,25 @@ bool	Client::readWhole(const std::string &full_path, \
 	readFile = ss.str();
 	openFile.close();
 	return (true);
+}
+
+int	Client::getError(int num)
+{
+	switch (num)
+	{
+		case 400:
+			getErrorMsg(400, "400", "Bad Request");
+			break ;
+		case 404:
+			getErrorMsg(404, "404", "Not Found");
+			break ;
+		case 411:
+			getErrorMsg(411, "411", "Length Required");
+			break ;
+		default:
+			return (0);
+	}
+	return (0);
 }
 
 bool	Client::responseErrorPage(int errNum, std::string &response_body) const

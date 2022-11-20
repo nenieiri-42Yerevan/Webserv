@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/17 18:34:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/20 11:12:09 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,20 @@ class	Client
 		void					parsing();
 		int						parsingRequestLine(std::string line);
 		void					parsingHeader(std::string line);
+		int						receiveInfo();
+		void					readBody();
+		int						findServer();
+		void					findLocation();
+		bool					findFile(t_str &full_path, t_str::size_type pos);
 		void					parsingBody();
 		void					prepareAnswer();
-		int						findServer();
-		void					findLocation(std::string &full_path);
-		bool					findFile(t_str &full_path, t_str::size_type pos);
+		bool					readWhole(const std::string &full_path, \
+											std::string &readFile) const;
 		int						getError(int num);
 		void					getErrorMsg(int errNum, const t_str &num, \
 											const t_str &msg);
 		bool					responseErrorPage(int errNum, \
 											std::string &response_body) const;
-		bool					readWhole(const std::string &full_path, \
-											std::string &readFile) const;
 	private:
 		std::string					_request;
 		std::string					_response;
@@ -78,6 +80,7 @@ class	Client
 		bool						_isLocation;
 		std::string					_port;
 		std::string					_host;
+		std::string					_file;
 };
 
 #endif
