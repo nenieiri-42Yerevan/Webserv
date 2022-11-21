@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 13:59:16 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 13:00:54 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,6 +319,7 @@ int	Client::receiveInfo()
 					return (getError(405));
 				if (this->findFile(_file, pos) == false)
 					return (getError(404));
+				this->findLength();
 			}
 		}
 	}
@@ -463,6 +464,29 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 	return (false);
 }
 
+void	Client::findLength()
+{
+	std::map<t_str, t_str>::iterator	it;
+
+	it = this->_header.find("Transfer-Encoding");
+	if (it != this->_header.end())
+	{
+		for (size_t	i = 0; i < it->second.length(); ++i)
+			it->second[i] = tolower(it->second[i]);
+		if (it->second == "chunked")
+			this->_bodyType = "chunked";
+	}
+	else
+	{
+		it = this->_header.find("Content-Length");
+		if (it != this->_header.end())
+		{
+			this->_bodyType = "length";
+			this->_contentLength = std::strtoul(it->second.c_str(), NULL, 0);
+		}
+	}
+}
+
 bool	Client::isAllowedMethods()
 {
 	std::vector<t_str>::const_iterator	it_begin;
@@ -500,21 +524,73 @@ bool	Client::isAllowedMethods()
 void	Client::parsingBody()
 {
 	if (this->_isRecvFinish == false)
-	{
-		this->_body += this->_request;
-		this->_request = "";
 		this->readBody();
-	}
 	if (this->_isRecvFinish == true)
 		this->prepareAnswer();
 }
 
 void	Client::readBody()
 {
+	if (_bodyType == "chunked")
+	{
+	}
+	else if (_bodyType == "length")
+	{
+		if (this->_request.length() >= this->_contentLength)
+		{
+			this->_contentLength = 0;
+			this->_isRecvFinish = true;
+		}
+		else
+			this->_contentLength -= this->_request.length();
+		this->_body += this->_request;
+		this->_request = "";
+	}
+	else
+	{
+		if (this->_request != "")
+			getError(411);
+		this->_isRecvFinish = true;
+	}
 }
 
 void	Client::prepareAnswer()
 {
+	std::string				response;
+	std::string				type;
+	std::string::size_type	pos;
+	std::stringstream		ss;
+
+/*	if (this->_body.length() > _contentLength)
+		getError(400);
+	else
+	{
+	}*/
+	if (this->_response == "")
+	{
+		if (this->_isCGI == true)
+		{
+		}
+		else
+		{
+			pos = _file.find_last_of(".");
+			this->readWhole(_file, _response);
+			response += "HTTP/1.1 200 OK\r\n";
+			if (pos == std::string::npos)
+				response += "Content-Type : text/plain;\r\n";
+			else
+			{
+				++pos;
+				type = _file.substr(pos, _file.length() - pos);
+				response += "Content-Type : text/" + type + ";\r\n";
+			}
+			ss << _response.length();
+			response += "Content-Length : " + ss.str() + "\r\n";
+			response += "Server : webserv\r\n";
+			response += "\r\n";
+			_response = response + _response;
+		}
+	}
 }
 
 bool	Client::readWhole(const std::string &full_path, \
