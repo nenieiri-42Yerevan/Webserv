@@ -10,6 +10,7 @@ class Cgi
     private:
         std::map<std::string, std::string> env;
         std::map<std::string, std::string> header;
+        Client c;
     public:
         Cgi();
         Cgi(Client &other);
@@ -17,6 +18,7 @@ class Cgi
         void cgi_run();
         Cgi(const Cgi &other);
         Cgi &operator=(Cgi const &other);
+        void tofile(std::string path);
         virtual ~Cgi();
 
 };

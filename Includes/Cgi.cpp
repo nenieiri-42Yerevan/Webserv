@@ -5,22 +5,16 @@
 Cgi::Cgi(Client  &other)
 {
     this->header = other.getHeader();
-    std::map<std::string, std::string>::iterator it = this->header.begin();
-    while (it != this->header.end())
-    {
-        std::cout << it->first << std::endl;
-        it++;
-    }
+    this->c = other;
 }
 
 Cgi::Cgi()
 {
-
 }
 
 void Cgi::initenv()
 {
-    env["AUTH_TYPE"] = "";
+    env["AUTH_TYPE"] = this->header["method"];
     env["CONTENT_LENGTH"] = "";
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["CONTENT_TYPE"] = "text/plain";
@@ -38,6 +32,15 @@ void Cgi::initenv()
 Cgi::Cgi(const Cgi &other)
 {
     *this = other;
+}
+
+void Cgi::tofile(std::string path)
+{
+    std::stringstream ss;
+    std::ifstream ifs(path, std::ifstream::in);
+
+    ss << ifs.rdbuf();
+    this->c.setResponse(ss.str());
 }
 
 Cgi::~Cgi(){}
@@ -89,5 +92,6 @@ void Cgi::cgi_run()
     waitpid(pid, &status, 0);
     dup2(tmpfd, 1);
     close(fd);
+    tofile("temp");
     close(tmpfd);
 }
