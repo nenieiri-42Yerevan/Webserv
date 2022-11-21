@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 12:32:36 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:07:55 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,13 @@ class	Location
 		const std::map<int, t_str>		&getErrorPage() const;
 		long int						getClientMaxBodySize() const;
 		const std::vector<t_str>		&getAllowedMethods() const;
+		const std::map<t_str, t_str>	&getCgi() const;
 		void							inherit(t_str root, \
 											std::vector<t_str> index, \
 											bool autoindex, \
 											unsigned long int clientMaxBodySize, \
 											std::vector<t_str> allowMethods, \
+											std::map<t_str, t_str> cgi, \
 											t_str path);
 	private:
 		void							setRoot(t_str &value);
@@ -57,6 +59,7 @@ class	Location
 		void							setErrorPage(t_str &value);
 		void							setClientMaxBodySize(t_str &value);
 		void							setAllowedMethods(t_str &value);
+		void							setCgi(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 	private:
 		void							parsingLocation(t_str &body, \
@@ -73,6 +76,7 @@ class	Location
 		std::map<int, t_str>			_errorPage;
 		unsigned long int				_clientMaxBodySize;
 		std::vector<t_str>				_allowedMethods;
+		std::map<t_str, t_str>			_cgi;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 13:59:03 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:27:37 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ Server::Server(t_str &body)
 	_directiveList.push_back("client_max_body_size");
 	_directiveList.push_back("allow_methods");
 	_directiveList.push_back("location");
+	_directiveList.push_back("cgi");
 	this->_autoindex = false;
 	this->_clientMaxBodySize = 0;
 	parsingBody(tmp);
@@ -124,6 +125,11 @@ long int	Server::getClientMaxBodySize() const
 const std::vector<std::string>	&Server::getAllowedMethods() const
 {
 	return (this->_allowedMethods);
+}
+
+const std::map<std::string, std::string>	&Server::getCgi() const
+{
+	return (this->_cgi);
 }
 
 /*=====================================*/
@@ -341,6 +347,34 @@ void	Server::setAllowedMethods(t_str &value)
 	}
 }
 
+void	Server::setCgi(t_str &value)
+{
+	t_str::size_type	pos;
+	t_str				uri;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of cgi is empty.");
+	value = value.substr(0, ++pos);
+	pos = value.find_last_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive value of "
+								 "cgi must contain a cgi extension"
+								 "and after that the cgi uri.");
+	++pos;
+	uri = value.substr(pos, value.length() - pos);
+	value = value.substr(0, pos - 1);
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	value = value.substr(0, ++pos);
+	if (value.find(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of cgi is not valid.");
+	if (access(uri.c_str(), F_OK) != 0)
+		throw std::runtime_error("Error: cgi file does not found.");
+	this->_cgi.insert(std::make_pair(value, uri));
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -361,6 +395,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->setClientMaxBodySize(value);
 	else if (name.compare("allow_methods") == 0)
 		this->setAllowedMethods(value);
+	else if (name.compare("cgi") == 0)
+		this->setCgi(value);
 }
 
 void	Server::setDefaults()
@@ -587,5 +623,6 @@ void	Server::parsingBody(t_str &body)
 							this->_autoindex, \
 							this->_clientMaxBodySize, \
 							this->_allowedMethods, \
+							this->_cgi, \
 							it->first);
 }

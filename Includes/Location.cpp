@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 13:59:09 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:27:19 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Location::Location(t_str &body)
 	_directiveList.push_back("client_max_body_size");
 	_directiveList.push_back("allow_methods");
 	_directiveList.push_back("location");
+	_directiveList.push_back("cgi");
 	this->_autoindex = false;
 	this->_isAutoindexed = false;
 	this->_clientMaxBodySize = 0;
@@ -106,14 +107,21 @@ const std::vector<std::string>	&Location::getAllowedMethods() const
 	return (this->_allowedMethods);
 }
 
+const std::map<std::string, std::string>	&Location::getCgi() const
+{
+	return (this->_cgi);
+}
+
 void	Location::inherit(t_str root, \
 							std::vector<t_str> index, \
 							bool autoindex, \
 							unsigned long int clientMaxBodySize, \
 							std::vector<t_str> allowMethods, \
+							std::map<t_str, t_str> cgi, \
 							t_str path)
 {
 	std::map<t_str, Location>::iterator	it;
+	std::map<t_str, t_str>::iterator	it_cgi;
 	std::string							full_path;
 	std::string							error_msg;
 
@@ -127,6 +135,11 @@ void	Location::inherit(t_str root, \
 		this->_clientMaxBodySize = clientMaxBodySize;
 	if (this->_allowedMethods.size() == 0)
 		this->_allowedMethods = allowMethods;
+	for (it_cgi = cgi.begin(); it_cgi != cgi.end(); ++it_cgi)
+	{
+		if (this->_cgi.find(it_cgi->first) != this->_cgi.end())
+			this->_cgi[it_cgi->first] = it_cgi->second;
+	}
 
 	if (path[path.length() - 1] != '/')
 		full_path = path + "/";
@@ -148,6 +161,7 @@ void	Location::inherit(t_str root, \
 							this->_autoindex, \
 							this->_clientMaxBodySize, \
 							this->_allowedMethods, \
+							this->_cgi, \
 							it->first);
 	}
 }
@@ -335,6 +349,34 @@ void	Location::setAllowedMethods(t_str &value)
 	}
 }
 
+void	Location::setCgi(t_str &value)
+{
+	t_str::size_type	pos;
+	t_str				uri;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of cgi is empty.");
+	value = value.substr(0, ++pos);
+	pos = value.find_last_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive value of "
+								 "cgi must contain a cgi extension"
+								 "and after that the cgi uri.");
+	++pos;
+	uri = value.substr(pos, value.length() - pos);
+	value = value.substr(0, pos - 1);
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	value = value.substr(0, ++pos);
+	if (value.find(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of cgi is not valid.");
+	if (access(uri.c_str(), F_OK) != 0)
+		throw std::runtime_error("Error: cgi file does not found.");
+	this->_cgi.insert(std::make_pair(value, uri));
+}
+
 void	Location::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("root") == 0)
@@ -351,6 +393,8 @@ void	Location::setFildes(const t_str &name, t_str &value)
 		this->setClientMaxBodySize(value);
 	else if (name.compare("allow_methods") == 0)
 		this->setAllowedMethods(value);
+	else if (name.compare("cgi") == 0)
+		this->setCgi(value);
 }
 
 /*=====================================*/

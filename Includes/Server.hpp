@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/20 12:32:36 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 13:55:22 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class	Server
 		const std::map<int, t_str>		&getErrorPage() const;
 		long int						getClientMaxBodySize() const;
 		const std::vector<t_str>		&getAllowedMethods() const;
+		const std::map<t_str, t_str>	&getCgi() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);
@@ -57,6 +58,7 @@ class	Server
 		void							setErrorPage(t_str &value);
 		void							setClientMaxBodySize(t_str &value);
 		void							setAllowedMethods(t_str &value);
+		void							setCgi(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 		void							setDefaults();
 	private:
@@ -78,6 +80,7 @@ class	Server
 		std::map<int, t_str>			_errorPage;
 		unsigned long int				_clientMaxBodySize;
 		std::vector<t_str>				_allowedMethods;
+		std::map<t_str, t_str>			_cgi;
 };
 
 #endif
