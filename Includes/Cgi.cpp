@@ -8,7 +8,7 @@ Cgi::Cgi(Client  &other)
     std::map<std::string, std::string>::iterator it;
     while (it != this->header.end())
     {
-        std::cout << it->first << "  " << it->second << std::endl;
+        std::cout << it->first << std::endl;
         it++;
     }
 }

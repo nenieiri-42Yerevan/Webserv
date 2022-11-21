@@ -522,7 +522,6 @@ void	Client::findCgi()
 	
 	pos = this->_file.find_last_of("/");
 	pos = this->_file.find_first_of(".", pos);
-	std::cout << _file << std::endl;
 	if (pos != std::string::npos)
 	{
 		if (this->_isLocation == true)
@@ -534,11 +533,11 @@ void	Client::findCgi()
 		{
 			it_begin = this->_server.getCgi().begin();
 			it_end = this->_server.getCgi().end();
-		}
+		} 
 		while (it_begin != it_end)
 		{
-			if (it_begin->first.compare(pos, it_begin->first.length(), \
-										this->_file) == 0)
+			if (this->_file.compare(++pos, strlen(it_begin->first.c_str()), \
+										it_begin->first) == 0)
 			{
 				this->_isCGI = true;
 				return ;
@@ -631,7 +630,6 @@ void	Client::prepareAnswer()
 		{
 			if (this->_isCGI == true)
 			{
-				std::cout << "lll" << std::endl; 
 				Cgi	cgi(*this);
 				cgi.cgi_run();
 			}
