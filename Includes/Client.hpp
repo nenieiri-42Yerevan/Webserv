@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 15:01:10 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 16:14:51 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,18 @@
 # include "Server.hpp"
 # include "Location.hpp"
 
-class Cgi;
+class	Cgi;
 
 class	Client
 {
 	private:
 		typedef std::string		t_str;
 	public:
+		Client();
 		Client(std::vector<Server> &serverSet, int serverNumber);
 		Client(const Client &other);
 		Client	&operator=(const Client &rhs);
 		~Client();
-	public:
-		Client();
 
 	public:
 		void					setRequest(const std::string &request);

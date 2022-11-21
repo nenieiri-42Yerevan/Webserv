@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 15:38:29 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 16:15:45 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -614,7 +614,10 @@ void	Client::prepareAnswer()
 		if (this->_response == "")
 		{
 			if (this->_isCGI == true)
-				Cgi(*this);
+			{
+				Cgi	cgi(*this);
+				cgi.cgi_run();
+			}
 			else
 			{
 				pos = _file.find_last_of(".");
