@@ -2,9 +2,15 @@
 #include <fcntl.h>
 #include "Client.hpp"
 
-Cgi::Cgi(Client const &other)
+Cgi::Cgi(Client  &other)
 {
-    this->c = other;
+    this->header = other.getHeader();
+    std::map<std::string, std::string>::iterator it;
+    while (it != this->header.end())
+    {
+        std::cout << it->first << "  " << it->second << std::endl;
+        it++;
+    }
 }
 
 Cgi::Cgi()

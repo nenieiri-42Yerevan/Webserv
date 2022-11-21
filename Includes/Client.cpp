@@ -154,6 +154,11 @@ const std::string	Client::getResponse(size_t buff_size)
 	return (tmp);
 }
 
+const std::map<std::string, std::string>		Client::getHeader()
+{
+	return (this->_header);
+}
+
 const std::string	&Client::getFile() const
 {
 	return (this->_file);
@@ -514,9 +519,10 @@ void	Client::findCgi()
 	std::map<t_str, t_str>::const_iterator	it_begin;
 	std::map<t_str, t_str>::const_iterator	it_end;
 	std::string::size_type					pos;
-
+	
 	pos = this->_file.find_last_of("/");
 	pos = this->_file.find_first_of(".", pos);
+	std::cout << _file << std::endl;
 	if (pos != std::string::npos)
 	{
 		if (this->_isLocation == true)
@@ -625,6 +631,7 @@ void	Client::prepareAnswer()
 		{
 			if (this->_isCGI == true)
 			{
+				std::cout << "lll" << std::endl; 
 				Cgi	cgi(*this);
 				cgi.cgi_run();
 			}

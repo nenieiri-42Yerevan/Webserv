@@ -4,16 +4,15 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "Client.hpp"
-class Client;
 
 class Cgi
 {
     private:
         std::map<std::string, std::string> env;
-        Client c;
+        std::map<std::string, std::string> header;
     public:
         Cgi();
-        Cgi(const Client &other);
+        Cgi(Client &other);
         void initenv();
         void cgi_run();
         Cgi(const Cgi &other);

@@ -49,6 +49,7 @@ class	Client
 		const std::string		getResponse();
 		const std::string		getResponse(size_t	buff_size);
 		const std::string		&getFile() const;
+		const std::map<t_str, t_str>	getHeader();
 	private:
 		void					parsing();
 		int						parsingRequestLine(std::string line);
