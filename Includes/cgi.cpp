@@ -1,4 +1,11 @@
-#include "cgi.hpp"
+#include "Cgi.hpp"
+#include <fcntl.h>
+#include "Client.hpp"
+
+Cgi::Cgi(Client const &other)
+{
+    this->c = other;
+}
 
 Cgi::Cgi()
 {

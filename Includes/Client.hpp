@@ -27,7 +27,8 @@
 
 # include "Server.hpp"
 # include "Location.hpp"
-# include "Cgi.hpp"
+
+class Cgi;
 
 class	Client
 {
@@ -38,7 +39,7 @@ class	Client
 		Client(const Client &other);
 		Client	&operator=(const Client &rhs);
 		~Client();
-	private:
+	public:
 		Client();
 
 	public:
