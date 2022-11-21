@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 15:01:16 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 15:38:29 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -606,33 +606,33 @@ void	Client::prepareAnswer()
 	std::string::size_type	pos;
 	std::stringstream		ss;
 
-/*	if (this->_body.length() > _contentLength)
-		getError(400);
+	if (this->_body.length() > _contentLength)
+		getError(413);
 	else
 	{
-	}*/
-	if (this->_response == "")
-	{
-		if (this->_isCGI == true)
-			Cgi(*this);
-		else
+		if (this->_response == "")
 		{
-			pos = _file.find_last_of(".");
-			this->readWhole(_file, _response);
-			response += "HTTP/1.1 200 OK\r\n";
-			if (pos == std::string::npos)
-				response += "Content-Type : text/plain;\r\n";
+			if (this->_isCGI == true)
+				Cgi(*this);
 			else
 			{
-				++pos;
-				type = _file.substr(pos, _file.length() - pos);
-				response += "Content-Type : text/" + type + ";\r\n";
+				pos = _file.find_last_of(".");
+				this->readWhole(_file, _response);
+				response += "HTTP/1.1 200 OK\r\n";
+				if (pos == std::string::npos)
+					response += "Content-Type : text/plain;\r\n";
+				else
+				{
+					++pos;
+					type = _file.substr(pos, _file.length() - pos);
+					response += "Content-Type : text/" + type + ";\r\n";
+				}
+				ss << _response.length();
+				response += "Content-Length : " + ss.str() + "\r\n";
+				response += "Server : webserv\r\n";
+				response += "\r\n";
+				_response = response + _response;
 			}
-			ss << _response.length();
-			response += "Content-Length : " + ss.str() + "\r\n";
-			response += "Server : webserv\r\n";
-			response += "\r\n";
-			_response = response + _response;
 		}
 	}
 }
@@ -667,6 +667,9 @@ int	Client::getError(int num)
 			break ;
 		case 411:
 			getErrorMsg(411, "411", "Length Required");
+			break ;
+		case 413:
+			getErrorMsg(413, "413", "Request Entity Too Large");
 			break ;
 		case 501:
 			getErrorMsg(501, "501", "Not Implemented");
