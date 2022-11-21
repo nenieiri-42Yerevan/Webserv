@@ -10,7 +10,7 @@ class Cgi
     private:
         std::map<std::string, std::string> env;
         std::map<std::string, std::string> header;
-        Client c;
+        Client cont;
     public:
         Cgi();
         Cgi(Client &other);

@@ -83,6 +83,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_request = rhs._request;
 		this->_response = rhs._response;
 		this->_header = rhs._header;
+		this->_file = rhs._file;
 		this->_body = rhs._body;
 		this->_isRecvFinish = rhs._isRecvFinish;
 		this->_isSendFinish = rhs._isSendFinish;

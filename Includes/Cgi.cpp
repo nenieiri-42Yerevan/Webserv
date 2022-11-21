@@ -5,7 +5,7 @@
 Cgi::Cgi(Client  &other)
 {
     this->header = other.getHeader();
-    this->c = other;
+    this->cont = other;
 }
 
 Cgi::Cgi()
@@ -40,7 +40,7 @@ void Cgi::tofile(std::string path)
     std::ifstream ifs(path, std::ifstream::in);
 
     ss << ifs.rdbuf();
-    this->c.setResponse(ss.str());
+    this->cont.setResponse(ss.str());
 }
 
 Cgi::~Cgi(){}
@@ -60,7 +60,6 @@ void Cgi::cgi_run()
     char *args[3];
     char *envc[20];
     int i, status;
-    //char buf;
     int tmpfd;
 
     i = 0;
@@ -73,6 +72,7 @@ void Cgi::cgi_run()
         it++;
     }
     envc[i] = NULL;
+    std::cout << this->cont.getFile() << std::endl;
     int fd = open("temp", O_WRONLY | O_TRUNC | O_CREAT, S_IRWXU);
     pid = fork();
     if (pid == 0)
@@ -80,7 +80,7 @@ void Cgi::cgi_run()
         dup2(fd, 1);
         close(fd);
         args[0] = strdup("/usr/bin/php");
-        args[1] = strdup("./cgi/hello.php");
+        args[1] = strdup(this->cont.getFile().c_str());
         args[2] = NULL;
         if (execve(args[0], args, envc) == -1)
             perror("Error\n");
