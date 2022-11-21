@@ -5,7 +5,7 @@
 Cgi::Cgi(Client  &other)
 {
     this->header = other.getHeader();
-    std::map<std::string, std::string>::iterator it;
+    std::map<std::string, std::string>::iterator it = this->header.begin();
     while (it != this->header.end())
     {
         std::cout << it->first << std::endl;
