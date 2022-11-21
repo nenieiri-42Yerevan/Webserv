@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 14:44:40 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 16:21:48 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,6 +374,9 @@ void	Location::setCgi(t_str &value)
 	if (value.find(" \t\v\r\n\f") != std::string::npos)
 		throw std::runtime_error("Error: Config file: Directive "
 								 "value of cgi is not valid.");
+	if (value != "php")
+		throw std::runtime_error("Error: Config file: Directive "
+								 "value of cgi support only 'php'.");
 	if (access(uri.c_str(), F_OK) != 0)
 		throw std::runtime_error("Error: cgi file does not found.");
 	this->_cgi.insert(std::make_pair(value, uri));
