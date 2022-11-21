@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 13:00:54 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 15:01:16 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ Client::Client()
 	this->_isHeader = 0;
 	this->_lastHeader = "";
 	this->_isLocation = false;
+	this->_isCGI = false;
+	this->_contentLength = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -45,6 +47,8 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_serverSet = serverSet;
 	this->_server = serverSet[serverNumber];
 	this->_isLocation = false;
+	this->_isCGI = false;
+	this->_contentLength = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -66,6 +70,9 @@ Client::Client(const Client &other)
 	this->_server= other._server;
 	this->_isLocation = other._isLocation;
 	this->_supportedMethods = other._supportedMethods;
+	this->_isCGI = other._isCGI;
+	this->_contentLength = other._contentLength;
+	this->_bodyType = other._bodyType;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -86,6 +93,9 @@ Client	&Client::operator=(const Client &rhs)
 		this->_server= rhs._server;
 		this->_isLocation = rhs._isLocation;
 		this->_supportedMethods = rhs._supportedMethods;
+		this->_isCGI = rhs._isCGI;
+		this->_contentLength = rhs._contentLength;
+		this->_bodyType = rhs._bodyType;
 	}
 	return (*this);
 }
@@ -320,6 +330,7 @@ int	Client::receiveInfo()
 				if (this->findFile(_file, pos) == false)
 					return (getError(404));
 				this->findLength();
+				this->findCgi();
 			}
 		}
 	}
@@ -487,6 +498,40 @@ void	Client::findLength()
 	}
 }
 
+void	Client::findCgi()
+{
+	std::map<t_str, t_str>::const_iterator	it_begin;
+	std::map<t_str, t_str>::const_iterator	it_end;
+	std::string::size_type					pos;
+
+	pos = this->_file.find_last_of("/");
+	pos = this->_file.find_first_of(".", pos);
+	if (pos != std::string::npos)
+	{
+		if (this->_isLocation == true)
+		{
+			it_begin = this->_location.second.getCgi().begin();
+			it_end = this->_location.second.getCgi().end();
+		}
+		else
+		{
+			it_begin = this->_server.getCgi().begin();
+			it_end = this->_server.getCgi().end();
+		}
+		while (it_begin != it_end)
+		{
+			if (it_begin->first.compare(pos, it_begin->first.length(), \
+										this->_file) == 0)
+			{
+				this->_isCGI = true;
+				return ;
+			}
+			++it_begin;
+		}
+	}
+	this->_isCGI = false;
+}
+
 bool	Client::isAllowedMethods()
 {
 	std::vector<t_str>::const_iterator	it_begin;
@@ -569,8 +614,7 @@ void	Client::prepareAnswer()
 	if (this->_response == "")
 	{
 		if (this->_isCGI == true)
-		{
-		}
+			Cgi(*this);
 		else
 		{
 			pos = _file.find_last_of(".");

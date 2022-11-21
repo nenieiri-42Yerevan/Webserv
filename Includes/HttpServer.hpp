@@ -5,6 +5,7 @@
 # include <map>
 # include <string>
 # include "webserv.hpp"
+# include "Client.hpp"
 
 typedef struct s_serv
 {

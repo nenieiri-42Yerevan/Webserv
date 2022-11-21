@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 12:33:28 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 15:01:10 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 
 # include "Server.hpp"
 # include "Location.hpp"
+# include "Cgi.hpp"
 
 class	Client
 {
@@ -55,6 +56,7 @@ class	Client
 		void					findLocation();
 		bool					findFile(t_str &full_path, t_str::size_type pos);
 		void					findLength();
+		void					findCgi();
 		bool					isAllowedMethods();
 		void					parsingBody();
 		void					readBody();

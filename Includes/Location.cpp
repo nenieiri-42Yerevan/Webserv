@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 14:27:19 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:44:40 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ Location::Location(const Location &other)
 	this->_clientMaxBodySize = other._clientMaxBodySize;
 	this->_location = other._location;
 	this->_allowedMethods = other._allowedMethods;
+	this->_cgi = other._cgi;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -60,6 +61,7 @@ Location	&Location::operator=(const Location &rhs)
 		this->_clientMaxBodySize = rhs._clientMaxBodySize;
 		this->_location = rhs._location;
 		this->_allowedMethods = rhs._allowedMethods;
+		this->_cgi = rhs._cgi;
 	}
 	return (*this);
 }

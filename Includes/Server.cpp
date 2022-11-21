@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 14:27:37 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:44:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ Server::Server(const Server &other)
 	this->_errorPage = other._errorPage;
 	this->_location = other._location;
 	this->_allowedMethods = other._allowedMethods;
+	this->_cgi = other._cgi;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -70,6 +71,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_errorPage = rhs._errorPage;
 		this->_clientMaxBodySize = rhs._clientMaxBodySize;
 		this->_allowedMethods = rhs._allowedMethods;
+		this->_cgi = rhs._cgi;
 	}
 	return (*this);
 }
