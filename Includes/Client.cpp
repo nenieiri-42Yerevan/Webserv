@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 16:15:45 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 16:46:19 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,11 @@ void	Client::setRequest(const std::string &request)
 	parsing();
 }
 
+void	Client::setResponse(const std::string &response)
+{
+	this->_response = response;
+}
+
 bool	Client::getRecvStatus() const
 {
 	return (this->_isRecvFinish);
@@ -147,6 +152,11 @@ const std::string	Client::getResponse(size_t buff_size)
 	if (_response == "")
 		this->_isSendFinish = true;
 	return (tmp);
+}
+
+const std::string	&Client::getFile() const
+{
+	return (this->_file);
 }
 
 /*=====================================*/

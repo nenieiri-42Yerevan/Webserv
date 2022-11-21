@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 16:14:51 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/21 16:45:21 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,12 @@ class	Client
 
 	public:
 		void					setRequest(const std::string &request);
+		void					setResponse(const std::string &response);
 		bool					getRecvStatus() const;
 		bool					getSendStatus() const;
 		const std::string		getResponse();
 		const std::string		getResponse(size_t	buff_size);
+		const std::string		&getFile() const;
 	private:
 		void					parsing();
 		int						parsingRequestLine(std::string line);
