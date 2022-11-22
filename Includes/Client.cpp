@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/22 11:58:11 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/22 18:12:28 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -482,7 +482,16 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 		{
 			len = this->_location.first.length();
 			full_path = full_path.substr(len, full_path.length() - len);
-			full_path = this->_location.second.getRoot() + full_path;
+
+			if (_location.second.getRoot()[_location.second.getRoot().length() - 1] \
+					== '/' && full_path[0] == '/')
+				full_path = this->_location.second.getRoot() + \
+							full_path.substr(1, full_path.length() - 1);
+			else if (_location.second.getRoot()[_location.second.getRoot().length() - 1] \
+					!= '/' && full_path[0] != '/')
+				full_path = this->_location.second.getRoot() + "/" + full_path;
+			else
+				full_path = this->_location.second.getRoot() + full_path;
 		}
 		else
 		{
@@ -491,14 +500,13 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 						this->_server.getRoot().length() - 1);
 			else
 				root = this->_server.getRoot();
-			full_path = root + full_path;
+			if (full_path[0] != '/')
+				full_path = root + "/" + full_path;
+			else
+				full_path = root + full_path;
 		}
-		tmp = full_path;
-		if (access(tmp.c_str(), F_OK | R_OK) == 0)
-		{
-			full_path = tmp;
+		if (access(full_path.c_str(), F_OK | R_OK) == 0)
 			return (true);
-		}
 	}
 	return (false);
 }
