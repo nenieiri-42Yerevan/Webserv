@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 16:45:21 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/22 11:58:11 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class	Cgi;
 class	Client
 {
 	private:
-		typedef std::string		t_str;
+		typedef std::string				t_str;
 	public:
 		Client();
 		Client(std::vector<Server> &serverSet, int serverNumber);
@@ -42,58 +42,61 @@ class	Client
 		~Client();
 
 	public:
-		void					setRequest(const std::string &request);
-		void					setResponse(const std::string &response);
-		bool					getRecvStatus() const;
-		bool					getSendStatus() const;
-		const std::string		getResponse();
-		const std::string		getResponse(size_t	buff_size);
-		const std::string		&getFile() const;
-		const std::map<t_str, t_str>	getHeader();
+		void							setRequest(const std::string &request);
+		void							setResponse(const std::string &response);
+		bool							getRecvStatus() const;
+		bool							getSendStatus() const;
+		const std::string				getResponse();
+		const std::string				getResponse(size_t	buff_size);
+		const std::string				&getFile() const;
+		const std::map<t_str, t_str>	getHeader() const;
+		const std::pair<t_str, t_str>	getCgi() const;
 	private:
-		void					parsing();
-		int						parsingRequestLine(std::string line);
-		void					parsingHeader(std::string line);
-		int						receiveInfo();
-		int						findServer();
-		void					findLocation();
-		bool					findFile(t_str &full_path, t_str::size_type pos);
-		void					findLength();
-		void					findCgi();
-		bool					isAllowedMethods();
-		void					parsingBody();
-		void					readBody();
-		void					prepareAnswer();
-		bool					readWhole(const std::string &full_path, \
+		void							parsing();
+		int								parsingRequestLine(std::string line);
+		void							parsingHeader(std::string line);
+		int								receiveInfo();
+		int								findServer();
+		void							findLocation();
+		bool							findFile(t_str &full_path, \
+											t_str::size_type pos);
+		void							findLength();
+		void							findCgi();
+		bool							isAllowedMethods();
+		void							parsingBody();
+		void							readBody();
+		void							prepareAnswer();
+		bool							readWhole(const std::string &full_path, \
 											std::string &readFile) const;
-		int						getError(int num);
-		void					getErrorMsg(int errNum, const t_str &num, \
-											const t_str &msg);
-		bool					responseErrorPage(int errNum, \
+		int								getError(int num);
+		void							getErrorMsg(int errNum, \
+											const t_str &num, const t_str &msg);
+		bool							responseErrorPage(int errNum, \
 											std::string &response_body) const;
 	private:
-		std::string					_request;
-		std::string					_response;
-		std::map<t_str, t_str>		_header;
-		std::string					_body;
-		bool						_isRecvFinish;
-		bool						_isSendFinish;
-		std::string					_version;
-		int							_isStart;
-		int							_isHeader;
-		std::string					_lastHeader;
-		std::vector<Server>			_serverSet;
-		Server						_server;
-		std::pair<t_str, Location>	_location;
-		bool						_isLocation;
-		std::string					_port;
-		std::string					_host;
-		std::string					_file;
-		std::vector<t_str>			_supportedMethods;
-		std::string					_errorAllowed;
-		std::string					_bodyType;
-		unsigned long int			_contentLength;
-		bool						_isCGI;
+		std::string						_request;
+		std::string						_response;
+		std::map<t_str, t_str>			_header;
+		std::string						_body;
+		bool							_isRecvFinish;
+		bool							_isSendFinish;
+		std::string						_version;
+		int								_isStart;
+		int								_isHeader;
+		std::string						_lastHeader;
+		std::vector<Server>				_serverSet;
+		Server							_server;
+		std::pair<t_str, Location>		_location;
+		bool							_isLocation;
+		std::string						_port;
+		std::string						_host;
+		std::string						_file;
+		std::vector<t_str>				_supportedMethods;
+		std::string						_errorAllowed;
+		std::string						_bodyType;
+		unsigned long int				_contentLength;
+		bool							_isCgi;
+		std::pair<t_str, t_str>			_Cgi;
 };
 
 #endif

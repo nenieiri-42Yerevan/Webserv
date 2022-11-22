@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/22 11:42:52 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/22 11:58:11 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Client::Client()
 	this->_isHeader = 0;
 	this->_lastHeader = "";
 	this->_isLocation = false;
-	this->_isCGI = false;
+	this->_isCgi = false;
 	this->_contentLength = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
@@ -48,7 +48,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_serverSet = serverSet;
 	this->_server = serverSet[serverNumber];
 	this->_isLocation = false;
-	this->_isCGI = false;
+	this->_isCgi = false;
 	this->_contentLength = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
@@ -72,7 +72,7 @@ Client::Client(const Client &other)
 	this->_server= other._server;
 	this->_isLocation = other._isLocation;
 	this->_supportedMethods = other._supportedMethods;
-	this->_isCGI = other._isCGI;
+	this->_isCgi = other._isCgi;
 	this->_contentLength = other._contentLength;
 	this->_bodyType = other._bodyType;
 }
@@ -96,7 +96,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_server= rhs._server;
 		this->_isLocation = rhs._isLocation;
 		this->_supportedMethods = rhs._supportedMethods;
-		this->_isCGI = rhs._isCGI;
+		this->_isCgi = rhs._isCgi;
 		this->_contentLength = rhs._contentLength;
 		this->_bodyType = rhs._bodyType;
 	}
@@ -156,14 +156,19 @@ const std::string	Client::getResponse(size_t buff_size)
 	return (tmp);
 }
 
-const std::map<std::string, std::string>		Client::getHeader()
+const std::string	&Client::getFile() const
+{
+	return (this->_file);
+}
+
+const std::map<std::string, std::string>	Client::getHeader() const
 {
 	return (this->_header);
 }
 
-const std::string	&Client::getFile() const
+const std::pair<std::string, std::string>	Client::getCgi() const
 {
-	return (this->_file);
+	return (this->_Cgi);
 }
 
 /*=====================================*/
@@ -546,13 +551,14 @@ void	Client::findCgi()
 			if (this->_file.compare(++pos, strlen(it_begin->first.c_str()), \
 										it_begin->first) == 0)
 			{
-				this->_isCGI = true;
+				this->_isCgi = true;
+				this->_Cgi = *it_begin;
 				return ;
 			}
 			++it_begin;
 		}
 	}
-	this->_isCGI = false;
+	this->_isCgi = false;
 }
 
 bool	Client::isAllowedMethods()
@@ -635,7 +641,7 @@ void	Client::prepareAnswer()
 	{
 		if (this->_response == "")
 		{
-			if (this->_isCGI == true)
+			if (this->_isCgi == true)
 			{
 				Cgi	cgi(*this);
 				cgi.cgi_run();
