@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 16:46:19 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/22 11:42:52 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ Client::Client(const Client &other)
 	this->_request = other._request;
 	this->_response = other._response;
 	this->_header = other._header;
+	this->_file = other._file;
 	this->_body = other._body;
 	this->_isRecvFinish = other._isRecvFinish;
 	this->_isSendFinish = other._isSendFinish;
@@ -457,7 +458,12 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 		}
 		for (; it_begin != it_end; ++it_begin)
 		{
-			tmp = full_path + *it_begin;
+			if (full_path[full_path.length() - 1] == '/'  && (*it_begin)[0] == '/')
+				tmp = full_path + it_begin->substr(1, it_begin->length() - 1);
+			else if (full_path[full_path.length() - 1] != '/'  && (*it_begin)[0] != '/')
+				tmp = full_path + "/" + *it_begin;
+			else
+				tmp = full_path + *it_begin;
 			if (access(tmp.c_str(), F_OK | R_OK) == 0)
 			{
 				full_path = tmp;

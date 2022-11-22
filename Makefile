@@ -6,7 +6,7 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/11/20 09:58:53 by vismaily         ###   ########.fr        #
+#    Updated: 2022/11/22 10:42:41 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,7 @@ clean:
 			@$(RM) $(TMP)
 
 fclean:		clean
-			@$(RM) $(NAME)
+			@$(RM) $(NAME) temp
 
 re:			fclean all
 
