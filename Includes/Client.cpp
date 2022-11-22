@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/22 18:12:28 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/22 18:32:18 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,6 +439,7 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 	std::string							tmp;
 	std::string							root;
 	std::string::size_type				len;
+	std::string::size_type				pos_post;
 
 	if (full_path[pos] == '/')
 	{
@@ -469,6 +470,10 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 				tmp = full_path + "/" + *it_begin;
 			else
 				tmp = full_path + *it_begin;
+			pos_post = tmp.find_last_of("/");
+			pos_post = tmp.find_first_of("?", pos_post);
+			if (pos_post != std::string::npos)
+				tmp = tmp.substr(0, pos_post);
 			if (access(tmp.c_str(), F_OK | R_OK) == 0)
 			{
 				full_path = tmp;
@@ -505,6 +510,10 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 			else
 				full_path = root + full_path;
 		}
+		pos_post = full_path.find_last_of("/");
+		pos_post = full_path.find_first_of("?", pos_post);
+		if (pos_post != std::string::npos)
+			full_path = full_path.substr(0, pos_post);
 		if (access(full_path.c_str(), F_OK | R_OK) == 0)
 			return (true);
 	}
