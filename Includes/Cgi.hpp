@@ -20,6 +20,8 @@ class Cgi
         Cgi &operator=(Cgi const &other);
         void tofile(std::string path);
         virtual ~Cgi();
+        const std::string findscript(std::string uri);
+        std::string findquery(std::string uri);
 
 };
 
