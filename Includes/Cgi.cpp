@@ -52,7 +52,7 @@ void Cgi::initenv()
     env["PATH_TRANSLATED"] = "";
     env["REQUEST_METHOD"] = "GET";
     env["QUERY_STRING"] = findquery(this->header["uri"]);
-    env["REMOTE_ADDR"] = "";
+    env["REMOTE_ADDR"] = "127.0.0.1";
     env["SCRIPT_NAME"] = findscript(this->header["uri"]);
     env["SERVER_NAME"] = "127.0.0.1";
     env["SERVER_PORT"] = "8000";
