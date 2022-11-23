@@ -524,7 +524,7 @@ void	Client::findLength()
 {
 	std::map<t_str, t_str>::iterator	it;
 
-	it = this->_header.find("Transfer-Encoding");
+	it = this->_header.find("transfer-encoding");
 	if (it != this->_header.end())
 	{
 		for (size_t	i = 0; i < it->second.length(); ++i)
@@ -534,7 +534,7 @@ void	Client::findLength()
 	}
 	else
 	{
-		it = this->_header.find("Content-Length");
+		it = this->_header.find("content-length");
 		if (it != this->_header.end())
 		{
 			this->_bodyType = "length";
