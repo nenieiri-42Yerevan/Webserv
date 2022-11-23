@@ -9,7 +9,9 @@
 <body>
 <?php
 
-    echo "hello\n";
+    echo "arguments are:";
+    echo $_REQUEST["fname"];
+    echo "\n";
 
 ?> 
 </body>
