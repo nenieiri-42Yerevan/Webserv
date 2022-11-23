@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 16:21:06 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/23 16:15:59 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ const std::map<int, std::string>	&Server::getErrorPage() const
 	return (this->_errorPage);
 }
 
-long int	Server::getClientMaxBodySize() const
+unsigned long int	Server::getClientMaxBodySize() const
 {
 	return (this->_clientMaxBodySize);
 }

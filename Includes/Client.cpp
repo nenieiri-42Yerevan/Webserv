@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/22 18:32:18 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/23 16:16:36 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -651,8 +651,13 @@ void	Client::prepareAnswer()
 	std::string				type;
 	std::string::size_type	pos;
 	std::stringstream		ss;
+	unsigned long int		length;
 
-	if (this->_body.length() > _contentLength)
+	if (this->_isLocation == true)
+		length = this->_location.second.getClientMaxBodySize();
+	else
+		length = this->_server.getClientMaxBodySize();
+	if (length != 0 && this->_body.length() > length)
 		getError(413);
 	else
 	{

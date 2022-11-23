@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 14:07:55 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/23 16:13:07 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class	Location
 		const std::vector<t_str>		&getIndex() const;
 		bool							getAutoindex() const;
 		const std::map<int, t_str>		&getErrorPage() const;
-		long int						getClientMaxBodySize() const;
+		unsigned long int				getClientMaxBodySize() const;
 		const std::vector<t_str>		&getAllowedMethods() const;
 		const std::map<t_str, t_str>	&getCgi() const;
 		void							inherit(t_str root, \

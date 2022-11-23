@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/21 16:21:48 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/23 16:13:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Location::Location(const Location &other)
 	this->_errorPage = other._errorPage;
 	this->_clientMaxBodySize = other._clientMaxBodySize;
 	this->_location = other._location;
-	this->_allowedMethods = other._allowedMethods;
+this->_allowedMethods = other._allowedMethods;
 	this->_cgi = other._cgi;
 }
 
@@ -99,7 +99,7 @@ const std::map<int, std::string>	&Location::getErrorPage() const
 	return (this->_errorPage);
 }
 
-long int	Location::getClientMaxBodySize() const
+unsigned long int	Location::getClientMaxBodySize() const
 {
 	return (this->_clientMaxBodySize);
 }
