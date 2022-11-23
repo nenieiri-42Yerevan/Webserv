@@ -2,9 +2,9 @@
 #include <fcntl.h>
 #include "Client.hpp"
 
-Cgi::Cgi(Client  &other)
+Cgi::Cgi(Client  *other)
 {
-    this->header = other.getHeader();
+    this->header = other->getHeader();
     this->cont = other;
 }
 
@@ -17,7 +17,7 @@ void Cgi::initenv()
     env["AUTH_TYPE"] = this->header["method"];
     env["CONTENT_LENGTH"] = "";
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
-    env["CONTENT_TYPE"] = "text/plain";
+    env["CONTENT_TYPE"] = "text/html";
     env["PATH_INFO"] = "";
     env["PATH_TRANSLATED"] = "";
     env["REQUEST_METHOD"] = "GET";
@@ -38,9 +38,21 @@ void Cgi::tofile(std::string path)
 {
     std::stringstream ss;
     std::ifstream ifs(path, std::ifstream::in);
+    std::string response;
+    std::string str;
 
     ss << ifs.rdbuf();
-    this->cont.setResponse(ss.str());
+    str = ss.str();
+    ss.clear();
+    ss.str("");
+    ss << str.length();
+	response += "HTTP/1.1 " + (std::string)"200" + " " + "ok" + "\r\n";
+	response += "Content-Type : text/html;\r\n";
+	response += "Content-Length : " + ss.str() + "\r\n";
+	response += "Server : webserv\r\n";
+	response += "\r\n";
+	response += str;
+    this->cont->setResponse(response);
 }
 
 Cgi::~Cgi(){}
@@ -72,7 +84,6 @@ void Cgi::cgi_run()
         it++;
     }
     envc[i] = NULL;
-    std::cout << this->cont.getFile() << std::endl;
     int fd = open("temp", O_WRONLY | O_TRUNC | O_CREAT, S_IRWXU);
     pid = fork();
     if (pid == 0)
@@ -80,7 +91,7 @@ void Cgi::cgi_run()
         dup2(fd, 1);
         close(fd);
         args[0] = strdup("/usr/bin/php");
-        args[1] = strdup(this->cont.getFile().c_str());
+        args[1] = strdup(this->cont->getFile().c_str());
         args[2] = NULL;
         if (execve(args[0], args, envc) == -1)
             perror("Error\n");

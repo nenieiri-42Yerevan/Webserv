@@ -660,7 +660,7 @@ void	Client::prepareAnswer()
 		{
 			if (this->_isCgi == true)
 			{
-				Cgi	cgi(*this);
+				Cgi	cgi(this);
 				cgi.cgi_run();
 			}
 			else

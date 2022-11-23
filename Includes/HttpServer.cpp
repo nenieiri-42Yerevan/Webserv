@@ -111,7 +111,6 @@ int HttpServer::getrequest(int fd)
 	n = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	buffer[n] = '\0';
 	this->acceptfds.at(fd).setRequest(std::string(buffer));
-//    std::cout << buffer << std::endl;
     return (n);
 }
 
