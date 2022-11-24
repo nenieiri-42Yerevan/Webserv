@@ -41,21 +41,30 @@ std::string Cgi::findquery(std::string uri)
     return ("");
 }
 
+std::string getpathinfo(std::string uri)
+{
+    std::cout << uri << std::endl;
+    return ("");
+}
+
 void Cgi::initenv()
 {
-    env["AUTH_TYPE"] = this->header["method"];
+    //env["AUTH_TYPE"] = this->header["method"];
     if (this->header["content-length"] != "")
         env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
-    env["CONTENT_TYPE"] = "text/html";
-    env["PATH_INFO"] = "";
+     if (this->header["content-type"] != "")
+        env["CONTENT_TYPE"] = this->header["content-type"];
+    //env["SCRIPT_FILENAME"] = this->header[""];
+    env["PATH_INFO"] = getpathinfo(this->header["uri"]);
     env["PATH_TRANSLATED"] = "";
-    env["REQUEST_METHOD"] = "GET";
+    env["REQUEST_METHOD"] = this->header["method"];
     env["QUERY_STRING"] = findquery(this->header["uri"]);
     env["REMOTE_ADDR"] = "127.0.0.1";
     env["SCRIPT_NAME"] = findscript(this->header["uri"]);
-    env["SERVER_NAME"] = "127.0.0.1";
-    env["SERVER_PORT"] = "8000";
+    env["SCRIPT_FILENAME"] = "/Users/arastepa/Desktop/42_Webserv/www/html/cgi/hello.php";
+    env["SERVER_NAME"] = "webserv";
+    env["SERVER_PORT"] = this->cont->getServerPort();
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["SERVER_SOFTWARE"] = "Webserv";
 }

@@ -10,7 +10,9 @@
 <?php
 
     echo "arguments are:";
-    echo $_REQUEST["fname"];
+    echo var_dump($_GET);
+    echo "\n";
+    echo var_dump($_POST);
     echo "\n";
 
 ?> 
