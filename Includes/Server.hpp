@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 14:37:13 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:52:42 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class	Server
 		unsigned long int				getClientMaxBodySize() const;
 		const std::vector<t_str>		&getAllowedMethods() const;
 		const std::map<t_str, t_str>	&getCgi() const;
+		const std::string				&getUploadDir() const;
 	private:
 		void							setServerName(t_str &value);
 		void							setLocation(t_str &value);

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 14:47:47 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:53:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,11 @@ const std::vector<std::string>	&Location::getAllowedMethods() const
 const std::map<std::string, std::string>	&Location::getCgi() const
 {
 	return (this->_cgi);
+}
+
+const std::string	&Location::getUploadDir() const
+{
+	return (this->_uploadDir);
 }
 
 void	Location::inherit(t_str root, \

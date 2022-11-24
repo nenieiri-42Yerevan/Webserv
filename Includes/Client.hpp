@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/22 11:58:11 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 15:10:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class	Client
 		const std::string				&getFile() const;
 		const std::map<t_str, t_str>	getHeader() const;
 		const std::pair<t_str, t_str>	getCgi() const;
+		const std::string				&getUploadDir() const;
 	private:
 		void							parsing();
 		int								parsingRequestLine(std::string line);
@@ -97,6 +98,7 @@ class	Client
 		unsigned long int				_contentLength;
 		bool							_isCgi;
 		std::pair<t_str, t_str>			_Cgi;
+		std::string						_uploadDir;
 };
 
 #endif

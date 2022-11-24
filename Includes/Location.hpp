@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 14:37:13 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:53:11 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class	Location
 		unsigned long int				getClientMaxBodySize() const;
 		const std::vector<t_str>		&getAllowedMethods() const;
 		const std::map<t_str, t_str>	&getCgi() const;
+		const std::string				&getUploadDir() const;
 		void							inherit(t_str root, \
 											std::vector<t_str> index, \
 											bool autoindex, \

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/23 16:16:36 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 15:10:53 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,11 @@ const std::map<std::string, std::string>	Client::getHeader() const
 const std::pair<std::string, std::string>	Client::getCgi() const
 {
 	return (this->_Cgi);
+}
+
+const std::string	&Client::getUploadDir() const
+{
+	return (this->_uploadDir);
 }
 
 /*=====================================*/
@@ -551,6 +556,14 @@ void	Client::findCgi()
 	
 	pos = this->_file.find_last_of("/");
 	pos = this->_file.find_first_of(".", pos);
+
+	/* find upload directory */
+	if (this->_isLocation == true)
+		this->_uploadDir = this->_location.second.getUploadDir();
+	else
+		this->_uploadDir = this->_server.getUploadDir();
+	/* --------------------- */
+
 	if (pos != std::string::npos)
 	{
 		if (this->_isLocation == true)
