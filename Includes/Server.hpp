@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/23 16:16:16 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:37:13 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class	Server
 		void							setClientMaxBodySize(t_str &value);
 		void							setAllowedMethods(t_str &value);
 		void							setCgi(t_str &value);
+		void							setUploadDir(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 		void							setDefaults();
 	private:
@@ -81,6 +82,7 @@ class	Server
 		unsigned long int				_clientMaxBodySize;
 		std::vector<t_str>				_allowedMethods;
 		std::map<t_str, t_str>			_cgi;
+		std::string						_uploadDir;
 };
 
 #endif

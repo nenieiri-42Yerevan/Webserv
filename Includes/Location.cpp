@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:20:56 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/23 16:13:24 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:47:47 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Location::Location(t_str &body)
 	_directiveList.push_back("allow_methods");
 	_directiveList.push_back("location");
 	_directiveList.push_back("cgi");
+	_directiveList.push_back("upload_dir");
 	this->_autoindex = false;
 	this->_isAutoindexed = false;
 	this->_clientMaxBodySize = 0;
@@ -45,8 +46,9 @@ Location::Location(const Location &other)
 	this->_errorPage = other._errorPage;
 	this->_clientMaxBodySize = other._clientMaxBodySize;
 	this->_location = other._location;
-this->_allowedMethods = other._allowedMethods;
+	this->_allowedMethods = other._allowedMethods;
 	this->_cgi = other._cgi;
+	this->_uploadDir = other._uploadDir;
 }
 
 Location	&Location::operator=(const Location &rhs)
@@ -62,6 +64,7 @@ Location	&Location::operator=(const Location &rhs)
 		this->_location = rhs._location;
 		this->_allowedMethods = rhs._allowedMethods;
 		this->_cgi = rhs._cgi;
+		this->_uploadDir = rhs._uploadDir;
 	}
 	return (*this);
 }
@@ -120,6 +123,7 @@ void	Location::inherit(t_str root, \
 							unsigned long int clientMaxBodySize, \
 							std::vector<t_str> allowMethods, \
 							std::map<t_str, t_str> cgi, \
+							std::string uploadDir, \
 							t_str path)
 {
 	std::map<t_str, Location>::iterator	it;
@@ -137,6 +141,8 @@ void	Location::inherit(t_str root, \
 		this->_clientMaxBodySize = clientMaxBodySize;
 	if (this->_allowedMethods.size() == 0)
 		this->_allowedMethods = allowMethods;
+	if (this->_uploadDir == "")
+		this->_uploadDir = uploadDir;
 	for (it_cgi = cgi.begin(); it_cgi != cgi.end(); ++it_cgi)
 	{
 		if (this->_cgi.find(it_cgi->first) != this->_cgi.end())
@@ -164,6 +170,7 @@ void	Location::inherit(t_str root, \
 							this->_clientMaxBodySize, \
 							this->_allowedMethods, \
 							this->_cgi, \
+							this->_uploadDir, \
 							it->first);
 	}
 }
@@ -382,6 +389,36 @@ void	Location::setCgi(t_str &value)
 	this->_cgi.insert(std::make_pair(value, uri));
 }
 
+void	Location::setUploadDir(t_str &value)
+{
+	std::string::size_type	pos;
+	std::string				path;
+	char					*isPathOk;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: upload_dir value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: upload_dir isn't valid "
+								 "(there are whitespaces).");
+	if (value.compare(0, 4, "www/") != 0)
+		throw std::runtime_error("Error: upload_dir must start with 'www/' path.");
+	isPathOk = std::getenv("_");
+	if (isPathOk == nullptr)
+		throw std::runtime_error("Error: env variable '$_' does not found.");
+	path = static_cast<std::string>(isPathOk);
+	pos = path.find_last_of("/") + 1;
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: not found '/' in env variable '$_'");
+	path = path.substr(0, pos);
+	value = path + value;
+	if (access(value.c_str(), F_OK) != 0)
+		throw std::runtime_error("Error: upload_dir value does not exist.");
+	this->_uploadDir = value;
+}
+
 void	Location::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("root") == 0)
@@ -400,6 +437,8 @@ void	Location::setFildes(const t_str &name, t_str &value)
 		this->setAllowedMethods(value);
 	else if (name.compare("cgi") == 0)
 		this->setCgi(value);
+	else if (name.compare("upload_dir") == 0)
+		this->setUploadDir(value);
 }
 
 /*=====================================*/
