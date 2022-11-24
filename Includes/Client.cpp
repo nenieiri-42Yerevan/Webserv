@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 15:10:53 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 15:59:47 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,11 @@ const std::pair<std::string, std::string>	Client::getCgi() const
 const std::string	&Client::getUploadDir() const
 {
 	return (this->_uploadDir);
+}
+
+const std::string	&Client::getBody() const
+{
+	return (this->_body);
 }
 
 /*=====================================*/
