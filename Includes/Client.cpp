@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 15:59:47 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 17:48:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,11 @@ const std::string	&Client::getUploadDir() const
 const std::string	&Client::getBody() const
 {
 	return (this->_body);
+}
+
+const std::string	&Client::getServerPort() const
+{
+	return (this->_port);
 }
 
 /*=====================================*/

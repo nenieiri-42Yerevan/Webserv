@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 15:58:55 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/24 17:47:52 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ class	Client
 		const std::pair<t_str, t_str>	getCgi() const;
 		const std::string				&getUploadDir() const;
 		const std::string				&getBody() const;
+		const std::string				&getServerPort() const;
 	private:
 		void							parsing();
 		int								parsingRequestLine(std::string line);
