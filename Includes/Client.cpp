@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/25 14:59:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/25 15:42:12 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -618,8 +618,10 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 	dirent				*dir_struct;
 	std::string			table;
 	std::string			response;
-	std::string			tmp;
+	std::string			name;
+	std::string			tmp_path;
 	std::stringstream	ss;
+	struct stat			buf;
 
 	if (access(full_path.c_str(), F_OK) != 0)
 	{
@@ -644,15 +646,22 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 	dir_struct = readdir(opened_dir);
 	while (dir_struct != NULL)
 	{
-		tmp = dir_struct->d_name;
-		if (!(tmp[0] == '.' && tmp != ".."))
+		name = dir_struct->d_name;
+		if (!(name[0] == '.' && name != ".."))
 		{
+			tmp_path = full_path + name;
 			table += "<a href=\"";
-			table += tmp;
+			table += name;
 			table += "/\">";
-			table += tmp;
-			table += "/\n";
-			table += "</a>";
+			table += name;
+			table += "/\t";
+			if (stat(tmp_path.c_str(), &buf) == 0)
+			{
+//				ss.str("");
+				ss << table.length();
+				table += ss.str();
+			}
+			table += "\n</a>";
 		}
 		dir_struct = readdir(opened_dir);
 	}
@@ -660,11 +669,13 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 
 	response += "HTTP/1.1 200 OK\r\n";
 	response += "Content-Type : text/html;\r\n";
+//	ss.clear();
 	ss << table.length();
 	response += "Content-Length : " + ss.str() + "\r\n";
 	response += "Server : webserv\r\n";
 	response += "\r\n";
 	_response = response + table;
+	closedir(opened_dir);
 	return (true);
 }
 
