@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 17:48:23 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/25 14:59:00 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,7 +366,12 @@ int	Client::receiveInfo()
 				if (this->isAllowedMethods() == false)
 					return (getError(405));
 				if (this->findFile(_file, pos) == false)
-					return (getError(404));
+				{
+					if (this->_response == "")
+						return (getError(404));
+					else
+						return (0);
+				}
 				this->findLength();
 				this->findCgi();
 			}
@@ -453,8 +458,10 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 	std::vector<t_str>::const_iterator	it_end;
 	std::string							tmp;
 	std::string							root;
+	std::string							rel_path(full_path);
 	std::string::size_type				len;
 	std::string::size_type				pos_post;
+	bool								autoindex = false;
 
 	if (full_path[pos] == '/')
 	{
@@ -465,6 +472,7 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 			full_path = this->_location.second.getRoot() + full_path;
 			it_begin = this->_location.second.getIndex().begin();
 			it_end = this->_location.second.getIndex().end();
+			autoindex = this->_location.second.getAutoindex();
 		}
 		else
 		{
@@ -476,6 +484,7 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 			full_path = root + full_path;
 			it_begin = this->_server.getIndex().begin();
 			it_end = this->_server.getIndex().end();
+			autoindex = this->_server.getAutoindex();
 		}
 		for (; it_begin != it_end; ++it_begin)
 		{
@@ -495,6 +504,8 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 				return (true);
 			}
 		}
+		if (autoindex == true)
+			return (directListening(full_path, rel_path));
 	}
 	else
 	{
@@ -567,7 +578,7 @@ void	Client::findCgi()
 	pos = this->_file.find_last_of("/");
 	pos = this->_file.find_first_of(".", pos);
 
-	/* find upload directory */
+	/* upload directory */
 	if (this->_isLocation == true)
 		this->_uploadDir = this->_location.second.getUploadDir();
 	else
@@ -601,14 +612,69 @@ void	Client::findCgi()
 	this->_isCgi = false;
 }
 
+bool	Client::directListening(std::string &full_path, std::string &rel_path)
+{
+	DIR					*opened_dir;
+	dirent				*dir_struct;
+	std::string			table;
+	std::string			response;
+	std::string			tmp;
+	std::stringstream	ss;
+
+	if (access(full_path.c_str(), F_OK) != 0)
+	{
+		getError(404);
+		return (false);
+	}
+	opened_dir = opendir(full_path.c_str());
+	if (access(full_path.c_str(), X_OK) != 0 || opened_dir == NULL)
+	{
+		getError(403);
+		return (false);
+	}
+	table += "<!DOCTYPE html><html><head><title>";
+	table += "Index of ";
+	table += rel_path;
+	table += "</title></head><body>";
+	table += "<h1>";
+	table += "Index of ";
+	table += rel_path;
+	table += "</h1><hr><pre>";
+
+	dir_struct = readdir(opened_dir);
+	while (dir_struct != NULL)
+	{
+		tmp = dir_struct->d_name;
+		if (!(tmp[0] == '.' && tmp != ".."))
+		{
+			table += "<a href=\"";
+			table += tmp;
+			table += "/\">";
+			table += tmp;
+			table += "/\n";
+			table += "</a>";
+		}
+		dir_struct = readdir(opened_dir);
+	}
+	table += "</pre><hr></body></html>";
+
+	response += "HTTP/1.1 200 OK\r\n";
+	response += "Content-Type : text/html;\r\n";
+	ss << table.length();
+	response += "Content-Length : " + ss.str() + "\r\n";
+	response += "Server : webserv\r\n";
+	response += "\r\n";
+	_response = response + table;
+	return (true);
+}
+
 bool	Client::isAllowedMethods()
 {
 	std::vector<t_str>::const_iterator	it_begin;
 	std::vector<t_str>::const_iterator	it_end;
 	std::vector<t_str>::const_iterator	it_begin_tmp;
 
-	if (this->_isLocation == true)
-	{
+	if (this->_isLocation == true) {
 		it_begin = this->_location.second.getAllowedMethods().begin();
 		it_end = this->_location.second.getAllowedMethods().end();
 	}
@@ -735,6 +801,9 @@ int	Client::getError(int num)
 	{
 		case 400:
 			getErrorMsg(400, "400", "Bad Request");
+			break ;
+		case 403:
+			getErrorMsg(403, "403", "Forbidden");
 			break ;
 		case 404:
 			getErrorMsg(404, "404", "Not Found");

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 17:47:52 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/25 14:18:28 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <algorithm>
 # include <unistd.h>
 # include <utility>
+# include <sys/types.h>
+# include <dirent.h>
 
 # include "Server.hpp"
 # include "Location.hpp"
@@ -65,6 +67,8 @@ class	Client
 											t_str::size_type pos);
 		void							findLength();
 		void							findCgi();
+		bool							directListening(t_str &full_path, \
+														t_str &rel_path);
 		bool							isAllowedMethods();
 		void							parsingBody();
 		void							readBody();
