@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/25 15:42:12 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/26 14:09:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -637,11 +637,15 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 	table += "<!DOCTYPE html><html><head><title>";
 	table += "Index of ";
 	table += rel_path;
-	table += "</title></head><body>";
-	table += "<h1>";
+	table += "</title>";
+	table += "<style>";
+	table += ".box>* {flex: 33.33%;}";
+	table += ".box {display: flex; flex-wrap: wrap; width: 75%;}";
+	table += "</style></head>";
+	table += "<body><h1>";
 	table += "Index of ";
 	table += rel_path;
-	table += "</h1><hr><pre>";
+	table += "</h1><hr><pre class=\"box\">";
 
 	dir_struct = readdir(opened_dir);
 	while (dir_struct != NULL)
@@ -654,14 +658,27 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 			table += name;
 			table += "/\">";
 			table += name;
-			table += "/\t";
+			table += "</a>";
 			if (stat(tmp_path.c_str(), &buf) == 0)
 			{
-//				ss.str("");
-				ss << table.length();
+				ss.str("");
+				ss << buf.st_mtime;
+				table += "<span>";
 				table += ss.str();
+				table += "</span><span>";
+				if (dir_struct->d_type == DT_DIR)
+				{
+					table += "-";
+				}
+				else
+				{
+					ss.str("");
+					ss << buf.st_size;
+					table += ss.str();
+				}
+				table += "</span>";
 			}
-			table += "\n</a>";
+			table += "\n";
 		}
 		dir_struct = readdir(opened_dir);
 	}
@@ -669,7 +686,7 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 
 	response += "HTTP/1.1 200 OK\r\n";
 	response += "Content-Type : text/html;\r\n";
-//	ss.clear();
+	ss.str("");
 	ss << table.length();
 	response += "Content-Length : " + ss.str() + "\r\n";
 	response += "Server : webserv\r\n";
