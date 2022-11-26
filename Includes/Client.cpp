@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/26 14:09:23 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/26 14:30:14 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -622,6 +622,8 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 	std::string			tmp_path;
 	std::stringstream	ss;
 	struct stat			buf;
+	struct tm			*timeinfo;
+	char				time_buf[100];
 
 	if (access(full_path.c_str(), F_OK) != 0)
 	{
@@ -656,20 +658,20 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 			tmp_path = full_path + name;
 			table += "<a href=\"";
 			table += name;
-			table += "/\">";
+			if (dir_struct->d_type == DT_DIR)
+				table += "/";
+			table += "\">";
 			table += name;
 			table += "</a>";
 			if (stat(tmp_path.c_str(), &buf) == 0)
 			{
-				ss.str("");
-				ss << buf.st_mtime;
 				table += "<span>";
-				table += ss.str();
+				timeinfo = localtime(&(buf.st_mtime));
+				strftime(time_buf, 100, "%d-%b-%Y %H:%S", timeinfo);
+				table += time_buf;
 				table += "</span><span>";
 				if (dir_struct->d_type == DT_DIR)
-				{
 					table += "-";
-				}
 				else
 				{
 					ss.str("");
