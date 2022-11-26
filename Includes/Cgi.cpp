@@ -43,30 +43,47 @@ std::string Cgi::findquery(std::string uri)
 
 std::string getpathinfo(std::string uri)
 {
-    std::cout << uri << std::endl;
-    return ("");
-}
+    size_t pos;
+    std::string res;
+    size_t pos2;
 
+    res = "";
+    pos = uri.find(".php");
+    if (pos != std::string::npos)
+    {
+        pos2 = uri.find("?");
+        if (pos2 != std::string::npos)
+        {
+            res = uri.substr(pos + strlen(".php"), pos2 - (pos + strlen(".php")));
+            std::cout << "rr:" << pos2 << std::endl;
+        }
+        else
+            res = uri.substr(pos + strlen(".php"), uri.length() - (pos + strlen(".php")));
+    }
+    return (res);
+}
 void Cgi::initenv()
 {
+    char *pwd;
+
+    pwd = getcwd(NULL, 0);
+    std::cout << pwd << std::endl;
     //env["AUTH_TYPE"] = this->header["method"];
-    if (this->header["content-length"] != "")
-        env["CONTENT_LENGTH"] = this->header["content-length"];
+    env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
-     if (this->header["content-type"] != "")
-        env["CONTENT_TYPE"] = this->header["content-type"];
-    //env["SCRIPT_FILENAME"] = this->header[""];
+    env["CONTENT_TYPE"] = this->header["content-type"];
     env["PATH_INFO"] = getpathinfo(this->header["uri"]);
     env["PATH_TRANSLATED"] = "";
     env["REQUEST_METHOD"] = this->header["method"];
     env["QUERY_STRING"] = findquery(this->header["uri"]);
     env["REMOTE_ADDR"] = "127.0.0.1";
     env["SCRIPT_NAME"] = findscript(this->header["uri"]);
-    env["SCRIPT_FILENAME"] = "/Users/arastepa/Desktop/42_Webserv/www/html/cgi/hello.php";
+    env["SCRIPT_FILENAME"] = std::string(pwd) + "/www/html" + env["SCRIPT_NAME"];
     env["SERVER_NAME"] = "webserv";
     env["SERVER_PORT"] = this->cont->getServerPort();
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["SERVER_SOFTWARE"] = "Webserv";
+    env["REDIRECT_STATUS"] = "true";
 }
 
 Cgi::Cgi(const Cgi &other)
@@ -130,7 +147,7 @@ void Cgi::cgi_run()
     {
         dup2(fd, 1);
         close(fd);
-        args[0] = strdup("/usr/bin/php");
+        args[0] = strdup("/usr/bin/php-cgi");
         args[1] = strdup(this->cont->getFile().c_str());
         args[2] = NULL;
         if (execve(args[0], args, envc) == -1)
