@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/26 14:30:14 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/26 17:41:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -741,8 +741,29 @@ void	Client::parsingBody()
 
 void	Client::readBody()
 {
+	std::string::size_type	pos;
+	std::stringstream		ss;
+	std::string				tmp;
+
 	if (_bodyType == "chunked")
 	{
+		this->_chunkedBody += this->_request;
+		this->_request = "";
+		pos = _chunkedBody.find("\r\n");
+		while (pos != std::string::npos)
+		{
+			tmp = _chunkedBody.substr(0, pos);
+			pos += 2;
+			_chunkedBody = _chunkedBody.substr(pos, _chunkedBody.length() - pos);
+			pos = tmp.find_first_of(":");
+			if (pos != std::string::npos)
+				tmp = tmp.substr(0, pos);
+			ss << std::hex << tmp;
+			ss >> _chunkedLen;
+
+			/* */
+			pos = _chunkedBody.find("\r\n");
+		}
 	}
 	else if (_bodyType == "length")
 	{
