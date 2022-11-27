@@ -6,12 +6,6 @@ Cgi::Cgi(Client  *other)
 {
     this->header = other->getHeader();
     this->cont = other;
-    /*std::map<std::string, std::string>::iterator it = this->header.begin();
-    while (it != this->header.end())
-    {
-        std::cout << it->first << "   " << it->second << std::endl;
-        it++;
-    }*/
 }
 
 Cgi::Cgi()
@@ -153,6 +147,15 @@ void Cgi::cgi_run()
     {
         dup2(fd, 1);
         close(fd);
+        if (this->header["method"] == "POST")
+        {
+            int pipefd[2];
+            pipe(pipefd);
+            dup2(pipefd[0], 0);
+            write(pipefd[1], this->cont->getBody().c_str(), this->cont->getBody().length());
+            close(pipefd[0]);
+            close(pipefd[1]);
+        }
         args[0] = strdup("/usr/bin/php-cgi");
         args[1] = strdup(this->cont->getFile().c_str());
         args[2] = NULL;
