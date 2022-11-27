@@ -104,9 +104,9 @@ void Cgi::tofile(std::string path)
     ss.str("");
     ss << str.length();
 	response += "HTTP/1.1 " + (std::string)"200" + " " + "ok" + "\r\n";
-	response += "Content-Type : text/html;\r\n";
-	response += "Content-Length : " + ss.str() + "\r\n";
-	response += "Server : webserv\r\n";
+	response += "Content-Type: text/html;\r\n";
+	response += "Content-Length: " + ss.str() + "\r\n";
+	response += "Server: webserv\r\n";
 	response += "\r\n";
 	response += str;
     ifs.close();
