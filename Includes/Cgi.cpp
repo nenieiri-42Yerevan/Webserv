@@ -170,5 +170,6 @@ void Cgi::cgi_run()
     dup2(tmpfd, 1);
     close(fd);
     tofile("temp");
+    unlink("temp");
     close(tmpfd);
 }
