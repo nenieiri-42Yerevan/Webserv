@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/27 13:21:04 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/27 16:29:45 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ Client::Client()
 	this->_lastHeader = "";
 	this->_isServerFound = false;
 	this->_isLocation = false;
-	this->_isCgi = false;
 	this->_contentLength = 0;
+	this->_isCgi = false;
+	this->_connection = true;
+	this->_closeTime = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -54,8 +56,10 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_serverSet = serverSet;
 	this->_server = serverSet[serverNumber];
 	this->_isLocation = false;
-	this->_isCgi = false;
 	this->_contentLength = 0;
+	this->_isCgi = false;
+	this->_connection = true;
+	this->_closeTime = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -87,6 +91,8 @@ Client::Client(const Client &other)
 	this->_isCgi = other._isCgi;
 	this->_Cgi = other._Cgi;
 	this->_uploadDir = other._uploadDir;
+	this->_connection = other._connection;
+	this->_closeTime = other._closeTime;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -117,6 +123,8 @@ Client	&Client::operator=(const Client &rhs)
 		this->_isCgi = rhs._isCgi;
 		this->_Cgi = rhs._Cgi;
 		this->_uploadDir = rhs._uploadDir;
+		this->_connection = rhs._connection;
+		this->_closeTime = rhs._closeTime;
 	}
 	return (*this);
 }
@@ -132,6 +140,8 @@ Client::~Client()
 void	Client::setRequest(const std::string &request)
 {
 	this->_request += request;
+	if (this->_isSendFinish == true)
+		this->_isSendFinish = false;
 	parsing();
 }
 
@@ -148,6 +158,13 @@ bool	Client::getRecvStatus() const
 bool	Client::getSendStatus() const
 {
 	return (this->_isSendFinish);
+}
+
+bool	Client::getCloseStatus()
+{
+	if (time(NULL) - this->_closeTime > CONNECTION_CLOSE_SECONDS)
+		this->_connection = false;
+	return (this->_connection);
 }
 
 const std::string	Client::getResponse()
@@ -348,6 +365,7 @@ void	Client::parsingHeader(std::string line)
 int	Client::receiveInfo()
 {
 	std::map<std::string, std::string>::iterator	host;
+	std::map<std::string, std::string>::iterator	connection;
 	std::string::size_type							pos;
 
 	if (std::find(_supportedMethods.begin(), _supportedMethods.end(), \
@@ -368,6 +386,14 @@ int	Client::receiveInfo()
 			host->second = host->second.substr(0, pos - 1);
 		}
 		this->_host = host->second;
+		connection = this->_header.find("connection");
+		if (connection != this->_header.end())
+		{
+			if (connection->second == "close")
+				this->_connection = false;
+			else
+				this->_closeTime = time(NULL);
+		}
 		if (this->_isServerFound == false && this->findServer() == 0)
 			return (0);
 		else

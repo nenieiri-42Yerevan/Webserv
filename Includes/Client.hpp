@@ -6,12 +6,14 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/27 12:50:24 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/27 16:29:45 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
+
+# define CONNECTION_CLOSE_SECONDS	10
 
 # include <iostream>
 # include <string>
@@ -50,6 +52,7 @@ class	Client
 		void							setResponse(const std::string &response);
 		bool							getRecvStatus() const;
 		bool							getSendStatus() const;
+		bool							getCloseStatus();
 		const std::string				getResponse();
 		const std::string				getResponse(size_t	buff_size);
 		const std::string				&getFile() const;
@@ -111,6 +114,8 @@ class	Client
 		bool							_isCgi;
 		std::pair<t_str, t_str>			_Cgi;
 		std::string						_uploadDir;
+		bool							_connection;
+		time_t							_closeTime;
 };
 
 #endif
