@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/27 12:24:27 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/27 13:21:04 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,15 @@ Client::Client()
 {
 	this->_request = "";
 	this->_body = "";
+	this->_chunkedBody = "";
+	this->_chunkedLen = -1;
 	this->_isRecvFinish = false;
 	this->_isSendFinish = false;
 	this->_version = "webserv/1.0.0";
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
+	this->_isServerFound = false;
 	this->_isLocation = false;
 	this->_isCgi = false;
 	this->_contentLength = 0;
@@ -39,12 +42,15 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 {
 	this->_request = "";
 	this->_body = "";
+	this->_chunkedBody = "";
+	this->_chunkedLen = -1;
 	this->_isRecvFinish = false;
 	this->_isSendFinish = false;
 	this->_version = "webserv/1.0.0";
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
+	this->_isServerFound = false;
 	this->_serverSet = serverSet;
 	this->_server = serverSet[serverNumber];
 	this->_isLocation = false;
@@ -62,19 +68,25 @@ Client::Client(const Client &other)
 	this->_header = other._header;
 	this->_file = other._file;
 	this->_body = other._body;
+	this->_chunkedBody = other._chunkedBody;
+	this->_chunkedLen = other._chunkedLen;
 	this->_isRecvFinish = other._isRecvFinish;
 	this->_isSendFinish = other._isSendFinish;
 	this->_version = other._version;
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
 	this->_lastHeader = other._lastHeader;
+	this->_isServerFound = other._isServerFound;
 	this->_serverSet = other._serverSet;
 	this->_server= other._server;
 	this->_isLocation = other._isLocation;
 	this->_supportedMethods = other._supportedMethods;
-	this->_isCgi = other._isCgi;
-	this->_contentLength = other._contentLength;
+	this->_errorAllowed = other._errorAllowed;
 	this->_bodyType = other._bodyType;
+	this->_contentLength = other._contentLength;
+	this->_isCgi = other._isCgi;
+	this->_Cgi = other._Cgi;
+	this->_uploadDir = other._uploadDir;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -86,19 +98,25 @@ Client	&Client::operator=(const Client &rhs)
 		this->_header = rhs._header;
 		this->_file = rhs._file;
 		this->_body = rhs._body;
+		this->_chunkedBody = rhs._chunkedBody;
+		this->_chunkedLen = rhs._chunkedLen;
 		this->_isRecvFinish = rhs._isRecvFinish;
 		this->_isSendFinish = rhs._isSendFinish;
 		this->_version = rhs._version;
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
 		this->_lastHeader = rhs._lastHeader;
+		this->_isServerFound = rhs._isServerFound;
 		this->_serverSet = rhs._serverSet;
 		this->_server= rhs._server;
 		this->_isLocation = rhs._isLocation;
 		this->_supportedMethods = rhs._supportedMethods;
-		this->_isCgi = rhs._isCgi;
-		this->_contentLength = rhs._contentLength;
+		this->_errorAllowed = rhs._errorAllowed;
 		this->_bodyType = rhs._bodyType;
+		this->_contentLength = rhs._contentLength;
+		this->_isCgi = rhs._isCgi;
+		this->_Cgi = rhs._Cgi;
+		this->_uploadDir = rhs._uploadDir;
 	}
 	return (*this);
 }
@@ -119,7 +137,7 @@ void	Client::setRequest(const std::string &request)
 
 void	Client::setResponse(const std::string &response)
 {
-	this->_response = response;
+	this->_response += response;
 }
 
 bool	Client::getRecvStatus() const
@@ -350,7 +368,7 @@ int	Client::receiveInfo()
 			host->second = host->second.substr(0, pos - 1);
 		}
 		this->_host = host->second;
-		if (this->findServer() == 0)
+		if (this->_isServerFound == false && this->findServer() == 0)
 			return (0);
 		else
 		{
@@ -395,6 +413,7 @@ int	Client::findServer()
 			if (listen_it->first == this->_host && listen_it->second == this->_port)
 			{
 				this->_server = this->_serverSet[i];
+				this->_isServerFound = true;
 				return (1);
 			}
 		}
@@ -407,6 +426,7 @@ int	Client::findServer()
 			if (*serv_it == this->_host)
 			{
 				this->_server = this->_serverSet[i];
+				this->_isServerFound = true;
 				return (1);
 			}
 		}
@@ -693,7 +713,7 @@ bool	Client::directListening(std::string &full_path, std::string &rel_path)
 	response += "Content-Length : " + ss.str() + "\r\n";
 	response += "Server : webserv\r\n";
 	response += "\r\n";
-	_response = response + table;
+	_response += response + table;
 	closedir(opened_dir);
 	return (true);
 }
@@ -816,6 +836,7 @@ void	Client::readBody()
 void	Client::prepareAnswer()
 {
 	std::string				response;
+	std::string				file_body;
 	std::string				type;
 	std::string::size_type	pos;
 	std::stringstream		ss;
@@ -829,34 +850,32 @@ void	Client::prepareAnswer()
 		getError(413);
 	else
 	{
-		if (this->_response == "")
+		if (this->_isCgi == true)
 		{
-			if (this->_isCgi == true)
-			{
-				Cgi	cgi(this);
-				cgi.cgi_run();
-			}
+			Cgi	cgi(this);
+			cgi.cgi_run();
+		}
+		else
+		{
+			pos = _file.find_last_of(".");
+			this->readWhole(_file, file_body);
+			response += "HTTP/1.1 200 OK\r\n";
+			if (pos == std::string::npos)
+				response += "Content-Type : text/plain;\r\n";
 			else
 			{
-				pos = _file.find_last_of(".");
-				this->readWhole(_file, _response);
-				response += "HTTP/1.1 200 OK\r\n";
-				if (pos == std::string::npos)
-					response += "Content-Type : text/plain;\r\n";
-				else
-				{
-					++pos;
-					type = _file.substr(pos, _file.length() - pos);
-					response += "Content-Type : text/" + type + ";\r\n";
-				}
-				ss << _response.length();
-				response += "Content-Length : " + ss.str() + "\r\n";
-				response += "Server : webserv\r\n";
-				response += "\r\n";
-				_response = response + _response;
+				++pos;
+				type = _file.substr(pos, _file.length() - pos);
+				response += "Content-Type : text/" + type + ";\r\n";
 			}
+			ss << file_body.length();
+			response += "Content-Length : " + ss.str() + "\r\n";
+			response += "Server : webserv\r\n";
+			response += "\r\n";
+			_response += response + file_body;
 		}
 	}
+	//resetHeader();
 }
 
 bool	Client::readWhole(const std::string &full_path, \
@@ -969,5 +988,21 @@ void	Client::getErrorMsg(int errNum, const t_str &num, const t_str &msg)
 	response += "Server : webserv\r\n";
 	response += "\r\n";
 	response += response_body;
-	this->_response = response;
+	this->_response += response;
+}
+
+void	Client::resetHeader()
+{
+	this->_request = "";
+	this->_header.clear();
+	this->_body = "";
+	this->_chunkedBody = "";
+	this->_chunkedLen = -1;
+	this->_isRecvFinish = false;
+	this->_isStart = 0;
+	this->_isHeader = 0;
+	this->_lastHeader = "";
+	this->_isLocation = false;
+	this->_contentLength = 0;
+	this->_isCgi = false;
 }

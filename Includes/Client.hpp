@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/27 12:18:42 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/27 12:50:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ class	Client
 											const t_str &num, const t_str &msg);
 		bool							responseErrorPage(int errNum, \
 											std::string &response_body) const;
+		void							resetHeader();
 	private:
 		std::string						_request;
 		std::string						_response;
@@ -95,6 +96,7 @@ class	Client
 		int								_isStart;
 		int								_isHeader;
 		std::string						_lastHeader;
+		bool							_isServerFound;
 		std::vector<Server>				_serverSet;
 		Server							_server;
 		std::pair<t_str, Location>		_location;
