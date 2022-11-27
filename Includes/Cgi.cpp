@@ -109,6 +109,7 @@ void Cgi::tofile(std::string path)
 	response += "Server : webserv\r\n";
 	response += "\r\n";
 	response += str;
+    ifs.close();
     this->cont->setResponse(response);
 }
 
