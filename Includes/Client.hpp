@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/26 17:41:25 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/27 12:18:42 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ class	Client
 		std::map<t_str, t_str>			_header;
 		std::string						_body;
 		std::string						_chunkedBody;
-		unsigned int					_chunkedLen;
+		int								_chunkedLen;
 		bool							_isRecvFinish;
 		bool							_isSendFinish;
 		std::string						_version;

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/26 17:41:23 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/27 12:24:27 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -749,20 +749,48 @@ void	Client::readBody()
 	{
 		this->_chunkedBody += this->_request;
 		this->_request = "";
-		pos = _chunkedBody.find("\r\n");
-		while (pos != std::string::npos)
+		while (this->_isRecvFinish == false)
 		{
-			tmp = _chunkedBody.substr(0, pos);
-			pos += 2;
-			_chunkedBody = _chunkedBody.substr(pos, _chunkedBody.length() - pos);
-			pos = tmp.find_first_of(":");
-			if (pos != std::string::npos)
-				tmp = tmp.substr(0, pos);
-			ss << std::hex << tmp;
-			ss >> _chunkedLen;
-
-			/* */
-			pos = _chunkedBody.find("\r\n");
+			if (_chunkedLen == -1)
+			{
+				pos = _chunkedBody.find("\r\n");
+				if (pos == std::string::npos)
+					break ;
+				tmp = _chunkedBody.substr(0, pos);
+				pos += 2;
+				if (_chunkedBody.length() < pos)
+					break ;
+				_chunkedBody = _chunkedBody.substr(pos, _chunkedBody.length() - pos);
+				pos = tmp.find_first_of(":");
+				if (pos != std::string::npos)
+					tmp = tmp.substr(0, pos);
+				ss << std::hex << tmp;
+				ss >> _chunkedLen;
+				if (_chunkedLen < 0)
+					_chunkedLen = 0;
+			}
+			if (_chunkedLen == 0 || _chunkedLen == -10)
+			{
+				_chunkedLen = -10;
+				pos = _chunkedBody.find("\r\n");
+				if (pos == std::string::npos)
+					break ;
+				_chunkedBody = "";
+				this->_isRecvFinish = true;
+			}
+			else if (_chunkedBody.length() >= static_cast<t_str::size_type>(_chunkedLen))
+			{
+				if (_chunkedBody.length() < (static_cast<t_str::size_type>(_chunkedLen) + 2))
+					break ;
+				this->_body += _chunkedBody.substr(0, _chunkedLen);
+				_chunkedLen += 2;
+				_chunkedBody = _chunkedBody.substr(_chunkedLen, \
+										_chunkedBody.length() - _chunkedLen);
+				_chunkedLen = -1;
+				pos = _chunkedBody.find("\r\n");
+			}
+			else
+				break ;
 		}
 	}
 	else if (_bodyType == "length")
