@@ -108,7 +108,12 @@ void Cgi::tofile(std::string path)
 	response += "Content-Length: " + ss.str() + "\r\n";
 	response += "Server: webserv\r\n";
 	response += "\r\n";
-	response += str;
+    char *st = (char *)str.c_str();
+    while (*st != '\n')
+    {
+        st++;
+    }
+	response += st;
     ifs.close();
     this->cont->setResponse(response);
 }
