@@ -49,7 +49,6 @@ std::string getpathinfo(std::string uri)
         if (pos2 != std::string::npos)
         {
             res = uri.substr(pos + strlen(".php"), pos2 - (pos + strlen(".php")));
-            std::cout << "rr:" << pos2 << std::endl;
         }
         else
             res = uri.substr(pos + strlen(".php"), uri.length() - (pos + strlen(".php")));
@@ -61,7 +60,6 @@ void Cgi::initenv()
     char *pwd;
 
     pwd = getcwd(NULL, 0);
-    std::cout << pwd << std::endl;
     //env["AUTH_TYPE"] = this->header["method"];
     env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
@@ -129,11 +127,9 @@ void Cgi::cgi_run()
     char *args[3];
     char *envc[20];
     int i, status;
-    int tmpfd;
 
     i = 0;
     initenv();
-    tmpfd = dup(1);
     std::map<std::string, std::string>::iterator it = env.begin();
     while (it != env.end())
     {
@@ -167,9 +163,6 @@ void Cgi::cgi_run()
         perror("Error: ");
     }
     waitpid(pid, &status, 0);
-    dup2(tmpfd, 1);
-    close(fd);
     tofile("temp");
     unlink("temp");
-    close(tmpfd);
 }

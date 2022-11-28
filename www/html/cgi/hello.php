@@ -6,12 +6,14 @@
 <body>
 <?php
 
-    echo "arguments are:";
-    echo var_dump($_GET);
-    echo "\n";
-    echo var_dump($_POST);
-    echo "\n";
-
+if ($_SERVER['REQUEST_METHOD'] == 'GET')
+{
+    echo("arguments are: ". $_GET["fname"] . " " . $_GET["lname"] . "\n");
+}
+else if ($_SERVER['REQUEST_METHOD'] == 'POST')
+{
+    echo("arguments are: ". $_POST["fname"] . " " . $_POST["lname"] . "\n");
+}
 ?> 
 </body>
 </html>
