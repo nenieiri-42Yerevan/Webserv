@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/29 16:57:39 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:48:57 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ Client::Client()
 	this->_contentLength = 0;
 	this->_isCgi = false;
 	this->_isClosed = false;
-	this->_closeTime = time(NULL);
+	this->_closeTime = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -59,7 +59,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_contentLength = 0;
 	this->_isCgi = false;
 	this->_isClosed = false;
-	this->_closeTime = time(NULL);
+	this->_closeTime = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -162,10 +162,8 @@ bool	Client::getSendStatus() const
 
 bool	Client::getCloseStatus()
 {
-	if (this->_isSendFinish == true && \
-			time(NULL) - this->_closeTime > CONNECTION_CLOSE_SECONDS)
+	if (time(NULL) - this->_closeTime > CONNECTION_CLOSE_SECONDS)
 		this->_isClosed = true;
-	std::cout << this->_isClosed << std::endl;
 	return (this->_isClosed);
 }
 
