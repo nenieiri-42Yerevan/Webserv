@@ -168,23 +168,13 @@ void HttpServer::run()
             }
             if (it->second.getCloseStatus() == true)
             {
-				if (it->first == maxfd)
-					maxfd = (++(this->acceptfds.rbegin()))->first;
-
-				std::string response;
-				response += "HTTP/1.1 204 No Content\r\n";
-//				response += "Content-Type: text/html;\r\n";
-				response += "Content-Length: 0\r\n";
-				response += "Connection: close\r\n";
-				response += "Server: webserv\r\n";
-				response += "\r\n";
-				send(it->first, response.c_str(), response.length(), 0);
-
+                if (it->first == maxfd)
+                    maxfd = (++(this->acceptfds.rbegin()))->first;
                 close(it->first);
                 FD_CLR(it->first, &initwset);
                 FD_CLR(it->first, &initrset);
                 this->acceptfds.erase(it++);
-            	std::cout << "AAAAAAAAAAAAAA"  << __LINE__ << std::endl;
+                std::cout << "AAAAAAAAAAAAAA"  << __LINE__ << std::endl;
                 continue ;
             }
             it++;

@@ -140,8 +140,9 @@ Client::~Client()
 void	Client::setRequest(const std::string &request)
 {
 	this->_request += request;
-	if (this->_isSendFinish == true)
-		this->_isSendFinish = false;
+	this->_isSendFinish = false;
+	this->_isClosed = false;
+	this->_closeTime = time(NULL);
 	parsing();
 }
 
