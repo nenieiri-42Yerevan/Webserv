@@ -154,26 +154,22 @@ void HttpServer::run()
             {
                 getrequest(it->first);
                 FD_SET(it->first, &initwset);
-				//if (it->second.getRecvStatus() == true)
-					//FD_CLR(it->first, &initrset);
+				if (it->second.getRecvStatus() == true)
+					FD_CLR(it->first, &initrset);
             }
             if (FD_ISSET(it->first, &writeset))
             {
 				sendresponse(it->first);
-               if (it->second.getSendStatus() == true)
-               {
-                    FD_CLR(it->first, &initwset);
-                   	//close(it->first);
-					//this->acceptfds.erase(it++);
-					//continue ;
-			   }
+				if (it->second.getSendStatus() == true)
+					FD_CLR(it->first, &initwset);
             }
-            std::cout << "hi" << std::endl;
             if (it->second.getCloseStatus() == true)
             {
+                std::cout << "hi" << std::endl;
+                FD_CLR(it->first, &initwset);
+                FD_CLR(it->first, &initrset);
                 close(it->first);
                 this->acceptfds.erase(it++);
-                FD_CLR(it->first, &initrset);
                 continue ;
             }
             it++;

@@ -34,7 +34,7 @@ Client::Client()
 	this->_contentLength = 0;
 	this->_isCgi = false;
 	this->_isClosed = false;
-	this->_closeTime = 0;
+	this->_closeTime = time(NULL);
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
@@ -59,7 +59,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_contentLength = 0;
 	this->_isCgi = false;
 	this->_isClosed = false;
-	this->_closeTime = 0;
+	this->_closeTime = time(NULL);
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
