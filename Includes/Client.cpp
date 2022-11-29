@@ -901,7 +901,7 @@ void	Client::prepareAnswer()
 			_response += response + file_body;
 		}
 	}
-	//resetHeader();
+	resetHeader();
 }
 
 bool	Client::readWhole(const std::string &full_path, \
