@@ -89,6 +89,7 @@ void HttpServer::createListen()
 
 void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 {
+	std::cout << "BBBBB"  << __LINE__ << std::endl;
 	struct sockaddr_in	address;
 	int					fd;
 	socklen_t			addrlen;
@@ -141,39 +142,49 @@ void HttpServer::run()
     {
         readset = initrset;
         writeset = initwset;
+            	std::cout << __LINE__ << std::endl;
         select(maxfd + 1, &readset, &writeset, 0, 0);
+            	std::cout << __LINE__ << std::endl;
         for (size_t i = 0; i < this->listenSockets.size(); i++)
         {
             if (FD_ISSET(this->listenSockets[i].sockfd, &readset))
                 createacceptfd(i, &initrset,  &maxfd);
         }
+            	std::cout << __LINE__ << std::endl;
         std::map<int, Client>::iterator it = this->acceptfds.begin();
         while (it != this->acceptfds.end())
         {
+            	std::cout << __LINE__ << std::endl;
             if (FD_ISSET(it->first, &readset))
             {
                 getrequest(it->first);
                 FD_SET(it->first, &initwset);
-				//if (it->second.getRecvStatus() == true)
-					//FD_CLR(it->first, &initrset);
             }
             if (FD_ISSET(it->first, &writeset))
             {
 				sendresponse(it->first);
-               if (it->second.getSendStatus() == true)
-               {
-                    FD_CLR(it->first, &initwset);
-                   	//close(it->first);
-					//this->acceptfds.erase(it++);
-					//continue ;
-			   }
+				if (it->second.getSendStatus() == true)
+					FD_CLR(it->first, &initwset);
             }
-            std::cout << "hi" << std::endl;
             if (it->second.getCloseStatus() == true)
             {
+				if (it->first == maxfd)
+					maxfd = (++(this->acceptfds.rbegin()))->first;
+
+				std::string response;
+				response += "HTTP/1.1 204 No Content\r\n";
+//				response += "Content-Type: text/html;\r\n";
+				response += "Content-Length: 0\r\n";
+				response += "Connection: close\r\n";
+				response += "Server: webserv\r\n";
+				response += "\r\n";
+				send(it->first, response.c_str(), response.length(), 0);
+
                 close(it->first);
-                this->acceptfds.erase(it++);
+                FD_CLR(it->first, &initwset);
                 FD_CLR(it->first, &initrset);
+                this->acceptfds.erase(it++);
+            	std::cout << "AAAAAAAAAAAAAA"  << __LINE__ << std::endl;
                 continue ;
             }
             it++;

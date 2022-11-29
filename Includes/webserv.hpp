@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 12:50:24 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/12 14:54:00 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/29 16:24:28 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # define CONFIG_DEFAULT		"default.conf"
 # define CONFIG_PATH		"./Configs/"
 # define CONFIG_EXTANSION	".conf"
-# define BUFREAD			1024
-# define BUFWRITE			1024
+# define BUFREAD			10
+# define BUFWRITE			10
 
 # include <iostream>
 # include <fstream>
