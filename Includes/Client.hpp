@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/27 16:29:45 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:49:51 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ class	Client
 		bool							_isCgi;
 		std::pair<t_str, t_str>			_Cgi;
 		std::string						_uploadDir;
-		bool							_connection;
+		bool							_isClosed;
 		time_t							_closeTime;
 };
 

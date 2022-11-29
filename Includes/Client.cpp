@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/27 16:29:45 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:48:57 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Client::Client()
 	this->_isLocation = false;
 	this->_contentLength = 0;
 	this->_isCgi = false;
-	this->_connection = true;
+	this->_isClosed = false;
 	this->_closeTime = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
@@ -58,7 +58,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_isLocation = false;
 	this->_contentLength = 0;
 	this->_isCgi = false;
-	this->_connection = true;
+	this->_isClosed = false;
 	this->_closeTime = 0;
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
@@ -91,7 +91,7 @@ Client::Client(const Client &other)
 	this->_isCgi = other._isCgi;
 	this->_Cgi = other._Cgi;
 	this->_uploadDir = other._uploadDir;
-	this->_connection = other._connection;
+	this->_isClosed = other._isClosed;
 	this->_closeTime = other._closeTime;
 }
 
@@ -123,7 +123,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_isCgi = rhs._isCgi;
 		this->_Cgi = rhs._Cgi;
 		this->_uploadDir = rhs._uploadDir;
-		this->_connection = rhs._connection;
+		this->_isClosed = rhs._isClosed;
 		this->_closeTime = rhs._closeTime;
 	}
 	return (*this);
@@ -163,8 +163,8 @@ bool	Client::getSendStatus() const
 bool	Client::getCloseStatus()
 {
 	if (time(NULL) - this->_closeTime > CONNECTION_CLOSE_SECONDS)
-		this->_connection = false;
-	return (this->_connection);
+		this->_isClosed = true;
+	return (this->_isClosed);
 }
 
 const std::string	Client::getResponse()
@@ -390,7 +390,7 @@ int	Client::receiveInfo()
 		if (connection != this->_header.end())
 		{
 			if (connection->second == "close")
-				this->_connection = false;
+				this->_isClosed = true;
 			else
 				this->_closeTime = time(NULL);
 		}
