@@ -165,7 +165,6 @@ void HttpServer::run()
             }
             if (it->second.getCloseStatus() == true)
             {
-                std::cout << "hi" << std::endl;
                 FD_CLR(it->first, &initwset);
                 FD_CLR(it->first, &initrset);
                 close(it->first);

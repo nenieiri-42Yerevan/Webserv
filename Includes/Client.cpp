@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/29 13:48:57 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 10:49:54 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +140,9 @@ Client::~Client()
 void	Client::setRequest(const std::string &request)
 {
 	this->_request += request;
-	if (this->_isSendFinish == true)
-		this->_isSendFinish = false;
+	this->_isSendFinish = false;
+	this->_isClosed = false;
+	this->_closeTime = time(NULL);
 	parsing();
 }
 
@@ -162,7 +163,8 @@ bool	Client::getSendStatus() const
 
 bool	Client::getCloseStatus()
 {
-	if (time(NULL) - this->_closeTime > CONNECTION_CLOSE_SECONDS)
+	if (this->_isSendFinish == true && \
+			time(NULL) - this->_closeTime > CONNECTION_CLOSE_SECONDS)
 		this->_isClosed = true;
 	return (this->_isClosed);
 }
