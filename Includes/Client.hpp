@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/29 13:49:51 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 17:21:44 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ class	Client
 		int								receiveInfo();
 		int								findServer();
 		void							findLocation();
+		bool							findReturn();
 		bool							findFile(t_str &full_path, \
 											t_str::size_type pos);
 		void							findLength();
@@ -116,6 +117,7 @@ class	Client
 		std::string						_uploadDir;
 		bool							_isClosed;
 		time_t							_closeTime;
+		std::string						_redirectHeader;
 };
 
 #endif

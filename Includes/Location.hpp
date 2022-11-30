@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/30 15:02:46 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 16:59:51 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class	Location
 		const std::vector<t_str>		&getAllowedMethods() const;
 		const std::map<t_str, t_str>	&getCgi() const;
 		const std::string				&getUploadDir() const;
+		const std::string				&getReturn() const;
 		void							inherit(t_str root, \
 											std::vector<t_str> index, \
 											bool autoindex, \

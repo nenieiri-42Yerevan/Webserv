@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/30 15:14:22 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 17:00:17 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,11 @@ const std::map<std::string, std::string>	&Server::getCgi() const
 const std::string	&Server::getUploadDir() const
 {
 	return (this->_uploadDir);
+}
+
+const std::string	&Server::getReturn() const
+{
+	return (this->_return);
 }
 
 /*=====================================*/

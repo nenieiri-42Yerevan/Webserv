@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/30 10:49:54 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 17:30:35 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ Client::Client(const Client &other)
 	this->_uploadDir = other._uploadDir;
 	this->_isClosed = other._isClosed;
 	this->_closeTime = other._closeTime;
+	this->_redirectHeader = other._redirectHeader;
 }
 
 Client	&Client::operator=(const Client &rhs)
@@ -125,6 +126,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_uploadDir = rhs._uploadDir;
 		this->_isClosed = rhs._isClosed;
 		this->_closeTime = rhs._closeTime;
+		this->_redirectHeader = rhs._redirectHeader;
 	}
 	return (*this);
 }
@@ -411,6 +413,8 @@ int	Client::receiveInfo()
 				this->findLocation();
 				if (this->isAllowedMethods() == false)
 					return (getError(405));
+				if (this->findReturn() == true)
+					return (0);
 				if (this->findFile(_file, pos) == false)
 				{
 					if (this->_response == "")
@@ -498,6 +502,23 @@ void	Client::findLocation()
 		this->_isLocation = true;
 		findLocation();
 	}
+}
+
+bool	Client::findReturn()
+{
+	std::string	ret;
+
+	if (this->_isLocation == true)
+		ret = this->_location.second.getReturn();
+	else
+		ret = this->_server.getReturn();
+	if (ret != "")
+	{
+		this->_redirectHeader = "Location : " + ret;
+		getError(301);
+		return (true);
+	}
+	return (false);
 }
 
 bool	Client::findFile(std::string &full_path, std::string::size_type pos)
@@ -925,6 +946,9 @@ int	Client::getError(int num)
 {
 	switch (num)
 	{
+		case 301:
+			getErrorMsg(301, "301", "Moved Permanently");
+			break ;
 		case 400:
 			getErrorMsg(400, "400", "Bad Request");
 			break ;
@@ -1011,6 +1035,8 @@ void	Client::getErrorMsg(int errNum, const t_str &num, const t_str &msg)
 	response += "HTTP/1.1 " + num + " " + msg + "\r\n";
 	response += "Content-Type : text/html;\r\n";
 	response += "Content-Length : " + ss.str() + "\r\n";
+	if (errNum == 301)
+		response += this->_redirectHeader + "\r\n";
 	if (errNum == 405)
 		response += this->_errorAllowed + "\r\n";
 	response += "Server : webserv\r\n";
@@ -1031,6 +1057,9 @@ void	Client::resetHeader()
 	this->_isHeader = 0;
 	this->_lastHeader = "";
 	this->_isLocation = false;
+	this->_errorAllowed = "";
+	this->_bodyType = "";
 	this->_contentLength = 0;
 	this->_isCgi = false;
+	this->_redirectHeader = "";
 }
