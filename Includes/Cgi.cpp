@@ -96,16 +96,14 @@ void Cgi::tofile(std::string path)
     ss.str("");
     ss << str.length();
 	response += "HTTP/1.1 " + (std::string)"200" + " " + "ok" + "\r\n";
-	response += "Content-Type: text/html;\r\n";
 	response += "Content-Length: " + ss.str() + "\r\n";
 	response += "Server: webserv\r\n";
-	response += "\r\n";
-    char *st = (char *)str.c_str();
-    while (*st != '\n')
+
+    /*while (*st != '\n')
     {
         st++;
-    }
-	response += st;
+    }*/
+	response += str;
     ifs.close();
     this->cont->setResponse(response);
 }
@@ -163,6 +161,7 @@ void Cgi::cgi_run()
         perror("Error: ");
     }
     waitpid(pid, &status, 0);
+    close(fd);
     tofile("temp");
     unlink("temp");
 }
