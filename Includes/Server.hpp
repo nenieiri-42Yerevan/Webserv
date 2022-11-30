@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:36:35 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 14:52:42 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 15:02:33 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class	Server
 		void							setAllowedMethods(t_str &value);
 		void							setCgi(t_str &value);
 		void							setUploadDir(t_str &value);
+		void							setReturn(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 		void							setDefaults();
 	private:
@@ -84,6 +85,7 @@ class	Server
 		std::vector<t_str>				_allowedMethods;
 		std::map<t_str, t_str>			_cgi;
 		std::string						_uploadDir;
+		std::string						_return;
 };
 
 #endif

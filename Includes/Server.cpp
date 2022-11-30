@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 14:53:36 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 15:14:22 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ Server::Server(t_str &body)
 	_directiveList.push_back("location");
 	_directiveList.push_back("cgi");
 	_directiveList.push_back("upload_dir");
+	_directiveList.push_back("return");
 	this->_autoindex = false;
 	this->_clientMaxBodySize = 0;
 	parsingBody(tmp);
@@ -57,6 +58,7 @@ Server::Server(const Server &other)
 	this->_allowedMethods = other._allowedMethods;
 	this->_cgi = other._cgi;
 	this->_uploadDir = other._uploadDir;
+	this->_return = other._return;
 }
 
 Server	&Server::operator=(const Server &rhs)
@@ -75,6 +77,7 @@ Server	&Server::operator=(const Server &rhs)
 		this->_allowedMethods = rhs._allowedMethods;
 		this->_cgi = rhs._cgi;
 		this->_uploadDir = rhs._uploadDir;
+		this->_return = rhs._return;
 	}
 	return (*this);
 }
@@ -418,6 +421,25 @@ void	Server::setUploadDir(t_str &value)
 	this->_uploadDir = value;
 }
 
+void	Server::setReturn(t_str &value)
+{
+	std::string::size_type	pos;
+
+	pos = value.find_last_not_of(" \t\v\r\n\f");
+	if (pos == std::string::npos)
+		throw std::runtime_error("Error: return directive value is empty.");
+	++pos;
+	value = value.substr(0, pos);
+	if (value.find_first_of(" \t\v\r\n\f") != std::string::npos)
+		throw std::runtime_error("Error: return directive isn't valid "
+								 "(there are whitespaces).");
+	if (value[0] != '/' && value.compare(0, 7, "http://") != 0 && \
+			value.compare(0, 8, "https://") != 0)
+		throw std::runtime_error("Error: return directive must start with " \
+								"one of this 'http://', 'https://', '/'.");
+	this->_return = value;
+}
+
 void	Server::setFildes(const t_str &name, t_str &value)
 {
 	if (name.compare("server_name") == 0)
@@ -442,6 +464,8 @@ void	Server::setFildes(const t_str &name, t_str &value)
 		this->setCgi(value);
 	else if (name.compare("upload_dir") == 0)
 		this->setUploadDir(value);
+	else if (name.compare("return") == 0)
+		this->setReturn(value);
 }
 
 void	Server::setDefaults()

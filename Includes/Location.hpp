@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:21:31 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/24 14:53:11 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/11/30 15:02:46 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ class	Location
 		void							setAllowedMethods(t_str &value);
 		void							setCgi(t_str &value);
 		void							setUploadDir(t_str &value);
+		void							setReturn(t_str &value);
 		void							setFildes(const t_str &name, t_str &value);
 	private:
 		void							parsingLocation(t_str &body, \
@@ -81,6 +82,7 @@ class	Location
 		std::vector<t_str>				_allowedMethods;
 		std::map<t_str, t_str>			_cgi;
 		std::string						_uploadDir;
+		std::string						_return;
 };
 
 #endif
