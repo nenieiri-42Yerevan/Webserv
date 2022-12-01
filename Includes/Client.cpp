@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/01 15:59:02 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/01 16:09:06 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,6 +438,7 @@ int	Client::findServer()
 	std::vector<std::string>::iterator					serv_it;
 	std::string											tmp;
 
+	std::cout << this->_host << ":" << this->_port << std::endl;
 	for (std::vector<Server>::size_type i = 0; i < this->_serverSet.size(); ++i)
 	{
 		listen = this->_serverSet[i].getListen();
@@ -445,7 +446,7 @@ int	Client::findServer()
 		{
 			tmp = listen_it->first;
 			if (tmp == "*")
-				tmp = "0.0.0.0";
+				tmp = this->_host;
 			if (tmp == this->_host && listen_it->second == this->_port)
 			{
 				this->_server = this->_serverSet[i];
