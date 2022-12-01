@@ -61,6 +61,9 @@ void HttpServer::createSockets(int i)
 		throw std::runtime_error("Error: listening socket.");
         close(this->listenSockets[i].sockfd);
     }
+	std::cout << "Server: " << this->listenSockets[i].host << ":";
+	std::cout << this->listenSockets[i].port << " has created on fd: ";
+	std::cout << this->listenSockets[i].sockfd << "." << std::endl;
 }
 
 void HttpServer::createListen()
