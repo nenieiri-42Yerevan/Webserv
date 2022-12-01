@@ -6,6 +6,13 @@ Cgi::Cgi(Client  *other)
 {
     this->header = other->getHeader();
     this->cont = other;
+    /*std::map<std::string, std::string>::iterator it = this->header.begin();
+    while (it != this->header.end())
+    {
+        std::cout << it->first << "  " << it->second << std::endl;
+        it++;
+    }
+    std::cout << this->cont->getBody() << std::endl;*/
 }
 
 Cgi::Cgi()
@@ -61,6 +68,7 @@ void Cgi::initenv()
 
     pwd = getcwd(NULL, 0);
     //env["AUTH_TYPE"] = this->header["method"];
+    env["UPLOAD_DIR"] = "/hello";
     env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["CONTENT_TYPE"] = this->header["content-type"];
