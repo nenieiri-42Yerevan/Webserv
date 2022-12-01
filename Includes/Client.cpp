@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/30 17:30:35 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/01 15:59:02 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,13 +436,17 @@ int	Client::findServer()
 	std::multimap<std::string, std::string>::iterator	listen_it;
 	std::vector<std::string>							servName;
 	std::vector<std::string>::iterator					serv_it;
+	std::string											tmp;
 
 	for (std::vector<Server>::size_type i = 0; i < this->_serverSet.size(); ++i)
 	{
 		listen = this->_serverSet[i].getListen();
 		for (listen_it = listen.begin(); listen_it != listen.end(); ++listen_it)
 		{
-			if (listen_it->first == this->_host && listen_it->second == this->_port)
+			tmp = listen_it->first;
+			if (tmp == "*")
+				tmp = "0.0.0.0";
+			if (tmp == this->_host && listen_it->second == this->_port)
 			{
 				this->_server = this->_serverSet[i];
 				this->_isServerFound = true;
