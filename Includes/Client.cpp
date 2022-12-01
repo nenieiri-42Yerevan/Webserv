@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/01 17:13:26 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/01 19:03:08 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -576,14 +576,11 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 				getError(403);
 				return (false);
 			}
-			else
-			{
-				getError(404);
-				return (false);
-			}
 		}
 		if (autoindex == true)
 			return (directListening(full_path, rel_path));
+		getError(404);
+		return (false);
 	}
 	else
 	{
