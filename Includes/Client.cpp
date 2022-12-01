@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/01 16:09:06 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/01 17:13:26 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -416,12 +416,7 @@ int	Client::receiveInfo()
 				if (this->findReturn() == true)
 					return (0);
 				if (this->findFile(_file, pos) == false)
-				{
-					if (this->_response == "")
-						return (getError(404));
-					else
-						return (0);
-				}
+					return (0);
 				this->findLength();
 				this->findCgi();
 			}
@@ -438,7 +433,6 @@ int	Client::findServer()
 	std::vector<std::string>::iterator					serv_it;
 	std::string											tmp;
 
-	std::cout << this->_host << ":" << this->_port << std::endl;
 	for (std::vector<Server>::size_type i = 0; i < this->_serverSet.size(); ++i)
 	{
 		listen = this->_serverSet[i].getListen();
@@ -572,10 +566,20 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 			pos_post = tmp.find_first_of("?", pos_post);
 			if (pos_post != std::string::npos)
 				tmp = tmp.substr(0, pos_post);
-			if (access(tmp.c_str(), F_OK | R_OK) == 0)
+			if (access(tmp.c_str(), F_OK) == 0)
 			{
-				full_path = tmp;
-				return (true);
+				if (access(tmp.c_str(), R_OK) == 0)
+				{
+					full_path = tmp;
+					return (true);
+				}
+				getError(403);
+				return (false);
+			}
+			else
+			{
+				getError(404);
+				return (false);
 			}
 		}
 		if (autoindex == true)
@@ -614,8 +618,18 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 		pos_post = full_path.find_first_of("?", pos_post);
 		if (pos_post != std::string::npos)
 			full_path = full_path.substr(0, pos_post);
-		if (access(full_path.c_str(), F_OK | R_OK) == 0)
-			return (true);
+		if (access(full_path.c_str(), F_OK) == 0)
+		{
+			if (access(full_path.c_str(), R_OK) == 0)
+				return (true);
+			else
+			{
+				getError(403);
+				return (false);
+			}
+		}
+		else
+			getError(404);
 	}
 	return (false);
 }
