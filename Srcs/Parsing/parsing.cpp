@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 15:37:59 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/06 11:20:21 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/01 12:39:16 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ std::vector<Server>	*parsing(std::string &config)
 	server_set = new std::vector<Server>;
 	try
 	{
+		delete_comments(config);
 		while (config != "")
 		{
 			found_server = config.find_first_not_of(" \t\v\r\n\f");

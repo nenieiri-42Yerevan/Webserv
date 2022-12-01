@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 12:50:24 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/30 10:49:10 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/01 12:36:50 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void		start_server(std::string &config);
 
 /* ------------- Parsing part --------------*/
 std::vector<Server>	*parsing(std::string &config);
+void				delete_comments(std::string &config);
 std::string			get_inside(std::string &config, std::string::size_type start_pos);
 
 #endif
