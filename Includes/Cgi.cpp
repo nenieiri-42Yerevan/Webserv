@@ -11,8 +11,8 @@ Cgi::Cgi(Client  *other)
     {
         std::cout << it->first << "  " << it->second << std::endl;
         it++;
-    }
-    std::cout << this->cont->getBody() << std::endl;*/
+    }*/
+    /*std::cout << this->cont->getBody() << std::endl;*/
 }
 
 Cgi::Cgi()
@@ -68,7 +68,7 @@ void Cgi::initenv()
 
     pwd = getcwd(NULL, 0);
     //env["AUTH_TYPE"] = this->header["method"];
-    env["UPLOAD_DIR"] = "/hello";
+    env["UPLOAD_DIR"] = "upload";
     env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["CONTENT_TYPE"] = this->header["content-type"];
@@ -84,6 +84,7 @@ void Cgi::initenv()
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["SERVER_SOFTWARE"] = "Webserv";
     env["REDIRECT_STATUS"] = "true";
+    env["ORIGIN"] = this->header["origin"];
 }
 
 Cgi::Cgi(const Cgi &other)
@@ -172,5 +173,5 @@ void Cgi::cgi_run()
     waitpid(pid, &status, 0);
     close(fd);
     tofile("temp");
-    //unlink("temp");
+    unlink("temp");
 }
