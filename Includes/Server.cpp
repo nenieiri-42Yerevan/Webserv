@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/30 17:00:17 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/03 13:42:01 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,6 @@ void	Server::setRoot(t_str &value)
 {
 	std::string::size_type	pos;
 	std::string				path;
-	char					*isPathOk;
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
@@ -226,15 +225,6 @@ void	Server::setRoot(t_str &value)
 								 "(there are whitespaces).");
 	if (value.compare(0, 4, "www/") != 0)
 		throw std::runtime_error("Error: root must start with 'www/' path.");
-	isPathOk = std::getenv("_");
-	if (isPathOk == nullptr)
-		throw std::runtime_error("Error: env variable '$_' does not found.");
-	path = static_cast<std::string>(isPathOk);
-	pos = path.find_last_of("/") + 1;
-	if (pos == std::string::npos)
-		throw std::runtime_error("Error: not found '/' in env variable '$_'");
-	path = path.substr(0, pos);
-	value = path + value;
 	if (access(value.c_str(), F_OK) != 0)
 		throw std::runtime_error("Error: root dir does not found.");
 	this->_root = value;
@@ -399,8 +389,6 @@ void	Server::setCgi(t_str &value)
 void	Server::setUploadDir(t_str &value)
 {
 	std::string::size_type	pos;
-	std::string				path;
-	char					*isPathOk;
 
 	pos = value.find_last_not_of(" \t\v\r\n\f");
 	if (pos == std::string::npos)
@@ -412,15 +400,6 @@ void	Server::setUploadDir(t_str &value)
 								 "(there are whitespaces).");
 	if (value.compare(0, 4, "www/") != 0)
 		throw std::runtime_error("Error: upload_dir must start with 'www/' path.");
-	isPathOk = std::getenv("_");
-	if (isPathOk == nullptr)
-		throw std::runtime_error("Error: env variable '$_' does not found.");
-	path = static_cast<std::string>(isPathOk);
-	pos = path.find_last_of("/") + 1;
-	if (pos == std::string::npos)
-		throw std::runtime_error("Error: not found '/' in env variable '$_'");
-	path = path.substr(0, pos);
-	value = path + value;
 	if (access(value.c_str(), F_OK) != 0)
 		throw std::runtime_error("Error: upload_dir value does not exist.");
 	this->_uploadDir = value;
@@ -477,7 +456,7 @@ void	Server::setDefaults()
 {
 	std::string::size_type	pos;
 	std::string				path;
-	std::string				value("www/html/");
+	std::string				value("www/");
 	char					*isPathOk;
 
 	if (this->_root == "")
