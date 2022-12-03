@@ -44,22 +44,11 @@ std::string Cgi::findquery(std::string uri)
 
 std::string getpathinfo(std::string uri)
 {
-    size_t pos;
     std::string res;
-    size_t pos2;
 
     res = "";
-    pos = uri.find(".php");
-    if (pos != std::string::npos)
-    {
-        pos2 = uri.find("?");
-        if (pos2 != std::string::npos)
-        {
-            res = uri.substr(pos + strlen(".php"), pos2 - (pos + strlen(".php")));
-        }
-        else
-            res = uri.substr(pos + strlen(".php"), uri.length() - (pos + strlen(".php")));
-    }
+    res += "www/html";
+    res += uri;
     return (res);
 }
 void Cgi::initenv()
@@ -67,13 +56,11 @@ void Cgi::initenv()
     char *pwd;
 
     pwd = getcwd(NULL, 0);
-    //env["AUTH_TYPE"] = this->header["method"];
     env["UPLOAD_DIR"] = "upload";
     env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["CONTENT_TYPE"] = this->header["content-type"];
     env["PATH_INFO"] = getpathinfo(this->header["uri"]);
-    env["PATH_TRANSLATED"] = "";
     env["REQUEST_METHOD"] = this->header["method"];
     env["QUERY_STRING"] = findquery(this->header["uri"]);
     env["REMOTE_ADDR"] = "127.0.0.1";
@@ -125,6 +112,8 @@ Cgi &Cgi::operator=(Cgi const &other)
     if (this != &other)
     {
         this->env = other.env;
+        this->header = other.header;
+        this->cont = other.cont;
     }
     return (*this);
 }
@@ -164,7 +153,11 @@ void Cgi::cgi_run()
         args[1] = strdup(this->cont->getFile().c_str());
         args[2] = NULL;
         if (execve(args[0], args, envc) == -1)
+        {
+            free(args[0]);
+            free(args[1]);
             perror("Error\n");
+        }
     }
     if (pid < 0)
     {
@@ -173,5 +166,11 @@ void Cgi::cgi_run()
     waitpid(pid, &status, 0);
     close(fd);
     tofile("temp");
+    i = 0;
+    while (envc[i])
+    {
+        free(envc[i]);
+        i++;
+    }
     unlink("temp");
 }

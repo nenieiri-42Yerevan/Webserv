@@ -155,14 +155,26 @@ void HttpServer::run()
         {
             if (FD_ISSET(it->first, &readset))
             {
-                getrequest(it->first);
+                int ret = getrequest(it->first);
+                if (ret == -1)
+                    continue;
+                else if (ret == 0)
+                {
+                    FD_CLR(it->first, &initwset);
+                    FD_CLR(it->first, &initrset);
+                    close(it->first);
+                    this->acceptfds.erase(it++);
+                    continue ;
+                }
                 FD_SET(it->first, &initwset);
 				if (it->second.getRecvStatus() == true)
 					FD_CLR(it->first, &initrset);
             }
             if (FD_ISSET(it->first, &writeset))
             {
-				sendresponse(it->first);
+				int res = sendresponse(it->first);
+                if (res == -1)
+                    continue ;
 				if (it->second.getSendStatus() == true)
 					FD_CLR(it->first, &initwset);
             }
