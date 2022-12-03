@@ -63,7 +63,7 @@ void Cgi::initenv()
     env["PATH_INFO"] = getpathinfo(this->header["uri"]);
     env["REQUEST_METHOD"] = this->header["method"];
     env["QUERY_STRING"] = findquery(this->header["uri"]);
-    env["REMOTE_ADDR"] = "127.0.0.1";
+    env["REMOTE_ADDR"] = this->header["host"];
     env["SCRIPT_NAME"] = findscript(this->header["uri"]);
     env["SCRIPT_FILENAME"] = std::string(pwd) + "/www/html" + env["SCRIPT_NAME"];
     env["SERVER_NAME"] = "webserv";
