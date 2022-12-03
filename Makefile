@@ -6,7 +6,7 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/11/29 13:49:32 by vismaily         ###   ########.fr        #
+#    Updated: 2022/12/03 14:57:43 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,30 +23,39 @@ OBJS		= $(patsubst ./Srcs/%.cpp, ./$(TMP)/%.o, $(SRCS_COMM)) \
 			  $(patsubst ./Srcs/Parsing/%.cpp, ./$(TMP)/%.o, $(SRCS_PARS)) \
 			  $(patsubst ./Includes/%.cpp, ./$(TMP)/%.o, $(SRCS_CLAS)) \
 
-CC			= c++
+CPP			= c++
 
-CFLAGS		= -Wall -Wextra -Werror
+CPP_FLAGS	= -Wall -Wextra -Werror
+
+BONUS_PART	= 0
+
+DEFINES		= -D BONUS=$(BONUS_PART)
 
 INCLUDES	= -I ./Includes
 
 RM			= rm -rf
 
-all:		$(NAME)
+all:		bonus
+
+$(NAME):	$(TMP) $(OBJS)
+			@$(CPP) -o $(NAME) $(OBJS)
+
+bonus:		bonus_on $(NAME)
+
+bonus_on:
+			$(eval BONUS_PART = 1)
 
 $(TMP):
 			@$(shell mkdir $(TMP))
 
 $(TMP)/%.o:	Srcs/%.cpp
-			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+			@$(CPP) $(CPP_CFLAGS) $(DEFINES) $(INCLUDES) -o $@ -c $<
 
 $(TMP)/%.o:	Srcs/Parsing/%.cpp
-			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+			@$(CPP) $(CPP_CFLAGS) $(DEFINES) $(INCLUDES) -o $@ -c $<
 
 $(TMP)/%.o:	Includes/%.cpp
-			@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
-
-$(NAME):	$(TMP) $(OBJS)
-			@$(CC) $(CFLAGS) $(INCLUDES) -o $(NAME) $(OBJS)
+			@$(CPP) $(CPP_CFLAGS) $(DEFINES) $(INCLUDES) -o $@ -c $<
 
 clean:
 			@$(RM) $(TMP)
@@ -56,4 +65,4 @@ fclean:		clean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re
+.PHONY:		all clean fclean re bonus
