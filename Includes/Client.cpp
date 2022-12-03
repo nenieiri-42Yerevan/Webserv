@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/01 19:03:08 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/03 17:35:22 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -415,9 +415,9 @@ int	Client::receiveInfo()
 					return (getError(405));
 				if (this->findReturn() == true)
 					return (0);
+				this->findLength();
 				if (this->findFile(_file, pos) == false)
 					return (0);
-				this->findLength();
 				this->findCgi();
 			}
 		}
@@ -518,6 +518,29 @@ bool	Client::findReturn()
 		return (true);
 	}
 	return (false);
+}
+
+void	Client::findLength()
+{
+	std::map<t_str, t_str>::iterator	it;
+
+	it = this->_header.find("transfer-encoding");
+	if (it != this->_header.end())
+	{
+		for (size_t	i = 0; i < it->second.length(); ++i)
+			it->second[i] = tolower(it->second[i]);
+		if (it->second == "chunked")
+			this->_bodyType = "chunked";
+	}
+	else
+	{
+		it = this->_header.find("content-length");
+		if (it != this->_header.end())
+		{
+			this->_bodyType = "length";
+			this->_contentLength = std::strtoul(it->second.c_str(), NULL, 0);
+		}
+	}
 }
 
 bool	Client::findFile(std::string &full_path, std::string::size_type pos)
@@ -629,29 +652,6 @@ bool	Client::findFile(std::string &full_path, std::string::size_type pos)
 			getError(404);
 	}
 	return (false);
-}
-
-void	Client::findLength()
-{
-	std::map<t_str, t_str>::iterator	it;
-
-	it = this->_header.find("transfer-encoding");
-	if (it != this->_header.end())
-	{
-		for (size_t	i = 0; i < it->second.length(); ++i)
-			it->second[i] = tolower(it->second[i]);
-		if (it->second == "chunked")
-			this->_bodyType = "chunked";
-	}
-	else
-	{
-		it = this->_header.find("content-length");
-		if (it != this->_header.end())
-		{
-			this->_bodyType = "length";
-			this->_contentLength = std::strtoul(it->second.c_str(), NULL, 0);
-		}
-	}
 }
 
 void	Client::findCgi()
