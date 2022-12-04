@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/04 14:19:20 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/04 17:09:55 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -925,7 +925,7 @@ void	Client::prepareAnswer()
 			if (unlink((this->_header["uri"]).c_str()) == 0)
 				response += "HTTP/1.1 204 No Content\r\n";
 			else
-				response += "HTTP/1.1 202 Accepted\r\n";
+				response += "HTTP/1.1 500 Internal Server Error\r\n";
 			response += "Content-Length : 0\r\n";
 			response += "Server : webserv\r\n";
 			response += "\r\n";
