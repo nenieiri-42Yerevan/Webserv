@@ -922,7 +922,7 @@ void	Client::prepareAnswer()
 		}
 		else if (this->_header["method"] == "DELETE")
 		{
-			if (unlink((this->_header["uri"]).c_str()) == 0)
+			if (unlink(_file.c_str()) == 0)
 				response += "HTTP/1.1 204 No Content\r\n";
 			else
 				response += "HTTP/1.1 500 Internal Server Error\r\n";
