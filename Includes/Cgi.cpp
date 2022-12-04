@@ -168,9 +168,31 @@ void Cgi::cgi_run()
     }
     if (pid < 0)
     {
-        perror("Error: ");
+        std::string response;
+        response = "HTTP/1.1 500 Internal Server Error\r\n";
+        response += "Content-Length : 96\r\n";
+        response += "Server : webserv\r\n";
+        response += "\r\n";
+        response += "<html></html><head></head><body><h1>500<br>\
+        Internal Server Error</h1></body></html>";
+        this->cont->setResponse(response);
     }
     waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+    {
+        int exit_status = WEXITSTATUS(status);
+        if (exit_status != 0)       
+        {
+            std::string response;
+            response = "HTTP/1.1 500 Internal Server Error\r\n";
+			response += "Content-Length : 96\r\n";
+			response += "Server : webserv\r\n";
+			response += "\r\n";
+            response += "<html></html><head></head><body><h1>500<br>\
+            Internal Server Error</h1></body></html>";
+            this->cont->setResponse(response);
+        }
+    }
     close(fd);
     tofile("temp");
     i = 0;
