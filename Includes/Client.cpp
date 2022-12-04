@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/04 17:09:55 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/04 17:17:33 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -923,13 +923,15 @@ void	Client::prepareAnswer()
 		else if (this->_header["method"] == "DELETE")
 		{
 			if (unlink(_file.c_str()) == 0)
+			{
 				response += "HTTP/1.1 204 No Content\r\n";
+				response += "Content-Length : 0\r\n";
+				response += "Server : webserv\r\n";
+				response += "\r\n";
+				_response += response;
+			}
 			else
-				response += "HTTP/1.1 500 Internal Server Error\r\n";
-			response += "Content-Length : 0\r\n";
-			response += "Server : webserv\r\n";
-			response += "\r\n";
-			_response += response;
+				getError(413);
 		}
 		else
 		{
@@ -993,6 +995,9 @@ int	Client::getError(int num)
 			break ;
 		case 413:
 			getErrorMsg(413, "413", "Request Entity Too Large");
+			break ;
+		case 500:
+			getErrorMsg(500, "500", "Internal Server Error");
 			break ;
 		case 501:
 			getErrorMsg(501, "501", "Not Implemented");
