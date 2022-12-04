@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/03 17:35:22 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/04 14:19:20 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -919,6 +919,17 @@ void	Client::prepareAnswer()
 		{
 			Cgi	cgi(this);
 			cgi.cgi_run();
+		}
+		else if (this->_header["method"] == "DELETE")
+		{
+			if (unlink((this->_header["uri"]).c_str()) == 0)
+				response += "HTTP/1.1 204 No Content\r\n";
+			else
+				response += "HTTP/1.1 202 Accepted\r\n";
+			response += "Content-Length : 0\r\n";
+			response += "Server : webserv\r\n";
+			response += "\r\n";
+			_response += response;
 		}
 		else
 		{
