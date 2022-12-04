@@ -56,14 +56,14 @@ void Cgi::initenv()
     char *pwd;
 
     pwd = getcwd(NULL, 0);
-    env["UPLOAD_DIR"] = "upload";
+    env["UPLOAD_DIR"] = pwd + (std::string)"/" + this->cont->getUploadDir();
     env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["CONTENT_TYPE"] = this->header["content-type"];
     env["PATH_INFO"] = getpathinfo(this->header["uri"]);
     env["REQUEST_METHOD"] = this->header["method"];
     env["QUERY_STRING"] = findquery(this->header["uri"]);
-    env["REMOTE_ADDR"] = "127.0.0.1";
+    env["REMOTE_ADDR"] = this->header["host"];
     env["SCRIPT_NAME"] = findscript(this->header["uri"]);
     env["SCRIPT_FILENAME"] = std::string(pwd) + "/www/html" + env["SCRIPT_NAME"];
     env["SERVER_NAME"] = "webserv";
@@ -127,6 +127,13 @@ void Cgi::cgi_run()
 
     i = 0;
     initenv();
+   /* if (this->header["method"] == "POST")
+    {
+        if (this->header["content-length"] != "")
+        {
+            if (this->header["content-length"] > this->cont.get)
+        }
+    }*/
     std::map<std::string, std::string>::iterator it = env.begin();
     while (it != env.end())
     {
