@@ -17,18 +17,6 @@ try
     if ($_FILES['file']['size'] > 1000000) {
         throw new RuntimeException('Exceeded filesize limit.');
     }
-    $finfo = new finfo(FILEINFO_MIME_TYPE);
-    if (false === $ext = array_search(
-        $finfo->file($_FILES['file']['tmp_name']),
-        array(
-            'jpg' => 'image/jpeg',
-            'png' => 'image/png',
-            'txt' => 'text/plain',
-        ),
-        true
-    )) {
-        throw new RuntimeException('Invalid file format.');
-    }
     $filename = sprintf('%s/%s', $upload_dir, 
     $_FILES['file']['name']);
     if (!move_uploaded_file(
@@ -36,6 +24,7 @@ try
         $filename)) {
         throw new RuntimeException('Failed to move uploaded file.');
     }
+    echo $filename;
     echo "<html><head></head><body>";
     echo "<h1>FILE UPLOADED SUCCESFULLY</h1>";
     echo "</body>";
