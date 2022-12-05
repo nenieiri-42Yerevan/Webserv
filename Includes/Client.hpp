@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:11 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/05 12:43:42 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/05 13:54:56 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ class	Client
 		int								_chunkedLen;
 		bool							_isRecvFinish;
 		bool							_isSendFinish;
+		bool							_isErrored;
 		std::string						_version;
 		int								_isStart;
 		int								_isHeader;

@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/05 12:41:23 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/05 13:58:30 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Client::Client()
 	this->_chunkedLen = -1;
 	this->_isRecvFinish = false;
 	this->_isSendFinish = false;
+	this->_isErrored = false;
 	this->_version = "webserv/1.0.0";
 	this->_isStart = 0;
 	this->_isHeader = 0;
@@ -49,6 +50,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_chunkedLen = -1;
 	this->_isRecvFinish = false;
 	this->_isSendFinish = false;
+	this->_isErrored = false;
 	this->_version = "webserv/1.0.0";
 	this->_isStart = 0;
 	this->_isHeader = 0;
@@ -78,6 +80,7 @@ Client::Client(const Client &other)
 	this->_chunkedLen = other._chunkedLen;
 	this->_isRecvFinish = other._isRecvFinish;
 	this->_isSendFinish = other._isSendFinish;
+	this->_isErrored = other._isErrored;
 	this->_version = other._version;
 	this->_isStart = other._isStart;
 	this->_isHeader = other._isHeader;
@@ -111,6 +114,7 @@ Client	&Client::operator=(const Client &rhs)
 		this->_chunkedLen = rhs._chunkedLen;
 		this->_isRecvFinish = rhs._isRecvFinish;
 		this->_isSendFinish = rhs._isSendFinish;
+		this->_isErrored = rhs._isErrored;
 		this->_version = rhs._version;
 		this->_isStart = rhs._isStart;
 		this->_isHeader = rhs._isHeader;
@@ -917,42 +921,45 @@ void	Client::prepareAnswer()
 		getError(413);
 	else
 	{
-		if (this->_isCgi == true)
+		if (this->_isErrored == false)
 		{
-			Cgi	cgi(this);
-			cgi.cgi_run();
-		}
-		else if (this->_header["method"] == "DELETE")
-		{
-			if (unlink(_file.c_str()) == 0)
+			if (this->_isCgi == true)
 			{
-				response += "HTTP/1.1 204 No Content\r\n";
-				response += "Content-Length : 0\r\n";
+				Cgi	cgi(this);
+				cgi.cgi_run();
+			}
+			else if (this->_header["method"] == "DELETE")
+			{
+				if (unlink(_file.c_str()) == 0)
+				{
+					response += "HTTP/1.1 204 No Content\r\n";
+					response += "Content-Length : 0\r\n";
+					response += "Server : webserv\r\n";
+					response += "\r\n";
+					_response += response;
+				}
+				else
+					getError(413);
+			}
+			else
+			{
+				pos = _file.find_last_of(".");
+				this->readWhole(_file, file_body);
+				response += "HTTP/1.1 200 OK\r\n";
+				if (pos == std::string::npos)
+					response += "Content-Type : text/plain;\r\n";
+				else
+				{
+					++pos;
+					type = _file.substr(pos, _file.length() - pos);
+					response += "Content-Type : text/" + type + ";\r\n";
+				}
+				ss << file_body.length();
+				response += "Content-Length : " + ss.str() + "\r\n";
 				response += "Server : webserv\r\n";
 				response += "\r\n";
-				_response += response;
+				_response += response + file_body;
 			}
-			else
-				getError(413);
-		}
-		else
-		{
-			pos = _file.find_last_of(".");
-			this->readWhole(_file, file_body);
-			response += "HTTP/1.1 200 OK\r\n";
-			if (pos == std::string::npos)
-				response += "Content-Type : text/plain;\r\n";
-			else
-			{
-				++pos;
-				type = _file.substr(pos, _file.length() - pos);
-				response += "Content-Type : text/" + type + ";\r\n";
-			}
-			ss << file_body.length();
-			response += "Content-Length : " + ss.str() + "\r\n";
-			response += "Server : webserv\r\n";
-			response += "\r\n";
-			_response += response + file_body;
 		}
 	}
 	resetHeader();
@@ -1007,7 +1014,7 @@ int	Client::getError(int num)
 		default:
 			return (0);
 	}
-	resetHeader();
+	this->_isErrored = true;
 	return (0);
 }
 
@@ -1088,6 +1095,7 @@ void	Client::resetHeader()
 	this->_chunkedBody = "";
 	this->_chunkedLen = -1;
 	this->_isRecvFinish = false;
+	this->_isErrored = false;
 	this->_isStart = 0;
 	this->_isHeader = 0;
 	this->_lastHeader = "";
