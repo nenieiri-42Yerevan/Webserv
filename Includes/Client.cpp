@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:38:07 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/04 17:17:33 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/05 12:41:23 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ Client::Client()
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
+	this->_supportedMethods.push_back("HEAD");
 }
 
 Client::Client(std::vector<Server> &serverSet, int serverNumber)
@@ -63,6 +64,7 @@ Client::Client(std::vector<Server> &serverSet, int serverNumber)
 	this->_supportedMethods.push_back("GET");
 	this->_supportedMethods.push_back("POST");
 	this->_supportedMethods.push_back("DELETE");
+	this->_supportedMethods.push_back("HEAD");
 }
 
 Client::Client(const Client &other)
@@ -1005,6 +1007,7 @@ int	Client::getError(int num)
 		default:
 			return (0);
 	}
+	resetHeader();
 	return (0);
 }
 
