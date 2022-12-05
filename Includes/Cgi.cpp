@@ -127,13 +127,13 @@ void Cgi::cgi_run()
 
     i = 0;
     initenv();
-   /* if (this->header["method"] == "POST")
-    {
-        if (this->header["content-length"] != "")
-        {
-            if (this->header["content-length"] > this->cont.get)
-        }
-    }*/
+    char *pwd = getcwd(NULL, 0);
+    this->path = this->cont->getCgi().second;
+    if (this->path[0] == '.' && this->path[1] == '/')
+        this->path = this->path.substr(2, this->path.length() - 2);
+    if (this->path[0] != '/')
+        this->path = std::string(pwd) + (std::string)"/" + this->path;
+    free(pwd);
     std::map<std::string, std::string>::iterator it = env.begin();
     while (it != env.end())
     {
@@ -156,7 +156,7 @@ void Cgi::cgi_run()
             close(pipefd[0]);
             close(pipefd[1]);
         }
-        args[0] = strdup("/usr/bin/php-cgi");
+        args[0] = strdup(this->path.c_str());
         args[1] = strdup(this->cont->getFile().c_str());
         args[2] = NULL;
         if (execve(args[0], args, envc) == -1)

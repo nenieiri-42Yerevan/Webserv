@@ -11,6 +11,7 @@ class Cgi
         std::map<std::string, std::string> env;
         std::map<std::string, std::string> header;
         Client *cont;
+        std::string path;
     public:
         Cgi();
         Cgi(Client *other);
