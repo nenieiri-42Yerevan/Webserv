@@ -164,6 +164,7 @@ void Cgi::cgi_run()
             free(args[0]);
             free(args[1]);
             perror("Error\n");
+            exit(errno);
         }
     }
     if (pid < 0)
@@ -173,8 +174,8 @@ void Cgi::cgi_run()
         response += "Content-Length : 96\r\n";
         response += "Server : webserv\r\n";
         response += "\r\n";
-        response += "<html></html><head></head><body><h1>500<br>\
-        Internal Server Error</h1></body></html>";
+        response += "<html></html><head></head><body><h1><center>500<br>\
+        Internal Server Error</h1></center></body></html>";
         this->cont->setResponse(response);
     }
     waitpid(pid, &status, 0);
@@ -185,11 +186,11 @@ void Cgi::cgi_run()
         {
             std::string response;
             response = "HTTP/1.1 500 Internal Server Error\r\n";
-			response += "Content-Length : 96\r\n";
-			response += "Server : webserv\r\n";
-			response += "\r\n";
-            response += "<html></html><head></head><body><h1>500<br>\
-            Internal Server Error</h1></body></html>";
+            response += "Content-Length : 96\r\n";
+            response += "Server : webserv\r\n";
+            response += "\r\n";
+            response += "<html></html><head></head><body><h1><center>500<br>\
+            Internal Server Error</h1></center></body></html>";
             this->cont->setResponse(response);
         }
     }
