@@ -72,6 +72,8 @@ void Cgi::initenv()
     env["SERVER_SOFTWARE"] = "Webserv";
     env["REDIRECT_STATUS"] = "true";
     env["ORIGIN"] = this->header["origin"];
+    if (BONUS == 1)
+        env["HTTP_COOKIE"] = this->header["cookie"];
 }
 
 Cgi::Cgi(const Cgi &other)
