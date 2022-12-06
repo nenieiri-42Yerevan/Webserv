@@ -92,6 +92,8 @@ void Cgi::tofile(std::string path)
 	response += "HTTP/1.1 " + (std::string)"200" + " " + "ok" + "\r\n";
 	response += "Content-Length: " + ss.str() + "\r\n";
 	response += "Server: webserv\r\n";
+    if (this->cont->getCgi().first == "py")
+        response += "Content-Type: text/html\r\n\r\n";
 	response += str;
     ifs.close();
     this->cont->setResponse(response);

@@ -701,7 +701,7 @@ void	Client::findCgi()
 		} 
 		while (it_begin != it_end)
 		{
-			if (this->_file.compare(++pos, strlen(it_begin->first.c_str()), \
+			if (this->_file.compare(pos + 1, strlen(it_begin->first.c_str()), \
 										it_begin->first) == 0)
 			{
 				this->_isCgi = true;
