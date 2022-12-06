@@ -41,16 +41,6 @@ std::string Cgi::findquery(std::string uri)
         return (uri.substr(found + 1, uri.length() - found));
     return ("");
 }
-
-std::string getpathinfo(std::string uri)
-{
-    std::string res;
-
-    res = "";
-    res += "www/html";
-    res += uri;
-    return (res);
-}
 void Cgi::initenv()
 {
     char *pwd;
@@ -60,12 +50,12 @@ void Cgi::initenv()
     env["CONTENT_LENGTH"] = this->header["content-length"];
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["CONTENT_TYPE"] = this->header["content-type"];
-    env["PATH_INFO"] = getpathinfo(this->header["uri"]);
+    env["PATH_INFO"] = this->cont->getFile();
     env["REQUEST_METHOD"] = this->header["method"];
     env["QUERY_STRING"] = findquery(this->header["uri"]);
     env["REMOTE_ADDR"] = this->header["host"];
     env["SCRIPT_NAME"] = findscript(this->header["uri"]);
-    env["SCRIPT_FILENAME"] = std::string(pwd) + "/www/html" + env["SCRIPT_NAME"];
+    env["SCRIPT_FILENAME"] = std::string(pwd) + "/" + this->cont->getFile();
     env["SERVER_NAME"] = "webserv";
     env["SERVER_PORT"] = this->cont->getServerPort();
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
