@@ -6,7 +6,7 @@
 #    By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/28 12:59:24 by vismaily          #+#    #+#              #
-#    Updated: 2022/12/03 14:57:43 by vismaily         ###   ########.fr        #
+#    Updated: 2022/12/07 14:45:27 by vismaily         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,15 +35,8 @@ INCLUDES	= -I ./Includes
 
 RM			= rm -rf
 
-all:		bonus
-
 $(NAME):	$(TMP) $(OBJS)
 			@$(CPP) -o $(NAME) $(OBJS)
-
-bonus:		bonus_on $(NAME)
-
-bonus_on:
-			$(eval BONUS_PART = 1)
 
 $(TMP):
 			@$(shell mkdir $(TMP))
@@ -57,12 +50,19 @@ $(TMP)/%.o:	Srcs/Parsing/%.cpp
 $(TMP)/%.o:	Includes/%.cpp
 			@$(CPP) $(CPP_CFLAGS) $(DEFINES) $(INCLUDES) -o $@ -c $<
 
+bonus:		bonus_on $(NAME)
+
+bonus_on:
+			$(eval BONUS_PART = 1)
+
+all:		bonus
+
 clean:
 			@$(RM) $(TMP)
 
 fclean:		clean
 			@$(RM) $(NAME) temp
 
-re:			fclean all
+re:			fclean $(NAME)
 
 .PHONY:		all clean fclean re bonus
