@@ -196,5 +196,5 @@ void Cgi::cgi_run()
         free(envc[i]);
         i++;
     }
-    //unlink("temp");
+    unlink("temp");
 }
