@@ -100,7 +100,6 @@ void Cgi::tofile(std::string path)
 }
 
 Cgi::~Cgi(){}
-
 Cgi &Cgi::operator=(Cgi const &other)
 {
     if (this != &other)
