@@ -64,6 +64,7 @@ void Cgi::initenv()
     env["ORIGIN"] = this->header["origin"];
     if (BONUS == 1)
         env["HTTP_COOKIE"] = this->header["cookie"];
+	free(pwd);
 }
 
 Cgi::Cgi(const Cgi &other)
