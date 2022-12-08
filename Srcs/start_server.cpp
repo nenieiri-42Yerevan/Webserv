@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:26:22 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/08 19:42:46 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/08 19:54:24 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	start_server(std::string &config)
 	}
 	catch (...)
 	{
-		delete server_set;
 	}
 	delete server_set;
 }
