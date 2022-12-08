@@ -157,7 +157,7 @@ void Cgi::cgi_run()
         {
             free(args[0]);
             free(args[1]);
-            perror("Error\n");
+            perror("Error");
             exit(errno);
         }
     }
