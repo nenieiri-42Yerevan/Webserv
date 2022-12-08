@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:26:22 by vismaily          #+#    #+#             */
-/*   Updated: 2022/11/13 14:33:30 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/08 19:42:46 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,14 @@ void	start_server(std::string &config)
 	std::vector<Server>		*server_set;
 
 	server_set = parsing(config);
-	HttpServer	serv(server_set);
-	serv.run();
+	try
+	{
+		HttpServer	serv(server_set);
+		serv.run();
+	}
+	catch (...)
+	{
+		delete server_set;
+	}
 	delete server_set;
 }
