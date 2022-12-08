@@ -24,7 +24,6 @@ try
         $filename)) {
         throw new RuntimeException('Failed to move uploaded file.');
     }
-    echo $filename;
     echo "<html><head></head><body>";
     echo "<h1>FILE UPLOADED SUCCESFULLY</h1>";
     echo "</body>";

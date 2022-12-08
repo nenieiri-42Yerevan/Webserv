@@ -25,7 +25,7 @@ OBJS		= $(patsubst ./Srcs/%.cpp, ./$(TMP)/%.o, $(SRCS_COMM)) \
 
 CPP			= c++
 
-CPP_FLAGS	= -Wall -Wextra -Werror
+CPP_FLAGS	= -Wall -Wextra -Werror -std=c++98
 
 BONUS_PART	= 0
 
