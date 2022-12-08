@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 16:42:16 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/07 14:50:13 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/08 19:20:07 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ Server::Server(const Server &other)
 	this->_autoindex = other._autoindex;
 	this->_errorPage = other._errorPage;
 	this->_location = other._location;
+	this->_clientMaxBodySize = other._clientMaxBodySize;
 	this->_allowedMethods = other._allowedMethods;
 	this->_cgi = other._cgi;
 	this->_uploadDir = other._uploadDir;
