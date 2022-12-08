@@ -96,6 +96,7 @@ void HttpServer::createacceptfd(int i, fd_set *initrset, int *maxfd)
 	int					fd;
 	socklen_t			addrlen;
 
+    memset(&addrlen, 0, sizeof(addrlen));
 	if ((fd = accept(this->listenSockets[i].sockfd, (struct sockaddr *)&address, \
 					(socklen_t*)&addrlen)) < 0)
 		return ;

@@ -921,7 +921,7 @@ void	Client::prepareAnswer()
 	std::string::size_type	pos;
 	std::stringstream		ss;
 	unsigned long int		length;
-
+	
 	if (this->_isLocation == true)
 		length = this->_location.second.getClientMaxBodySize();
 	else
