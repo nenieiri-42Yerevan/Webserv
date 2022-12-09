@@ -1,4 +1,4 @@
-# 42_Webserv
+# Webserv
 
 Webserv is a HTTP/1.1 server written in C++98.
 
@@ -6,6 +6,8 @@ Webserv is a HTTP/1.1 server written in C++98.
 
 The objective of this project is to create a functional HTTP web server.
 It conditional compliant with RFC.
+It implements Get, Post and Delete methods. So it can serve static web pages, dynamic pages thanks to CGI (PHP, python).
+It is fully configurable though a config file, inspired by Nginx format.
 
 ## Usage
 
