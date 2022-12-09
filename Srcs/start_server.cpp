@@ -6,7 +6,7 @@
 /*   By: vismaily <nenie_iri@mail.ru>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:26:22 by vismaily          #+#    #+#             */
-/*   Updated: 2022/12/08 19:54:24 by vismaily         ###   ########.fr       */
+/*   Updated: 2022/12/09 17:56:21 by vismaily         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ void	start_server(std::string &config)
 		HttpServer	serv(server_set);
 		serv.run();
 	}
-	catch (...)
+	catch (const std::exception &e)
 	{
+		std::cout << e.what() << std::endl;
 	}
 	delete server_set;
 }
