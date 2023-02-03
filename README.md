@@ -50,5 +50,5 @@ As bonus
 
 ## Authors
 
-* [arastepa](https://github.com/arastepa)
-* [vismaily](https://github.com/nenieiri)
+* [Ara Stepanyan (arastepa)](https://github.com/arastepa)
+* [Volodya Ismailyan (vismaily)](https://github.com/nenieiri)
